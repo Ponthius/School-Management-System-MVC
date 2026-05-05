@@ -1,0 +1,421 @@
+﻿@model School_Management_System.Models.ViewModels.AdminDashboardViewModel
+@{
+    Layout = null;
+    var username = Context.Session.GetString("Username") ?? "Admin";
+    var initials = username.Length >= 2 ? username[..2].ToUpper() : username.ToUpper();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Dashboard — EduFlow SMS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f4f6fb;display:flex;min-height:100vh;font-size:14px}
+
+/* ── Sidebar ── */
+.sidebar{width:200px;min-height:100vh;background:#1e2a78;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:200}
+.sb-brand{padding:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo{display:flex;align-items:center;gap:8px}
+.sb-logo-icon{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.95rem}
+.sb-logo-text{color:#fff;font-weight:700;font-size:.95rem;line-height:1.1}
+.sb-logo-sub{color:rgba(255,255,255,.45);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase}
+.sb-role-badge{margin:.6rem 1rem;background:rgba(255,255,255,.08);border-radius:4px;padding:.3rem .7rem;font-size:.65rem;font-weight:600;color:#a5b4fc;letter-spacing:.06em;text-transform:uppercase;display:inline-block}
+.sb-role-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px}
+.sb-nav{flex:1;padding:.5rem 0;overflow-y:auto}
+.sb-nav a{display:flex;align-items:center;gap:9px;padding:.55rem 1rem;color:rgba(255,255,255,.65);text-decoration:none;font-size:.82rem;transition:background .15s,color .15s}
+.sb-nav a:hover,.sb-nav a.active{background:rgba(255,255,255,.1);color:#fff}
+.sb-nav a.active{border-left:3px solid #818cf8}
+.sb-nav a i{font-size:.95rem;width:18px;text-align:center}
+.sb-footer{padding:.8rem 1rem;border-top:1px solid rgba(255,255,255,.1)}
+.sb-footer a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.5);font-size:.78rem;text-decoration:none}
+.sb-footer a:hover{color:#fff}
+.sb-footer a i{font-size:.9rem}
+
+/* ── Main ── */
+.main{margin-left:200px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Topbar ── */
+.topbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:.65rem 1.5rem;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.topbar .search-box{position:relative;flex:1;max-width:280px}
+.topbar .search-box input{width:100%;border:1px solid #e5e7eb;border-radius:6px;padding:.35rem .75rem .35rem 2rem;font-size:.8rem;background:#f9fafb;outline:none}
+.topbar .search-box input:focus{border-color:#6366f1}
+.topbar .search-box i{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:.85rem}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;color:#6b7280;cursor:pointer;position:relative;font-size:.9rem}
+.icon-btn .badge-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#ef4444}
+.user-chip{display:flex;align-items:center;gap:8px}
+.user-chip .name{font-size:.82rem;font-weight:600;color:#111827;line-height:1.1}
+.user-chip .role{font-size:.7rem;color:#6b7280}
+.user-chip .avatar{width:32px;height:32px;border-radius:50%;background:#1e2a78;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+.logout-link{font-size:.78rem;color:#ef4444;text-decoration:none;font-weight:500}
+.logout-link:hover{text-decoration:underline}
+
+/* ── Content ── */
+.content{padding:1.25rem 1.5rem;flex:1}
+.page-title{font-size:1.4rem;font-weight:700;color:#1e2a78}
+.page-sub{font-size:.82rem;color:#6b7280;margin-bottom:1.1rem}
+
+/* ── Stat cards ── */
+.stat-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.1rem;height:100%}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.stat-badge{font-size:.7rem;font-weight:600;padding:.15rem .5rem;border-radius:999px}
+.stat-badge.green{background:#dcfce7;color:#15803d}
+.stat-badge.blue{background:#eff6ff;color:#1d4ed8}
+.stat-badge.gray{background:#f3f4f6;color:#6b7280}
+.stat-badge.amber{background:#fffbeb;color:#b45309}
+.stat-icon-sm{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.stat-label{font-size:.68rem;font-weight:600;color:#1e2a78;text-transform:uppercase;letter-spacing:.06em}
+.stat-value{font-size:1.7rem;font-weight:800;color:#111827;line-height:1.1;margin:.15rem 0}
+.stat-sub{font-size:.73rem;color:#9ca3af}
+.stat-border-blue{border-top:3px solid #6366f1}
+.stat-border-green{border-top:3px solid #22c55e}
+.stat-border-gray{border-top:3px solid #94a3b8}
+.stat-border-amber{border-top:3px solid #f59e0b}
+
+/* Quick report button */
+.btn-quick{background:#1e2a78;color:#fff;border:none;border-radius:7px;padding:.45rem 1rem;font-size:.8rem;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none}
+.btn-quick:hover{background:#162060;color:#fff}
+
+/* ── Activity table ── */
+.card-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.card-panel-head{padding:.8rem 1.1rem;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
+.card-panel-head .ttl{font-size:.85rem;font-weight:700;color:#1e2a78;display:flex;align-items:center;gap:6px}
+.card-panel-head a{font-size:.75rem;color:#6366f1;text-decoration:none}
+table.act-table{width:100%;border-collapse:collapse}
+table.act-table th{background:#f9fafb;font-size:.68rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;padding:.55rem 1rem;text-align:left}
+table.act-table td{padding:.65rem 1rem;font-size:.8rem;color:#374151;border-top:1px solid #f3f4f6;vertical-align:middle}
+.user-avatar-sm{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.status-pill{font-size:.68rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;white-space:nowrap}
+.s-verified{background:#dcfce7;color:#15803d}
+.s-complete{background:#eff6ff;color:#1d4ed8}
+.s-action{background:#fef2f2;color:#dc2626}
+.s-pending{background:#fffbeb;color:#b45309}
+.view-link{font-size:.75rem;color:#6366f1;text-decoration:none;font-weight:500}
+.view-link:hover{text-decoration:underline}
+
+/* ── Right panels ── */
+.pulse-bar-wrap{margin-bottom:.9rem}
+.pulse-label{display:flex;justify-content:space-between;font-size:.78rem;color:#374151;margin-bottom:.3rem}
+.pulse-label span:last-child{font-weight:700}
+.pulse-label .pct-green{color:#22c55e}
+.pulse-label .pct-blue{color:#6366f1}
+.progress-track{height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width .4s}
+.fill-green{background:#22c55e}
+.fill-blue{background:#6366f1}
+
+.events-panel{background:#1e2a78;border-radius:10px;padding:1rem 1.1rem;color:#fff}
+.events-panel .ep-title{font-size:.85rem;font-weight:700;margin-bottom:.8rem}
+.event-item{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem}
+.event-date{background:rgba(255,255,255,.12);border-radius:6px;padding:.3rem .5rem;text-align:center;min-width:38px}
+.event-date .em{font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase}
+.event-date .ed{font-size:.95rem;font-weight:800;color:#fff;line-height:1}
+.event-info .et{font-size:.78rem;font-weight:600;color:#fff}
+.event-info .el{font-size:.7rem;color:rgba(255,255,255,.55)}
+
+.help-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:.9rem 1rem;margin-top:.8rem}
+.help-box .hl{font-size:.7rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.help-box p{font-size:.75rem;color:#6b7280;margin-bottom:.6rem}
+.btn-support{width:100%;border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:.4rem;font-size:.78rem;color:#374151;cursor:pointer}
+.btn-support:hover{background:#f3f4f6}
+
+/* Avatar colour palette */
+.av-blue   {background:#3b82f6}
+.av-green  {background:#22c55e}
+.av-amber  {background:#f59e0b}
+.av-purple {background:#8b5cf6}
+.av-red    {background:#ef4444}
+.av-indigo {background:#6366f1}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo">
+            <div class="sb-logo-icon"><i class="bi bi-mortarboard-fill"></i></div>
+            <div>
+                <div class="sb-logo-text">EduFlow SMS</div>
+                <div class="sb-logo-sub">Administrative Portal</div>
+            </div>
+        </div>
+        <div class="sb-role-badge">
+            <span class="sb-role-dot"></span>Admin Role
+        </div>
+    </div>
+    <nav class="sb-nav">
+        <a href="/Dashboard/Admin" class="active">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </a>
+        <a href="/Students"><i class="bi bi-people-fill"></i> Students</a>
+        <a href="/Teachers"><i class="bi bi-person-badge-fill"></i> Teachers</a>
+        <a href="/Classes"><i class="bi bi-building"></i> Classes</a>
+        <a href="/Exams"><i class="bi bi-journal-text"></i> Exams</a>
+        <a href="/Payments"><i class="bi bi-cash-coin"></i> Payments</a>
+        <div style="margin-top:auto"></div>
+        <a href="#"><i class="bi bi-question-circle"></i> Help Center</a>
+        <a href="#"><i class="bi bi-gear"></i> Settings</a>
+    </nav>
+    <div class="sb-footer">
+        <a href="/Account/Logout">
+            <i class="bi bi-box-arrow-left"></i> Logout
+        </a>
+    </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Global search..."/>
+        </div>
+        <div class="topbar-right">
+            <div class="icon-btn">
+                <i class="bi bi-bell"></i>
+                <span class="badge-dot"></span>
+            </div>
+            <div class="icon-btn">
+                <i class="bi bi-gear"></i>
+            </div>
+            <div class="user-chip">
+                <div>
+                    <div class="name">Alex Sterling</div>
+                    <div class="role">Super Admin</div>
+                </div>
+                <div class="avatar">@initials</div>
+            </div>
+            <a href="/Account/Logout" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Page heading -->
+        <div class="d-flex align-items-start justify-content-between mb-3">
+            <div>
+                <div class="page-title">Dashboard</div>
+                <div class="page-sub">Welcome back. Here's what's happening today.</div>
+            </div>
+            <a href="#" class="btn-quick">
+                <i class="bi bi-plus-lg"></i> Quick Report
+            </a>
+        </div>
+
+        <!-- ── Stat cards ── -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-xl-3">
+                <div class="stat-card stat-border-blue">
+                    <div class="stat-top">
+                        <div class="stat-icon-sm" style="background:#eff6ff">
+                            <i class="bi bi-people-fill" style="color:#6366f1"></i>
+                        </div>
+                        <span class="stat-badge green">↑ 12%</span>
+                    </div>
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value">@Model.TotalStudents.ToString("N0")</div>
+                    <div class="stat-sub">Across @Model.GradeLevels grade levels</div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="stat-card stat-border-green">
+                    <div class="stat-top">
+                        <div class="stat-icon-sm" style="background:#f0fdf4">
+                            <i class="bi bi-person-badge-fill" style="color:#22c55e"></i>
+                        </div>
+                        <span class="stat-badge green">↑ 3%</span>
+                    </div>
+                    <div class="stat-label">Total Teachers</div>
+                    <div class="stat-value">@Model.TotalTeachers</div>
+                    <div class="stat-sub">@Model.StudentRatio student ratio</div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="stat-card stat-border-gray">
+                    <div class="stat-top">
+                        <div class="stat-icon-sm" style="background:#f8fafc">
+                            <i class="bi bi-building-fill" style="color:#64748b"></i>
+                        </div>
+                        <span class="stat-badge gray">Stable</span>
+                    </div>
+                    <div class="stat-label">Total Classes</div>
+                    <div class="stat-value">@Model.TotalClasses</div>
+                    <div class="stat-sub">Room occupancy: @Model.RoomOccupancyPercent%</div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="stat-card stat-border-amber">
+                    <div class="stat-top">
+                        <div class="stat-icon-sm" style="background:#fffbeb">
+                            <i class="bi bi-cash-stack" style="color:#f59e0b"></i>
+                        </div>
+                        <span class="stat-badge amber">⏳ Pending</span>
+                    </div>
+                    <div class="stat-label">Fees Collected</div>
+                    <div class="stat-value">
+                        $@Model.TotalFeesCollected.ToString("N0")
+                    </div>
+                    <div class="stat-sub">@Model.MonthlyGoalPercent% of monthly goal</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Bottom row: activity + right panels ── -->
+        <div class="row g-3">
+
+            <!-- Recent Activity -->
+            <div class="col-lg-8">
+                <div class="card-panel">
+                    <div class="card-panel-head">
+                        <div class="ttl">
+                            <i class="bi bi-arrow-repeat text-secondary"></i>
+                            Recent Activity
+                        </div>
+                        <a href="#">View All</a>
+                    </div>
+                    <table class="act-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if (!Model.RecentActivity.Any())
+                        {
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af">
+                                    No activity yet — it will appear here as you use the system.
+                                </td>
+                            </tr>
+                        }
+                        @{
+                            string[] avatarColors = {"av-blue","av-green","av-amber","av-purple","av-red","av-indigo"};
+                            int colorIdx = 0;
+                        }
+                        @foreach (var log in Model.RecentActivity)
+                        {
+                            var initStr = log.UserName.Length >= 2
+                                ? log.UserName[..2].ToUpper() : log.UserName.ToUpper();
+                            var avColor = avatarColors[colorIdx++ % avatarColors.Length];
+                            var pillClass = log.Status switch {
+                                "Complete"   => "s-complete",
+                                "Action Req."=> "s-action",
+                                "Pending"    => "s-pending",
+                                _            => "s-verified"
+                            };
+                            var elapsed = DateTime.Now - log.Timestamp;
+                            var timeStr = elapsed.TotalMinutes < 2    ? "Just now"
+                                        : elapsed.TotalMinutes < 60   ? $"{(int)elapsed.TotalMinutes} mins ago"
+                                        : elapsed.TotalHours   < 24   ? $"{(int)elapsed.TotalHours} hrs ago"
+                                        : $"{(int)elapsed.TotalDays} days ago";
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar-sm @avColor">@initStr</div>
+                                        <div>
+                                            <div style="font-weight:600;font-size:.8rem">@log.UserName</div>
+                                            <div style="font-size:.7rem;color:#9ca3af">@log.UserRole</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="max-width:140px">@log.Action</td>
+                                <td style="color:#9ca3af;font-size:.75rem;white-space:nowrap">@timeStr</td>
+                                <td><span class="status-pill @pillClass">@log.Status</span></td>
+                                <td>
+                                    @if (log.RelatedUserId.HasValue)
+                                    {
+                                        <a href="/Students/Details/@log.RelatedUserId"
+                                           class="view-link">View<br/>Profile</a>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#d1d5db;font-size:.75rem">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right panels -->
+            <div class="col-lg-4">
+
+                <!-- Academic Pulse -->
+                <div class="card-panel mb-3">
+                    <div class="card-panel-head">
+                        <div class="ttl" style="color:#6366f1;font-weight:800">
+                            Academic Pulse
+                        </div>
+                    </div>
+                    <div style="padding:.9rem 1.1rem">
+                        <div class="pulse-bar-wrap">
+                            <div class="pulse-label">
+                                <span>Daily Attendance</span>
+                                <span class="pct-green">@Model.DailyAttendancePercent%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill fill-green"
+                                     style="width:@Model.DailyAttendancePercent%"></div>
+                            </div>
+                        </div>
+                        <div class="pulse-bar-wrap">
+                            <div class="pulse-label">
+                                <span>Staff Availability</span>
+                                <span class="pct-blue">@Model.StaffAvailabilityPercent%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill fill-blue"
+                                     style="width:@Model.StaffAvailabilityPercent%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="events-panel mb-3">
+                    <div class="ep-title">Upcoming Events</div>
+                    @foreach (var ev in Model.UpcomingEvents)
+                    {
+                        <div class="event-item">
+                            <div class="event-date">
+                                <div class="em">@ev.Month</div>
+                                <div class="ed">@ev.Day</div>
+                            </div>
+                            <div class="event-info">
+                                <div class="et">@ev.Title</div>
+                                <div class="el">@ev.Location • @ev.Time</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Help -->
+                <div class="help-box">
+                    <div class="hl">Need Help?</div>
+                    <p>Contact the technical support team for system-wide issues.</p>
+                    <button class="btn-support">Open Support Ticket</button>
+                </div>
+
+            </div>
+        </div><!-- /row -->
+
+    </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

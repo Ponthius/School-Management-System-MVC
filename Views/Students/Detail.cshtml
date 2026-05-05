@@ -1,0 +1,83 @@
+﻿@model School_Management_System.Models.Student
+@{
+    ViewData["Title"] = "Student Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="mb-4 flex items-center justify-between">
+        <a href="/Students" class="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Back to Students
+        </a>
+        <div class="flex gap-2">
+            <a href="/Students/Edit/@Model.Id"
+                   class="text-xs px-4 py-1.5 border border-amber-300 text-amber-600
+                rounded-lg hover:bg-amber-50 flex items-center gap-1">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <!-- Header band -->
+        <div class="bg-indigo-800 px-6 py-5 flex items-center gap-4">
+            <img src="@Model.PhotoPath"
+                 onerror="this.src='/images/default-avatar.png'"
+                 class="w-16 h-16 rounded-full object-cover border-2 border-white/30" />
+            <div>
+                <div class="text-white font-bold text-lg">@Model.FullName</div>
+                <div class="text-indigo-200 text-xs">@(Model.Class?.Name ?? "No class assigned")</div>
+                <span class="mt-1 inline-block text-xs font-semibold px-2 py-0.5 rounded-full
+                    @(Model.Status == "Continuing"
+                                    ? "bg-green-400/20 text-green-200"
+                                    : "bg-amber-400/20 text-amber-200")">
+                    @Model.Status
+                </span>
+            </div>
+        </div>
+
+        <!-- Details grid -->
+        <div class="p-5 grid grid-cols-2 gap-x-6 gap-y-4">
+            @{
+                void Row(string label, string value)
+                {
+                    <div>
+                        <div class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">@label</div>
+                        <div class="text-sm text-gray-800 font-medium">@value</div>
+                    </div>
+              ;
+                }
+            }
+            @{
+                Row("Full Name", Model.FullName);
+            }
+            @{
+                Row("Gender", Model.Gender);
+            }
+            @{
+                Row("Date of Birth", Model.DOB.ToString("dd MMM yyyy"));
+            }
+            @{
+                Row("Class", Model.Class?.Name ?? "—");
+            }
+            @{
+                Row("Status", Model.Status);
+            }
+            @{
+                Row("Term", Model.Term);
+            }
+            @{
+                Row("Guardian Name", Model.GuardianName);
+            }
+            @{
+                Row("Guardian Contact", Model.GuardianContact);
+            }
+            @{
+                Row("Enrolled", Model.EnrolledDate.ToString("dd MMM yyyy"));
+            }
+            @{
+                Row("Login Username", Model.User?.Username ?? "—");
+            }
+        </div>
+    </div>
+</div>
