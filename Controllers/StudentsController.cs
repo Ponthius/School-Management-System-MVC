@@ -18,7 +18,6 @@ namespace School_Management_System.Controllers
             _env = env;
         }
 
-        // ── Guard ──────────────────────────────────────────────
         private IActionResult? Guard()
         {
             var role = HttpContext.Session.GetString("UserRole");
@@ -27,7 +26,7 @@ namespace School_Management_System.Controllers
             return null;
         }
 
-        // ── INDEX ──────────────────────────────────────────────
+        // GET: /Students  OR  /Students/Index
         public IActionResult Index(string? search, int? classId, int currentPage = 1)
         {
             var guard = Guard(); if (guard != null) return guard;
@@ -69,7 +68,7 @@ namespace School_Management_System.Controllers
             return View(students);
         }
 
-        // ── DETAILS ────────────────────────────────────────────
+        // GET: /Students/Details/5
         public IActionResult Details(int id)
         {
             var guard = Guard(); if (guard != null) return guard;
@@ -83,23 +82,21 @@ namespace School_Management_System.Controllers
             return View(student);
         }
 
-        // ── CREATE GET ─────────────────────────────────────────
+        // GET: /Students/Create
         public IActionResult Create()
         {
             var guard = Guard(); if (guard != null) return guard;
-
             ViewBag.Classes = new SelectList(_context.Classes.ToList(), "Id", "Name");
             return View(new StudentCreateViewModel());
         }
 
-        // ── CREATE POST ────────────────────────────────────────
+        // POST: /Students/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StudentCreateViewModel vm)
         {
             var guard = Guard(); if (guard != null) return guard;
 
-            // Check username not taken
             if (_context.Users.Any(u => u.Username == vm.Username))
                 ModelState.AddModelError("Username", "Username already exists.");
 
@@ -109,7 +106,6 @@ namespace School_Management_System.Controllers
                 return View(vm);
             }
 
-            // 1. Create user account
             var user = new User
             {
                 Username = vm.Username,
@@ -119,20 +115,18 @@ namespace School_Management_System.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // 2. Handle photo upload
             string photoPath = "/images/default-avatar.png";
             if (vm.Photo != null && vm.Photo.Length > 0)
             {
                 var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "students");
                 Directory.CreateDirectory(uploadsDir);
                 var fileName = $"{Guid.NewGuid()}{Path.GetExtension(vm.Photo.FileName)}";
-                var filePath = Path.Combine(uploadsDir, fileName);
-                using var stream = new FileStream(filePath, FileMode.Create);
+                using var stream = new FileStream(
+                    Path.Combine(uploadsDir, fileName), FileMode.Create);
                 await vm.Photo.CopyToAsync(stream);
                 photoPath = $"/uploads/students/{fileName}";
             }
 
-            // 3. Create student record
             var student = new Student
             {
                 UserId = user.Id,
@@ -150,12 +144,12 @@ namespace School_Management_System.Controllers
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            // 4. Log activity
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserName = HttpContext.Session.GetString("Username") ?? "Admin",
                 UserRole = "Admin",
-                Action = $"Added {student.FullName} to {_context.Classes.Find(student.ClassId)?.Name}",
+                Action = $"Added {student.FullName} to " +
+                                $"{_context.Classes.Find(student.ClassId)?.Name}",
                 Status = "Verified",
                 RelatedUserId = student.Id
             });
@@ -165,7 +159,7 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ── EDIT GET ───────────────────────────────────────────
+        // GET: /Students/Edit/5
         public IActionResult Edit(int id)
         {
             var guard = Guard(); if (guard != null) return guard;
@@ -190,11 +184,12 @@ namespace School_Management_System.Controllers
                 ExistingPhoto = student.PhotoPath
             };
 
-            ViewBag.Classes = new SelectList(_context.Classes.ToList(), "Id", "Name", student.ClassId);
+            ViewBag.Classes = new SelectList(
+                _context.Classes.ToList(), "Id", "Name", student.ClassId);
             return View(vm);
         }
 
-        // ── EDIT POST ──────────────────────────────────────────
+        // POST: /Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, StudentEditViewModel vm)
@@ -203,21 +198,21 @@ namespace School_Management_System.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Classes = new SelectList(_context.Classes.ToList(), "Id", "Name", vm.ClassId);
+                ViewBag.Classes = new SelectList(
+                    _context.Classes.ToList(), "Id", "Name", vm.ClassId);
                 return View(vm);
             }
 
             var student = _context.Students.Find(id);
             if (student == null) return NotFound();
 
-            // Handle new photo
             if (vm.Photo != null && vm.Photo.Length > 0)
             {
                 var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "students");
                 Directory.CreateDirectory(uploadsDir);
                 var fileName = $"{Guid.NewGuid()}{Path.GetExtension(vm.Photo.FileName)}";
-                var filePath = Path.Combine(uploadsDir, fileName);
-                using var stream = new FileStream(filePath, FileMode.Create);
+                using var stream = new FileStream(
+                    Path.Combine(uploadsDir, fileName), FileMode.Create);
                 await vm.Photo.CopyToAsync(stream);
                 student.PhotoPath = $"/uploads/students/{fileName}";
             }
@@ -247,7 +242,7 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ── DELETE POST ────────────────────────────────────────
+        // POST: /Students/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -262,17 +257,16 @@ namespace School_Management_System.Controllers
 
             string name = student.FullName;
 
-            // Remove photo file if not default
             if (!string.IsNullOrEmpty(student.PhotoPath)
                 && !student.PhotoPath.Contains("default-avatar"))
             {
                 var fullPath = Path.Combine(_env.WebRootPath,
-                    student.PhotoPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                    student.PhotoPath.TrimStart('/')
+                           .Replace('/', Path.DirectorySeparatorChar));
                 if (System.IO.File.Exists(fullPath))
                     System.IO.File.Delete(fullPath);
             }
 
-            // Remove associated user account
             var user = student.User;
             _context.Students.Remove(student);
             if (user != null) _context.Users.Remove(user);

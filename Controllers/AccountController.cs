@@ -17,10 +17,17 @@ namespace School_Management_System.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // If already logged in, redirect to dashboard
-            if (HttpContext.Session.GetString("UserRole") != null)
-                return RedirectToAction("Index", "Dashboard");
-
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != null)
+            {
+                return role switch
+                {
+                    "Admin" => RedirectToAction("Admin", "Dashboard"),
+                    "Teacher" => RedirectToAction("Teacher", "Dashboard"),
+                    "Student" => RedirectToAction("Student", "Dashboard"),
+                    _ => RedirectToAction("Login")
+                };
+            }
             return View(new LoginViewModel());
         }
 

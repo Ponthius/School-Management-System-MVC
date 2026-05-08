@@ -18,6 +18,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+
+    <!-- Added to override transitive vulnerable versions of NuGet libraries -->
+    <PackageReference Include="NuGet.Protocol" Version="6.12.5" />
+    <PackageReference Include="NuGet.Packaging" Version="6.12.5" />
   </ItemGroup>
 
 </Project>
