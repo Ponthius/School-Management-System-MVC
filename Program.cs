@@ -1,10 +1,24 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 // Add MVC
 builder.Services.AddControllersWithViews();
+
+// Keep session cookie encryption keys stable for this local app.
+var dataProtectionKeysPath = Path.Combine(
+    builder.Environment.ContentRootPath,
+    "data-protection-keys");
+Directory.CreateDirectory(dataProtectionKeysPath);
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath))
+    .SetApplicationName("SchoolManagementSystem");
 
 // Add Session
 builder.Services.AddSession(options =>
@@ -34,6 +48,11 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "students",
+    pattern: "Students/{action=Index}/{id?}",
+    defaults: new { controller = "Students" });
 
 app.MapControllerRoute(
     name: "default",
