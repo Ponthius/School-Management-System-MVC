@@ -1,0 +1,552 @@
+@model List<School_Management_System.Models.Teacher>
+@{
+    ViewData["Title"] = "Teacher Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    int currentPage = ViewBag.Page;
+    int totalPages  = ViewBag.TotalPages;
+    int total       = ViewBag.Total;
+    string search   = ViewBag.Search ?? "";
+    int showingStart = total == 0 ? 0 : ((currentPage - 1) * 10 + 1);
+    int showingEnd   = Math.Min(currentPage * 10, total);
+}
+
+@section Styles {
+<style>
+.tm {
+    --primary: #1e2a78;
+    --primary-soft: #e8eaf6;
+    --green: #1b6d24;
+    --green-soft: #dcfce7;
+    --amber: #b45309;
+    --amber-soft: #fef3c7;
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+    --border: #e5e7eb;
+    --surface: #ffffff;
+    --surface-soft: #f9fafb;
+    --text: #111827;
+    --text-dim: #6b7280;
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text);
+}
+
+/* ── Page header ── */
+.tm .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+}
+.tm .page-title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.tm .page-sub   { font-size: .84rem; color: var(--text-dim); margin-top: .15rem; }
+
+.tm .head-actions { display: flex; gap: .5rem; align-items: center; }
+
+.tm .btn-filter {
+    display: inline-flex; align-items: center; gap: .4rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: .3rem;
+    padding: .5rem .95rem;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tm .btn-add {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    border-radius: .3rem;
+    padding: .5rem 1.1rem;
+    font-size: .82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity .15s;
+}
+.tm .btn-add:hover { opacity: .88; color: #fff; }
+
+/* ── Stat cards ── */
+.tm .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.tm .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    padding: 1rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+}
+
+.tm .stat-icon {
+    width: 2.6rem; height: 2.6rem;
+    border-radius: .5rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.tm .stat-label {
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: .2rem;
+}
+
+.tm .stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text);
+}
+
+/* ── Panel ── */
+.tm .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    overflow: hidden;
+}
+
+/* ── Table ── */
+.tm table { width: 100%; border-collapse: collapse; }
+
+.tm thead th {
+    background: #f3f4f6;
+    font-size: .69rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #6b7280;
+    padding: .78rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.tm tbody tr { border-top: 1px solid #f3f4f6; }
+.tm tbody tr:hover { background: #fafafa; }
+
+.tm tbody td {
+    padding: .72rem 1rem;
+    font-size: .82rem;
+    color: #374151;
+    vertical-align: middle;
+}
+
+/* ── Teacher photo ── */
+.tm .teacher-photo {
+    width: 2.2rem; height: 2.2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--border);
+}
+
+/* ── Teacher name + email ── */
+.tm .teacher-name {
+    font-size: .86rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+    display: block;
+    line-height: 1.2;
+}
+.tm .teacher-name:hover { text-decoration: underline; }
+.tm .teacher-email {
+    font-size: .72rem;
+    color: var(--text-dim);
+}
+
+/* ── Subject tags ── */
+.tm .subject-tags { display: flex; flex-wrap: wrap; gap: .3rem; }
+.tm .subject-tag {
+    font-size: .64rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: .18rem .48rem;
+    border-radius: .18rem;
+    background: #e0e7ff;
+    color: #3730a3;
+    white-space: nowrap;
+}
+
+/* ── Action buttons ── */
+.tm .actions { display: inline-flex; align-items: center; gap: .2rem; }
+.tm .act-btn {
+    width: 1.7rem; height: 1.7rem;
+    border-radius: .22rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .88rem;
+    text-decoration: none;
+    border: 0;
+    background: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+}
+.tm .act-btn:hover       { background: #f3f4f6; }
+.tm .act-btn.view:hover  { color: var(--primary); }
+.tm .act-btn.edit:hover  { color: #4338ca; }
+.tm .act-btn.del:hover   { color: var(--red); }
+
+/* ── Footer ── */
+.tm .panel-footer {
+    padding: .75rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: .76rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.tm .pager { display: inline-flex; gap: .2rem; }
+.tm .pg-btn {
+    min-width: 1.7rem; height: 1.7rem;
+    border-radius: .2rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .73rem;
+    color: #4b5563;
+    text-decoration: none;
+    transition: background .12s;
+}
+.tm .pg-btn:hover    { background: #f3f4f6; }
+.tm .pg-btn.active   { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 700; }
+.tm .pg-btn.disabled { color: #d1d5db; pointer-events: none; }
+
+/* ── Success banner ── */
+.tm .success-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    border-radius: .25rem;
+    padding: .55rem .85rem;
+    font-size: .78rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* ── Delete modal ── */
+.tm .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+}
+.tm .modal-backdrop.open { display: flex; }
+.tm .modal-box {
+    background: #fff;
+    border-radius: .4rem;
+    border: 1px solid var(--border);
+    width: 22rem;
+    padding: 1.25rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,.18);
+}
+.tm .modal-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+.tm .modal-copy  { font-size: .8rem; color: var(--text-dim); margin-top: .4rem; line-height: 1.5; }
+.tm .modal-actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1rem; }
+.tm .btn-ghost {
+    border: 1px solid var(--border); background: #fff;
+    border-radius: .22rem; padding: .45rem .85rem;
+    font-size: .78rem; font-weight: 600; color: var(--text); cursor: pointer;
+}
+.tm .btn-danger {
+    border: 1px solid #b91c1c; background: var(--red);
+    border-radius: .22rem; padding: .45rem .85rem;
+    font-size: .78rem; font-weight: 700; color: #fff; cursor: pointer;
+}
+
+@@media(max-width:900px){
+    .tm .stats-row { grid-template-columns: 1fr 1fr; }
+}
+@@media(max-width:600px){
+    .tm .stats-row { grid-template-columns: 1fr; }
+}
+</style>
+}
+
+<div class="tm">
+
+    <!-- Page header -->
+    <div class="page-head">
+        <div>
+            <h2 class="page-title">Teacher Management</h2>
+            <p class="page-sub">Manage academic personnel, assign roles, and track faculty schedules.</p>
+        </div>
+        <div class="head-actions">
+            <button class="btn-filter">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+            <a href="/Teachers/Create" class="btn-add">
+                <i class="bi bi-plus-lg"></i> Add New Teacher
+            </a>
+        </div>
+    </div>
+
+    <!-- Success banner -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="success-banner">
+            <i class="bi bi-check-circle-fill me-1"></i>@TempData["Success"]
+        </div>
+    }
+
+    <!-- Stat cards -->
+    <div class="stats-row">
+        <div class="stat-card" style="border-left:4px solid #1e2a78">
+            <div class="stat-icon" style="background:#e8eaf6;color:#1e2a78">
+                <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">Active Faculty</div>
+                <div class="stat-value">@ViewBag.ActiveFaculty</div>
+            </div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #0891b2">
+            <div class="stat-icon" style="background:#e0f2fe;color:#0891b2">
+                <i class="bi bi-book-half"></i>
+            </div>
+            <div>
+                <div class="stat-label">Departments</div>
+                <div class="stat-value">@ViewBag.Departments</div>
+            </div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #d97706">
+            <div class="stat-icon" style="background:#fef3c7;color:#d97706">
+                <i class="bi bi-exclamation-circle-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">Pending Reports</div>
+                <div class="stat-value">@ViewBag.PendingReports</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search bar (outside panel, above) -->
+    <form method="get" action="/Teachers"
+          class="flex items-center gap-2 mb-3 flex-wrap">
+        <div class="relative">
+            <i class="bi bi-search"
+               style="position:absolute;left:.55rem;top:50%;transform:translateY(-50%);
+                      font-size:.75rem;color:#9ca3af"></i>
+            <input name="search" value="@search"
+                   placeholder="Search records..."
+                   style="border:1px solid #d1d5db;border-radius:.25rem;
+                          padding:.38rem .6rem .38rem 1.7rem;font-size:.78rem;
+                          width:17rem;outline:none"/>
+        </div>
+        <button type="submit"
+                style="border:1px solid #1e2a78;background:#1e2a78;color:#fff;
+                       border-radius:.25rem;padding:.38rem .85rem;font-size:.78rem;font-weight:600">
+            Search
+        </button>
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a href="/Teachers"
+               style="font-size:.76rem;color:#6b7280;text-decoration:none">
+                Clear
+            </a>
+        }
+    </form>
+
+    <!-- Table panel -->
+    <div class="panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Full Name</th>
+                    <th>Assigned Subjects</th>
+                    <th>Primary Class</th>
+                    <th style="text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5"
+                        style="text-align:center;padding:2.5rem;color:#9ca3af;font-size:.82rem">
+                        No teachers found.
+                        <a href="/Teachers/Create"
+                           style="color:#1e2a78;text-decoration:underline">
+                            Add one now
+                        </a>.
+                    </td>
+                </tr>
+            }
+            @foreach (var t in Model)
+            {
+                var subjects = t.AssignedSubjects
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => s.Length > 0)
+                    .ToList();
+
+                <tr>
+                    <td>
+                        <img src="@t.PhotoPath"
+                             onerror="this.src='/images/default-avatar.png'"
+                             class="teacher-photo"
+                             alt="@t.FullName"/>
+                    </td>
+                    <td>
+                        <a href="/Teachers/Details/@t.Id" class="teacher-name">
+                            @t.FullName
+                        </a>
+                        <span class="teacher-email">@t.Email</span>
+                    </td>
+                    <td>
+                        <div class="subject-tags">
+                            @if (subjects.Any())
+                            {
+                                @foreach (var sub in subjects.Take(3))
+                                {
+                                    <span class="subject-tag">@sub</span>
+                                }
+                                @if (subjects.Count > 3)
+                                {
+                                    <span class="subject-tag"
+                                          style="background:#f3f4f6;color:#6b7280">
+                                        +@(subjects.Count - 3)
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#9ca3af;font-size:.76rem">—</span>
+                            }
+                        </div>
+                    </td>
+                    <td>@(t.PrimaryClass?.Name ?? "—")</td>
+                    <td style="text-align:right">
+                        <div class="actions">
+                            <a href="/Teachers/Details/@t.Id"
+                               class="act-btn view" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="/Teachers/Edit/@t.Id"
+                               class="act-btn edit" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button"
+                                    onclick="confirmDelete(@t.Id, '@t.FullName')"
+                                    class="act-btn del" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="panel-footer">
+            <span>
+                Showing @showingStart–@showingEnd of
+                @total.ToString("N0") faculty members
+            </span>
+            @if (totalPages > 1)
+            {
+                <div class="pager">
+                    <!-- Prev -->
+                    @if (currentPage > 1)
+                    {
+                        <a href="/Teachers?currentPage=@(currentPage-1)&search=@search"
+                           class="pg-btn">
+                            <i class="bi bi-chevron-left" style="font-size:.65rem"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pg-btn disabled">
+                            <i class="bi bi-chevron-left" style="font-size:.65rem"></i>
+                        </span>
+                    }
+
+                    <!-- Page numbers -->
+                    @for (int pg = Math.Max(1, currentPage - 2);
+                              pg <= Math.Min(totalPages, currentPage + 2); pg++)
+                    {
+                        <a href="/Teachers?currentPage=@pg&search=@search"
+                           class="pg-btn @(pg == currentPage ? "active" : "")">
+                            @pg
+                        </a>
+                    }
+
+                    <!-- Next -->
+                    @if (currentPage < totalPages)
+                    {
+                        <a href="/Teachers?currentPage=@(currentPage+1)&search=@search"
+                           class="pg-btn">
+                            <i class="bi bi-chevron-right" style="font-size:.65rem"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pg-btn disabled">
+                            <i class="bi bi-chevron-right" style="font-size:.65rem"></i>
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Delete modal -->
+    <div id="deleteModal" class="modal-backdrop">
+        <div class="modal-box">
+            <div class="modal-title">Remove teacher?</div>
+            <div class="modal-copy">
+                You are about to remove <strong id="deleteName"></strong>.
+                This will also delete their login account. This cannot be undone.
+            </div>
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal()" class="btn-ghost">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-danger">
+                        Yes, Remove
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+function confirmDelete(id, name) {
+    document.getElementById('deleteName').textContent = name;
+    document.getElementById('deleteForm').action = '/Teachers/Delete/' + id;
+    document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+    document.getElementById('deleteModal').classList.remove('open');
+}
+</script>
+}

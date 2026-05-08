@@ -1,0 +1,150 @@
+@model School_Management_System.Models.ViewModels.TeacherEditViewModel
+@{
+    ViewData["Title"] = "Edit Teacher";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var allSubjects = ViewBag.AllSubjects as List<string> ?? new();
+}
+
+<div style="max-width:720px;margin:0 auto">
+    <div style="margin-bottom:1rem">
+        <a href="/Teachers"
+           style="font-size:.78rem;color:#1e2a78;text-decoration:none;
+                  display:inline-flex;align-items:center;gap:.3rem">
+            <i class="bi bi-arrow-left"></i> Back to Teachers
+        </a>
+        <h2 style="font-size:1.2rem;font-weight:800;color:#111827;margin-top:.4rem">
+            Edit Teacher
+        </h2>
+    </div>
+
+    <form asp-action="Edit" asp-controller="Teachers"
+          asp-route-id="@Model.Id"
+          method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id"/>
+        <input type="hidden" asp-for="ExistingPhoto"/>
+
+        <!-- Personal info -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;
+                    padding:1.2rem;margin-bottom:1rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                        letter-spacing:.08em;color:#374151;margin-bottom:.85rem">
+                Personal Information
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div style="grid-column:span 2">
+                    <label style="font-size:.78rem;font-weight:600;color:#374151;
+                                  display:block;margin-bottom:.3rem">Full Name</label>
+                    <input asp-for="FullName"
+                           style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
+                                  padding:.45rem .65rem;font-size:.84rem;outline:none"/>
+                    <span asp-validation-for="FullName"
+                          style="font-size:.72rem;color:#dc2626"></span>
+                </div>
+                <div>
+                    <label style="font-size:.78rem;font-weight:600;color:#374151;
+                                  display:block;margin-bottom:.3rem">Email Address</label>
+                    <input asp-for="Email" type="email"
+                           style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
+                                  padding:.45rem .65rem;font-size:.84rem;outline:none"/>
+                </div>
+                <div>
+                    <label style="font-size:.78rem;font-weight:600;color:#374151;
+                                  display:block;margin-bottom:.3rem">Status</label>
+                    <select asp-for="Status"
+                            style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
+                                   padding:.45rem .65rem;font-size:.84rem;outline:none">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:.78rem;font-weight:600;color:#374151;
+                                  display:block;margin-bottom:.3rem">Primary Class</label>
+                    <select asp-for="PrimaryClassId" asp-items="ViewBag.Classes"
+                            style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
+                                   padding:.45rem .65rem;font-size:.84rem;outline:none">
+                        <option value="">— None assigned —</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;
+                    padding:1.2rem;margin-bottom:1rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                        letter-spacing:.08em;color:#374151;margin-bottom:.85rem">
+                Assigned Subjects
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+                @foreach (var sub in allSubjects)
+                {
+                    bool isChecked = Model.SelectedSubjects.Contains(sub);
+                    <label style="display:inline-flex;align-items:center;gap:.35rem;
+                                  cursor:pointer;font-size:.8rem;color:#374151;
+                                  background:#f3f4f6;border:1px solid @(isChecked ? "#1e2a78" : "#e5e7eb");
+                                  border-radius:.25rem;padding:.32rem .65rem">
+                        <input type="checkbox"
+                               name="SelectedSubjects"
+                               value="@sub"
+                               style="accent-color:#1e2a78"
+                               @(isChecked ? "checked" : "")/>
+                        @sub
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Photo -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;
+                    padding:1.2rem;margin-bottom:1.2rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                        letter-spacing:.08em;color:#374151;margin-bottom:.85rem">
+                Profile Photo
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem">
+                <img id="photoPreview" src="@Model.ExistingPhoto"
+                     onerror="this.src='/images/default-avatar.png'"
+                     style="width:3.5rem;height:3.5rem;border-radius:50%;
+                            object-fit:cover;border:2px solid #e5e7eb"/>
+                <div>
+                    <input type="file" asp-for="Photo" accept="image/*"
+                           style="font-size:.78rem"
+                           onchange="previewPhoto(this)"/>
+                    <div style="font-size:.72rem;color:#9ca3af;margin-top:.25rem">
+                        Leave blank to keep existing photo
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;justify-content:flex-end;gap:.65rem">
+            <a href="/Teachers"
+               style="border:1px solid #d1d5db;background:#fff;border-radius:.25rem;
+                      padding:.48rem 1rem;font-size:.8rem;font-weight:600;
+                      color:#374151;text-decoration:none">
+                Cancel
+            </a>
+            <button type="submit"
+                    style="border:0;background:#1e2a78;color:#fff;border-radius:.25rem;
+                           padding:.48rem 1.2rem;font-size:.8rem;font-weight:700">
+                <i class="bi bi-check-lg me-1"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e =>
+            document.getElementById('photoPreview').src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+}

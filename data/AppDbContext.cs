@@ -68,6 +68,12 @@ namespace School_Management_System.Data
                 new Class { Id = 12, Name = "P6", Capacity = 45 },
                 new Class { Id = 13, Name = "P7", Capacity = 45 }
             );
+
+            modelBuilder.Entity<Teacher>()
+    .HasOne(t => t.PrimaryClass)
+    .WithMany()
+    .HasForeignKey(t => t.PrimaryClassId)
+    .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
