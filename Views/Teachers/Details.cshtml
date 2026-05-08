@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Teacher Profile";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var headClassName = ViewBag.HeadClassName as string;
     var subjects = Model.AssignedSubjects
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
         .Select(s => s.Trim())
@@ -66,11 +67,12 @@
                 }
             }
             @{ Field("Full Name",     Model.FullName); }
-            @{ Field("Email",         Model.Email.Length > 0 ? Model.Email : "—"); }
-            @{ Field("Primary Class", Model.PrimaryClass?.Name ?? "—"); }
+            @{ Field("Email",         Model.Email.Length > 0 ? Model.Email : "â€”"); }
+            @{ Field("Primary Class", Model.PrimaryClass?.Name ?? "â€”"); }
+            @{ Field("Class Teacher Of", !string.IsNullOrWhiteSpace(headClassName) ? headClassName : "â€”"); }
             @{ Field("Status",        Model.Status); }
             @{ Field("Joined",        Model.JoinedDate.ToString("dd MMM yyyy")); }
-            @{ Field("Login Username", Model.User?.Username ?? "—"); }
+            @{ Field("Login Username", Model.User?.Username ?? "â€”"); }
         </div>
 
         <!-- Subjects -->

@@ -25,6 +25,10 @@ namespace School_Management_System.Models.ViewModels
 
         public string Status { get; set; } = "Active";
 
+        // Optional: designate this teacher as a class teacher for one class.
+        public bool IsClassTeacher { get; set; }
+        public int? HeadClassId { get; set; }
+
         public IFormFile? Photo { get; set; }
     }
 
@@ -43,6 +47,10 @@ namespace School_Management_System.Models.ViewModels
         public int? PrimaryClassId { get; set; }
 
         public string Status { get; set; } = "Active";
+
+        // Optional: designate this teacher as a class teacher for one class.
+        public bool IsClassTeacher { get; set; }
+        public int? HeadClassId { get; set; }
 
         public IFormFile? Photo { get; set; }
         public string ExistingPhoto { get; set; } = string.Empty;

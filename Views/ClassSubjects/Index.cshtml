@@ -1,0 +1,927 @@
+@model School_Management_System.Models.ViewModels.ClassSubjectsDashboardViewModel
+@{
+    ViewData["Title"] = "Class & Subjects";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+  .cs-page {
+    --navy: #1f1b78;
+    --navy-deep: #171458;
+    --navy-soft: #edf0ff;
+    --green: #2c8d42;
+    --green-soft: #e8f8ec;
+    --amber: #d48a17;
+    --amber-soft: #fff2df;
+    --rose: #d94a5a;
+    --rose-soft: #ffe9ec;
+    --ink: #171a2b;
+    --muted: #6f7692;
+    --line: #dfe3f1;
+    --panel: #ffffff;
+    --page: #f5f6fb;
+    color: var(--ink);
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .cs-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.3rem;
+    flex-wrap: wrap;
+  }
+
+  .cs-title {
+    font-size: 1.55rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: var(--navy-deep);
+    margin: 0 0 .3rem 0;
+  }
+
+  .cs-subtitle {
+    margin: 0;
+    font-size: .86rem;
+    color: var(--muted);
+  }
+
+  .cs-actions {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    flex-wrap: wrap;
+  }
+
+  .cs-search {
+    position: relative;
+    min-width: 18rem;
+    max-width: 22rem;
+    flex: 1 1 18rem;
+  }
+
+  .cs-search i {
+    position: absolute;
+    left: .8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #98a0bd;
+    font-size: .8rem;
+  }
+
+  .cs-search input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: .55rem;
+    background: #fff;
+    padding: .72rem .95rem .72rem 2.35rem;
+    font-size: .8rem;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .cs-btn,
+  .cs-btn-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    border-radius: .55rem;
+    padding: .72rem 1rem;
+    font-size: .8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .12s ease, opacity .12s ease, background .12s ease;
+    border: 1px solid transparent;
+  }
+
+  .cs-btn:hover,
+  .cs-btn-link:hover { transform: translateY(-1px); }
+
+  .cs-btn-filter {
+    border-color: var(--line);
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .cs-btn-primary {
+    background: var(--navy);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(31, 27, 120, .16);
+  }
+
+  .cs-alert {
+    border-radius: .7rem;
+    padding: .8rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .cs-alert.success {
+    background: #eaf8ee;
+    color: #1f6b33;
+    border: 1px solid #c6ebd0;
+  }
+
+  .cs-alert.error {
+    background: #fff0f2;
+    color: #b4233a;
+    border: 1px solid #ffd1d8;
+  }
+
+  .cs-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .cs-stat {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: .9rem;
+    padding: 1rem 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    box-shadow: 0 8px 24px rgba(27, 39, 94, .04);
+  }
+
+  .cs-stat-icon {
+    width: 2.85rem;
+    height: 2.85rem;
+    border-radius: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+
+  .cs-stat-label {
+    margin: 0 0 .2rem 0;
+    font-size: .64rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .cs-stat-value {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .accent-indigo .cs-stat-icon,
+  .accent-indigo.cs-class-card { border-color: rgba(84, 92, 255, .28); }
+  .accent-indigo .cs-stat-icon { background: var(--navy-soft); color: var(--navy); }
+  .accent-green .cs-stat-icon,
+  .accent-green.cs-class-card { border-color: rgba(44, 141, 66, .28); }
+  .accent-green .cs-stat-icon { background: var(--green-soft); color: var(--green); }
+  .accent-amber .cs-stat-icon,
+  .accent-amber.cs-class-card { border-color: rgba(212, 138, 23, .28); }
+  .accent-amber .cs-stat-icon { background: var(--amber-soft); color: var(--amber); }
+  .accent-rose .cs-stat-icon { background: var(--rose-soft); color: var(--rose); }
+
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .cs-class-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top-width: 3px;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 10px 28px rgba(27, 39, 94, .04);
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+    min-height: 22rem;
+  }
+
+  .cs-class-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+  }
+
+  .cs-class-badge {
+    min-width: 2.35rem;
+    height: 2.35rem;
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .88rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .accent-indigo .cs-class-badge { background: linear-gradient(135deg, #3830af, #6366f1); }
+  .accent-green .cs-class-badge { background: linear-gradient(135deg, #2f7d35, #52b25f); }
+  .accent-amber .cs-class-badge { background: linear-gradient(135deg, #bf6d14, #f1ad44); }
+
+  .cs-class-name {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--navy-deep);
+  }
+
+  .cs-class-meta {
+    margin: .15rem 0 0 0;
+    font-size: .74rem;
+    color: var(--muted);
+  }
+
+  .cs-dot-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: #f5f6fb;
+    border: 1px solid #edf0f7;
+    color: #7d86a8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+  }
+
+  .cs-class-block {
+    background: #f8f9fd;
+    border: 1px solid #edf0f7;
+    border-radius: .8rem;
+    padding: .85rem;
+  }
+
+  .cs-block-label {
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9097b3;
+    margin-bottom: .45rem;
+  }
+
+  .cs-teacher {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .cs-teacher-avatar {
+    width: 1.95rem;
+    height: 1.95rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #c8d0ff, #e7e9ff);
+    color: var(--navy);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .cs-subject-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+  }
+
+  .cs-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .3rem .5rem;
+    border-radius: .45rem;
+    background: #f0f3ff;
+    color: #3947a7;
+    font-size: .66rem;
+    font-weight: 700;
+  }
+
+  .cs-chip button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    line-height: 1;
+    font-size: .72rem;
+  }
+
+  .cs-card-actions {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .6rem;
+  }
+
+  .cs-card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .72rem .7rem;
+    border-radius: .7rem;
+    font-size: .76rem;
+    font-weight: 700;
+    border: 1px solid var(--line);
+    text-decoration: none;
+  }
+
+  .cs-card-btn.primary {
+    background: #216637;
+    border-color: #216637;
+    color: #fff;
+  }
+
+  .cs-card-btn.secondary {
+    background: #fff;
+    color: var(--navy-deep);
+  }
+
+  .cs-add-card {
+    border: 2px dashed #ced4ec;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, .55);
+    min-height: 22rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.2rem;
+    color: var(--navy-deep);
+  }
+
+  .cs-add-card button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .65rem;
+  }
+
+  .cs-add-circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef1ff;
+    border: 1px solid #d7defa;
+    font-size: 1.15rem;
+  }
+
+  .cs-table-wrap {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(27, 39, 94, .04);
+  }
+
+  .cs-table-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid #edf0f7;
+  }
+
+  .cs-table-title {
+    margin: 0;
+    font-size: .92rem;
+    font-weight: 800;
+    color: var(--navy-deep);
+  }
+
+  .cs-table-link {
+    color: var(--navy);
+    text-decoration: none;
+    font-size: .74rem;
+    font-weight: 700;
+  }
+
+  .cs-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cs-table th {
+    background: #fafbff;
+    color: #7a82a0;
+    font-size: .66rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    text-align: left;
+    padding: .9rem 1.1rem;
+    border-bottom: 1px solid #edf0f7;
+  }
+
+  .cs-table td {
+    padding: .95rem 1.1rem;
+    border-top: 1px solid #f0f2f9;
+    font-size: .78rem;
+    color: #303651;
+    vertical-align: middle;
+  }
+
+  .cs-table tbody tr:hover { background: #fbfcff; }
+
+  .cs-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .18rem .45rem;
+    border-radius: .35rem;
+    background: #eef1ff;
+    color: #4050b5;
+    font-size: .63rem;
+    font-weight: 700;
+    margin-right: .3rem;
+    margin-bottom: .2rem;
+  }
+
+  .cs-action-link {
+    border: 0;
+    background: transparent;
+    color: var(--navy);
+    font-size: .72rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .cs-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 24, 56, .48);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 90;
+  }
+
+  .cs-modal-backdrop.open { display: flex; }
+
+  .cs-modal {
+    width: min(32rem, 100%);
+    background: #fff;
+    border-radius: 1rem;
+    border: 1px solid #eef0f7;
+    box-shadow: 0 28px 60px rgba(11, 20, 58, .25);
+    overflow: hidden;
+  }
+
+  .cs-modal-head {
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid #edf0f7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cs-modal-title {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--navy-deep);
+  }
+
+  .cs-close {
+    border: 0;
+    background: transparent;
+    color: #8890ae;
+    font-size: 1rem;
+  }
+
+  .cs-modal-body {
+    padding: 1rem 1.1rem 1.15rem;
+  }
+
+  .cs-field {
+    margin-bottom: .85rem;
+  }
+
+  .cs-field label {
+    display: block;
+    margin-bottom: .35rem;
+    font-size: .76rem;
+    font-weight: 700;
+    color: #333958;
+  }
+
+  .cs-field input,
+  .cs-field select {
+    width: 100%;
+    border: 1px solid #dbe0f0;
+    border-radius: .65rem;
+    background: #fff;
+    padding: .72rem .8rem;
+    font-size: .8rem;
+    color: #242a45;
+    outline: none;
+  }
+
+  .cs-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+    margin-top: .35rem;
+  }
+
+  .cs-btn-ghost {
+    background: #fff;
+    color: #36405d;
+    border-color: #dbe0f0;
+  }
+
+  @@media (max-width: 1100px) {
+    .cs-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @@media (max-width: 760px) {
+    .cs-stats,
+    .cs-grid { grid-template-columns: 1fr; }
+    .cs-card-actions { grid-template-columns: 1fr; }
+    .cs-search { min-width: 100%; max-width: none; }
+    .cs-table-wrap { overflow-x: auto; }
+    .cs-table { min-width: 44rem; }
+  }
+</style>
+}
+
+<div class="cs-page">
+  <div class="cs-topbar">
+    <div>
+      <h1 class="cs-title">Class &amp; Subject Management</h1>
+      <p class="cs-subtitle">Organize academic structures, assign class teachers, and map curriculum subjects.</p>
+    </div>
+    <div class="cs-actions">
+      <form method="get" action="/Classes" class="cs-search">
+        <i class="bi bi-search"></i>
+        <input type="text" name="search" value="@Model.Search" placeholder="Search class, subject or teacher..." />
+      </form>
+      <button type="button" class="cs-btn cs-btn-filter" onclick="openModal('subjectModal')">
+        <i class="bi bi-funnel"></i> Filters
+      </button>
+      <button type="button" class="cs-btn cs-btn-primary" onclick="openCreateClass()">
+        <i class="bi bi-plus-lg"></i> Create New Class
+      </button>
+    </div>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="cs-alert success">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] != null)
+  {
+    <div class="cs-alert error">@TempData["Error"]</div>
+  }
+
+  <div class="cs-stats">
+    @foreach (var stat in Model.Stats)
+    {
+      <div class="cs-stat @stat.AccentClass">
+        <div class="cs-stat-icon">
+          <i class="bi @stat.Icon"></i>
+        </div>
+        <div>
+          <p class="cs-stat-label">@stat.Label</p>
+          <p class="cs-stat-value">@stat.Value</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="cs-grid">
+    @foreach (var classCard in Model.ClassCards)
+    {
+      <div class="cs-class-card @classCard.AccentClass">
+        <div class="cs-class-head">
+          <div style="display:flex;gap:.75rem;">
+            <div class="cs-class-badge">@classCard.Name</div>
+            <div>
+              <h2 class="cs-class-name">@classCard.Name</h2>
+              <p class="cs-class-meta">Capacity @classCard.Capacity • @classCard.StudentCount students</p>
+            </div>
+          </div>
+          <button type="button" class="cs-dot-btn" onclick="openEditClass(@classCard.Id, '@classCard.Name', @classCard.Capacity)">
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+        </div>
+
+        <div class="cs-class-block">
+          <div class="cs-block-label">Class Teacher</div>
+          <div class="cs-teacher">
+            <span class="cs-teacher-avatar">@((classCard.ClassTeacherName.Length >= 2 ? classCard.ClassTeacherName[..2] : classCard.ClassTeacherName).ToUpper())</span>
+            <span>@classCard.ClassTeacherName</span>
+          </div>
+        </div>
+
+        <div class="cs-class-block">
+          <div class="cs-block-label">Linked Subjects (@classCard.SubjectCount)</div>
+          <div class="cs-subject-chips">
+            @if (classCard.Subjects.Any())
+            {
+              @foreach (var subject in classCard.Subjects.Take(5))
+              {
+                <span class="cs-chip">
+                  @subject.Name
+                  <button type="button" onclick="removeClassSubject(@classCard.Id, @subject.Id)" title="Remove subject">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </span>
+              }
+              @if (classCard.Subjects.Count > 5)
+              {
+                <span class="cs-chip">+ @(classCard.Subjects.Count - 5) more</span>
+              }
+            }
+            else
+            {
+              <span class="cs-chip" style="background:#f7f7fb;color:#8188a4">No linked subjects yet</span>
+            }
+          </div>
+        </div>
+
+        <div class="cs-card-actions">
+          <button type="button" class="cs-card-btn primary" onclick="openAssignSubject(@classCard.Id)">
+            <i class="bi bi-plus-lg"></i> Add Subject
+          </button>
+          <button type="button" class="cs-card-btn secondary" onclick="openAssignTeacher(@classCard.Id, @(classCard.TeacherId?.ToString() ?? "null"))">
+            <i class="bi bi-eye"></i> View Profile
+          </button>
+        </div>
+      </div>
+    }
+
+    <div class="cs-add-card">
+      <button type="button" onclick="openCreateClass()">
+        <span class="cs-add-circle"><i class="bi bi-plus-lg"></i></span>
+        <span style="font-weight:800;font-size:.95rem;">Add New Class</span>
+        <span style="font-size:.76rem;color:#7780a0;">Configure a new grade or section</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="cs-table-wrap">
+    <div class="cs-table-head">
+      <h3 class="cs-table-title">Global Subject Registry</h3>
+      <button type="button" class="cs-table-link" onclick="openCreateSubject()">
+        <i class="bi bi-journal-plus"></i> Add Subject
+      </button>
+    </div>
+    <table class="cs-table">
+      <thead>
+        <tr>
+          <th>Subject Code</th>
+          <th>Subject Name</th>
+          <th>Active Classes</th>
+          <th>Department</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var subject in Model.SubjectRows)
+        {
+          <tr>
+            <td>@subject.Code</td>
+            <td>@subject.Name</td>
+            <td>
+              @if (subject.ActiveClasses.Any())
+              {
+                @foreach (var activeClass in subject.ActiveClasses.Take(4))
+                {
+                  <span class="cs-pill">@activeClass</span>
+                }
+                @if (subject.ActiveClasses.Count > 4)
+                {
+                  <span class="cs-pill">+@(subject.ActiveClasses.Count - 4)</span>
+                }
+              }
+              else
+              {
+                <span style="color:#9298b0;">None</span>
+              }
+            </td>
+            <td><span class="cs-pill">@subject.Department</span></td>
+            <td>
+              <button type="button" class="cs-action-link"
+                      onclick="openEditSubject(@subject.Id, '@subject.Code', '@subject.Name', '@subject.Department')">
+                Edit
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div id="classModal" class="cs-modal-backdrop">
+    <div class="cs-modal">
+      <div class="cs-modal-head">
+        <h4 id="classModalTitle" class="cs-modal-title">Create Class</h4>
+        <button type="button" class="cs-close" onclick="closeModal('classModal')"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="cs-modal-body">
+        <form method="post" action="/ClassSubjects/SaveClass">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="classId" name="Id" />
+          <div class="cs-field">
+            <label for="className">Class Name</label>
+            <input id="className" name="Name" maxlength="50" placeholder="e.g. S4-A or Primary One" required />
+          </div>
+          <div class="cs-field">
+            <label for="classCapacity">Capacity</label>
+            <input id="classCapacity" name="Capacity" type="number" min="1" max="1000" value="40" required />
+          </div>
+          <div class="cs-modal-actions">
+            <button type="button" class="cs-btn cs-btn-ghost" onclick="closeModal('classModal')">Cancel</button>
+            <button type="submit" class="cs-btn cs-btn-primary">Save Class</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="subjectModal" class="cs-modal-backdrop">
+    <div class="cs-modal">
+      <div class="cs-modal-head">
+        <h4 id="subjectModalTitle" class="cs-modal-title">Create Subject</h4>
+        <button type="button" class="cs-close" onclick="closeModal('subjectModal')"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="cs-modal-body">
+        <form method="post" action="/ClassSubjects/SaveSubject">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="subjectId" name="Id" />
+          <div class="cs-field">
+            <label for="subjectCode">Subject Code</label>
+            <input id="subjectCode" name="Code" maxlength="20" placeholder="e.g. MAT-001" required />
+          </div>
+          <div class="cs-field">
+            <label for="subjectName">Subject Name</label>
+            <input id="subjectName" name="Name" maxlength="100" placeholder="e.g. Mathematics" required />
+          </div>
+          <div class="cs-field">
+            <label for="subjectDepartment">Department</label>
+            <input id="subjectDepartment" name="Department" maxlength="50" placeholder="e.g. STEM" />
+          </div>
+          <div class="cs-modal-actions">
+            <button type="button" class="cs-btn cs-btn-ghost" onclick="closeModal('subjectModal')">Cancel</button>
+            <button type="submit" class="cs-btn cs-btn-primary">Save Subject</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="teacherModal" class="cs-modal-backdrop">
+    <div class="cs-modal">
+      <div class="cs-modal-head">
+        <h4 class="cs-modal-title">Assign Class Teacher</h4>
+        <button type="button" class="cs-close" onclick="closeModal('teacherModal')"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="cs-modal-body">
+        <form method="post" action="/ClassSubjects/AssignTeacher">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="teacherClassId" name="ClassId" />
+          <div class="cs-field">
+            <label for="teacherId">Teacher</label>
+            <select id="teacherId" name="TeacherId">
+              <option value="">No class teacher</option>
+              @foreach (SelectListItem teacher in ViewBag.Teachers)
+              {
+                <option value="@teacher.Value">@teacher.Text</option>
+              }
+            </select>
+          </div>
+          <div class="cs-modal-actions">
+            <button type="button" class="cs-btn cs-btn-ghost" onclick="closeModal('teacherModal')">Cancel</button>
+            <button type="submit" class="cs-btn cs-btn-primary">Save Assignment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="assignSubjectModal" class="cs-modal-backdrop">
+    <div class="cs-modal">
+      <div class="cs-modal-head">
+        <h4 class="cs-modal-title">Add Subject To Class</h4>
+        <button type="button" class="cs-close" onclick="closeModal('assignSubjectModal')"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="cs-modal-body">
+        <form method="post" action="/ClassSubjects/AddSubjectToClass">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="assignSubjectClassId" name="ClassId" />
+          <div class="cs-field">
+            <label for="assignSubjectId">Subject</label>
+            <select id="assignSubjectId" name="SubjectId" required>
+              <option value="">Select subject</option>
+              @foreach (SelectListItem subject in ViewBag.Subjects)
+              {
+                <option value="@subject.Value">@subject.Text</option>
+              }
+            </select>
+          </div>
+          <div class="cs-modal-actions">
+            <button type="button" class="cs-btn cs-btn-ghost" onclick="closeModal('assignSubjectModal')">Cancel</button>
+            <button type="submit" class="cs-btn cs-btn-primary">Link Subject</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <form id="removeSubjectForm" method="post" action="/ClassSubjects/RemoveSubjectFromClass" style="display:none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="removeClassId" name="ClassId" />
+    <input type="hidden" id="removeSubjectId" name="SubjectId" />
+  </form>
+</div>
+
+@section Scripts {
+<script>
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function openCreateClass() {
+  document.getElementById('classModalTitle').textContent = 'Create Class';
+  document.getElementById('classId').value = '';
+  document.getElementById('className').value = '';
+  document.getElementById('classCapacity').value = 40;
+  openModal('classModal');
+}
+
+function openEditClass(id, name, capacity) {
+  document.getElementById('classModalTitle').textContent = 'Edit Class';
+  document.getElementById('classId').value = id;
+  document.getElementById('className').value = name;
+  document.getElementById('classCapacity').value = capacity;
+  openModal('classModal');
+}
+
+function openCreateSubject() {
+  document.getElementById('subjectModalTitle').textContent = 'Create Subject';
+  document.getElementById('subjectId').value = '';
+  document.getElementById('subjectCode').value = '';
+  document.getElementById('subjectName').value = '';
+  document.getElementById('subjectDepartment').value = '';
+  openModal('subjectModal');
+}
+
+function openEditSubject(id, code, name, department) {
+  document.getElementById('subjectModalTitle').textContent = 'Edit Subject';
+  document.getElementById('subjectId').value = id;
+  document.getElementById('subjectCode').value = code;
+  document.getElementById('subjectName').value = name;
+  document.getElementById('subjectDepartment').value = department;
+  openModal('subjectModal');
+}
+
+function openAssignTeacher(classId, teacherId) {
+  document.getElementById('teacherClassId').value = classId;
+  document.getElementById('teacherId').value = teacherId === null ? '' : teacherId;
+  openModal('teacherModal');
+}
+
+function openAssignSubject(classId) {
+  document.getElementById('assignSubjectClassId').value = classId;
+  document.getElementById('assignSubjectId').value = '';
+  openModal('assignSubjectModal');
+}
+
+function removeClassSubject(classId, subjectId) {
+  document.getElementById('removeClassId').value = classId;
+  document.getElementById('removeSubjectId').value = subjectId;
+  document.getElementById('removeSubjectForm').submit();
+}
+</script>
+}

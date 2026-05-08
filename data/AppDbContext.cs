@@ -11,6 +11,8 @@ namespace School_Management_System.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<ClassSubject> ClassSubjects { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
 
@@ -30,9 +32,24 @@ namespace School_Management_System.Data
             // Prevent cascade delete chains
             modelBuilder.Entity<Class>()
                 .HasOne(c => c.Teacher)
-                .WithMany()
+                .WithMany(t => t.HeadedClasses)
                 .HasForeignKey(c => c.TeacherId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ClassSubject>()
+                .HasKey(cs => new { cs.ClassId, cs.SubjectId });
+
+            modelBuilder.Entity<ClassSubject>()
+                .HasOne(cs => cs.Class)
+                .WithMany(c => c.ClassSubjects)
+                .HasForeignKey(cs => cs.ClassId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ClassSubject>()
+                .HasOne(cs => cs.Subject)
+                .WithMany(s => s.ClassSubjects)
+                .HasForeignKey(cs => cs.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Class)
@@ -70,10 +87,20 @@ namespace School_Management_System.Data
             );
 
             modelBuilder.Entity<Teacher>()
-    .HasOne(t => t.PrimaryClass)
-    .WithMany()
-    .HasForeignKey(t => t.PrimaryClassId)
-    .OnDelete(DeleteBehavior.SetNull);
+                .HasOne(t => t.PrimaryClass)
+                .WithMany()
+                .HasForeignKey(t => t.PrimaryClassId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Subject>().HasData(
+                SubjectCatalog.SeedSubjects.Select(subject => new Subject
+                {
+                    Id = subject.Id,
+                    Code = subject.Code,
+                    Name = subject.Name,
+                    Department = subject.Department
+                })
+            );
         }
     }
 }

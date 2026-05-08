@@ -64,9 +64,34 @@
                     <select asp-for="PrimaryClassId" asp-items="ViewBag.Classes"
                             style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
                                    padding:.45rem .65rem;font-size:.84rem;outline:none">
-                        <option value="">— None assigned —</option>
+                        <option value="">None assigned</option>
                     </select>
                 </div>
+            </div>
+        </div>
+
+        <!-- Class teacher (optional) -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;
+                    padding:1.2rem;margin-bottom:1rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                        letter-spacing:.08em;color:#374151;margin-bottom:.85rem">
+                Class Teacher (Optional)
+            </div>
+            <label style="display:flex;align-items:center;gap:.55rem;font-size:.84rem;color:#374151">
+                <input asp-for="IsClassTeacher" type="checkbox" style="accent-color:#1e2a78"
+                       onchange="toggleHeadClass()" />
+                Make this teacher a class teacher
+            </label>
+            <div id="headClassWrap" style="margin-top:.9rem;display:none">
+                <label style="font-size:.78rem;font-weight:600;color:#374151;
+                              display:block;margin-bottom:.3rem">Head Class</label>
+                <select asp-for="HeadClassId" asp-items="ViewBag.HeadClasses"
+                        style="width:100%;border:1px solid #d1d5db;border-radius:.25rem;
+                               padding:.45rem .65rem;font-size:.84rem;outline:none">
+                    <option value="">Select class</option>
+                </select>
+                <span asp-validation-for="HeadClassId"
+                      style="font-size:.72rem;color:#dc2626"></span>
             </div>
         </div>
 
@@ -146,5 +171,16 @@ function previewPhoto(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function toggleHeadClass() {
+    const cb = document.getElementById('IsClassTeacher');
+    const wrap = document.getElementById('headClassWrap');
+    const sel = document.getElementById('HeadClassId');
+    const on = cb && cb.checked;
+    if (wrap) wrap.style.display = on ? 'block' : 'none';
+    if (!on && sel) sel.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', toggleHeadClass);
 </script>
 }

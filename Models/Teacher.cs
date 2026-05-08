@@ -29,5 +29,7 @@ namespace School_Management_System.Models
         public string PhotoPath { get; set; } = "/images/default-avatar.png";
         public string Status { get; set; } = "Active"; // Active / Inactive
         public DateTime JoinedDate { get; set; } = DateTime.Now;
+
+        public ICollection<Class> HeadedClasses { get; set; } = new List<Class>();
     }
 }

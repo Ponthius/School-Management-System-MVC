@@ -13,14 +13,7 @@ namespace School_Management_System.Controllers
         private readonly IWebHostEnvironment _env;
 
         // All available subjects for the multi-select
-        private static readonly List<string> AllSubjects = new()
-        {
-            "Mathematics", "Physics", "Chemistry", "Biology",
-            "English Literature", "English Language", "History",
-            "Geography", "Social Studies", "Computer Science",
-            "Physical Education", "Fine Art", "Music",
-            "Economics", "Commerce", "Agriculture", "CRE", "IRE"
-        };
+        private static readonly List<string> AllSubjects = SubjectCatalog.Names.ToList();
 
         public TeachersController(AppDbContext context, IWebHostEnvironment env)
         {
@@ -87,6 +80,10 @@ namespace School_Management_System.Controllers
                 .FirstOrDefault(t => t.Id == id);
 
             if (teacher == null) return NotFound();
+            ViewBag.HeadClassName = _context.Classes
+                .Where(c => c.TeacherId == teacher.Id)
+                .Select(c => c.Name)
+                .FirstOrDefault();
             return View(teacher);
         }
 
@@ -95,7 +92,9 @@ namespace School_Management_System.Controllers
         {
             var guard = Guard(); if (guard != null) return guard;
 
-            ViewBag.Classes     = new SelectList(_context.Classes.ToList(), "Id", "Name");
+            var classes = _context.Classes.ToList();
+            ViewBag.Classes     = new SelectList(classes, "Id", "Name");
+            ViewBag.HeadClasses = new SelectList(classes, "Id", "Name");
             ViewBag.AllSubjects = AllSubjects;
             return View(new TeacherCreateViewModel());
         }
@@ -110,9 +109,28 @@ namespace School_Management_System.Controllers
             if (_context.Users.Any(u => u.Username == vm.Username))
                 ModelState.AddModelError("Username", "Username already exists.");
 
+            // Optional: class teacher assignment (validate before creating records).
+            if (vm.IsClassTeacher)
+            {
+                if (!vm.HeadClassId.HasValue || vm.HeadClassId.Value <= 0)
+                {
+                    ModelState.AddModelError("HeadClassId", "Select the class this teacher heads.");
+                }
+                else
+                {
+                    var cls = _context.Classes.FirstOrDefault(c => c.Id == vm.HeadClassId.Value);
+                    if (cls == null)
+                        ModelState.AddModelError("HeadClassId", "Selected class was not found.");
+                    else if (cls.TeacherId != null)
+                        ModelState.AddModelError("HeadClassId", "That class already has a class teacher assigned.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                ViewBag.Classes     = new SelectList(_context.Classes.ToList(), "Id", "Name");
+                var classes = _context.Classes.ToList();
+                ViewBag.Classes     = new SelectList(classes, "Id", "Name", vm.PrimaryClassId);
+                ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", vm.HeadClassId);
                 ViewBag.AllSubjects = AllSubjects;
                 return View(vm);
             }
@@ -154,6 +172,17 @@ namespace School_Management_System.Controllers
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 
+            // Optional: assign this teacher as the head/class teacher for one class.
+            if (vm.IsClassTeacher && vm.HeadClassId.HasValue)
+            {
+                var headClass = _context.Classes.FirstOrDefault(c => c.Id == vm.HeadClassId.Value);
+                if (headClass != null && headClass.TeacherId == null)
+                {
+                    headClass.TeacherId = teacher.Id;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             // 4. Activity log
             _context.ActivityLogs.Add(new ActivityLog
             {
@@ -176,6 +205,11 @@ namespace School_Management_System.Controllers
             var teacher = _context.Teachers.Find(id);
             if (teacher == null) return NotFound();
 
+            var headClassId = _context.Classes
+                .Where(c => c.TeacherId == teacher.Id)
+                .Select(c => (int?)c.Id)
+                .FirstOrDefault();
+
             var vm = new TeacherEditViewModel
             {
                 Id               = teacher.Id,
@@ -186,10 +220,14 @@ namespace School_Management_System.Controllers
                                           .ToList(),
                 PrimaryClassId   = teacher.PrimaryClassId,
                 Status           = teacher.Status,
-                ExistingPhoto    = teacher.PhotoPath
+                ExistingPhoto    = teacher.PhotoPath,
+                IsClassTeacher   = headClassId.HasValue,
+                HeadClassId      = headClassId
             };
 
-            ViewBag.Classes     = new SelectList(_context.Classes.ToList(), "Id", "Name", teacher.PrimaryClassId);
+            var classes = _context.Classes.ToList();
+            ViewBag.Classes     = new SelectList(classes, "Id", "Name", teacher.PrimaryClassId);
+            ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", headClassId);
             ViewBag.AllSubjects = AllSubjects;
             return View(vm);
         }
@@ -201,15 +239,53 @@ namespace School_Management_System.Controllers
         {
             var guard = Guard(); if (guard != null) return guard;
 
+            // Optional: class teacher assignment validation.
+            if (vm.IsClassTeacher)
+            {
+                if (!vm.HeadClassId.HasValue || vm.HeadClassId.Value <= 0)
+                {
+                    ModelState.AddModelError("HeadClassId", "Select the class this teacher heads.");
+                }
+                else
+                {
+                    var cls = _context.Classes.FirstOrDefault(c => c.Id == vm.HeadClassId.Value);
+                    if (cls == null)
+                        ModelState.AddModelError("HeadClassId", "Selected class was not found.");
+                    else if (cls.TeacherId != null && cls.TeacherId != id)
+                        ModelState.AddModelError("HeadClassId", "That class already has a class teacher assigned.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                ViewBag.Classes     = new SelectList(_context.Classes.ToList(), "Id", "Name", vm.PrimaryClassId);
+                var classes = _context.Classes.ToList();
+                ViewBag.Classes     = new SelectList(classes, "Id", "Name", vm.PrimaryClassId);
+                ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", vm.HeadClassId);
                 ViewBag.AllSubjects = AllSubjects;
                 return View(vm);
             }
 
             var teacher = _context.Teachers.Find(id);
             if (teacher == null) return NotFound();
+
+            // Update class-teacher assignment (optional).
+            var currentHead = _context.Classes.FirstOrDefault(c => c.TeacherId == teacher.Id);
+            if (!vm.IsClassTeacher)
+            {
+                if (currentHead != null)
+                    currentHead.TeacherId = null;
+            }
+            else if (vm.HeadClassId.HasValue)
+            {
+                var newHead = _context.Classes.FirstOrDefault(c => c.Id == vm.HeadClassId.Value);
+                if (newHead != null)
+                {
+                    if (currentHead != null && currentHead.Id != newHead.Id)
+                        currentHead.TeacherId = null;
+                    if (newHead.TeacherId == null || newHead.TeacherId == teacher.Id)
+                        newHead.TeacherId = teacher.Id;
+                }
+            }
 
             if (vm.Photo != null && vm.Photo.Length > 0)
             {
@@ -256,6 +332,10 @@ namespace School_Management_System.Controllers
             if (teacher == null) return NotFound();
 
             string name = teacher.FullName;
+
+            // Clear any class-teacher assignment(s) for this teacher.
+            foreach (var cls in _context.Classes.Where(c => c.TeacherId == teacher.Id))
+                cls.TeacherId = null;
 
             // Delete photo file
             if (!string.IsNullOrEmpty(teacher.PhotoPath)
