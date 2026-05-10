@@ -1,257 +1,570 @@
 ﻿@{
-    var username = Context.Session.GetString("Username") ?? "Admin";
+    var username = Context.Session.GetString("Username") ?? "admin";
+    var role = Context.Session.GetString("UserRole") ?? "Admin";
     var initials = username.Length >= 2 ? username[..2].ToUpper() : username.ToUpper();
-    var current  = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var current = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    var searchPlaceholder = string.Equals(current, "ClassSubjects", StringComparison.OrdinalIgnoreCase)
+        ? "Search class, subject or teacher..."
+        : "Search students, teachers, classes...";
+
+    string Active(string controller)
+    {
+        return string.Equals(current, controller, StringComparison.OrdinalIgnoreCase)
+            ? "sms-nav-link active"
+            : "sms-nav-link";
+    }
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>@ViewData["Title"] — School Management System</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
-<style>
-  body { font-family: 'Segoe UI', sans-serif; }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  /* ── Sidebar ── */
-  .sidebar {
-    width: 210px;
-    min-height: 100vh;
-    background: #1e2a78;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-  }
+    <title>@ViewData["Title"] — Brait Inc SMS</title>
 
-  /* ── Main content area ── */
-  .main { margin-left: 210px; min-height: 100vh; background: #f4f6fb; }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-  /* ── Nav links ── */
-  .nav-link-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: .52rem 1rem;
-    color: rgba(255,255,255,.65);
-    text-decoration: none;
-    font-size: .82rem;
-    transition: background .15s, color .15s;
-    border-left: 3px solid transparent;
-  }
-  .nav-link-item:hover {
-    background: rgba(255,255,255,.08);
-    color: #fff;
-  }
-  .nav-link-item.active {
-    background: rgba(255,255,255,.12);
-    color: #fff;
-    border-left: 3px solid #818cf8;
-  }
-  .nav-link-item i {
-    width: 18px;
-    text-align: center;
-    font-size: .95rem;
-  }
+    <style>
+        :root {
+            --primary: #1a237e;
+            --primary-soft: #283593;
+            --primary-light: #eef0ff;
+            --green: #1b6d24;
+            --green-soft: #e8f8ea;
+            --amber: #b76400;
+            --amber-soft: #fff4df;
+            --red: #ba1a1a;
+            --red-soft: #ffefed;
+            --text: #1a1c1c;
+            --muted: #767683;
+            --border: #dfe2ec;
+            --surface: #f6f7fb;
+            --white: #ffffff;
+            --sidebar-width: 200px;
+        }
 
-  /* ── Nav section label ── */
-  .nav-section {
-    font-size: .6rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,.3);
-    padding: .8rem 1rem .2rem;
-  }
+        * {
+            box-sizing: border-box;
+        }
 
-  /* ── Status pills (used in student tables) ── */
-  .status-pill {
-    font-size: .68rem;
-    font-weight: 600;
-    padding: .2rem .55rem;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-  .s-continuing { background: #dcfce7; color: #15803d; }
-  .s-new        { background: #fef9c3; color: #854d0e; }
-</style>
-@RenderSection("Styles", required: false)
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Inter, Arial, sans-serif;
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+            line-height: 1;
+        }
+
+        .sms-shell {
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sms-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            overflow: hidden;
+        }
+
+        .sms-brand {
+            padding: 16px 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .sms-brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .15);
+            color: white;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .sms-brand-icon .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        .sms-brand-title {
+            font-size: 13px;
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: 0;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .sms-brand-subtitle {
+            margin-top: 3px;
+            font-size: 8px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #c7ccff;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .sms-role-pill {
+            margin: 0 16px 12px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .10);
+            color: #e7e9ff;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .14em;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sms-role-dot {
+            width: 7px;
+            height: 7px;
+            background: #35d66b;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sms-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 6px 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,.45) transparent;
+        }
+
+        .sms-nav::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sms-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.35);
+            border-radius: 20px;
+        }
+
+        .sms-nav-section {
+            padding: 13px 16px 6px;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            color: rgba(255,255,255,.42);
+            text-transform: uppercase;
+        }
+
+        .sms-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 16px;
+            color: rgba(255,255,255,.72);
+            font-size: 12px;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+            transition: .18s ease;
+            min-height: 39px;
+        }
+
+        .sms-nav-link:hover {
+            background: rgba(255,255,255,.08);
+            color: white;
+        }
+
+        .sms-nav-link.active {
+            background: var(--primary-soft);
+            color: white;
+            border-left-color: #c7ccff;
+            font-weight: 800;
+        }
+
+        .sms-nav-link .material-symbols-outlined {
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .sms-nav-link span:not(.material-symbols-outlined) {
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .sms-sidebar-footer {
+            border-top: 1px solid rgba(255,255,255,.12);
+            padding: 10px 0;
+            flex-shrink: 0;
+            background: var(--primary);
+        }
+
+        .sms-user-mini {
+            margin: 0 16px 8px;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sms-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #eef0ff;
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 900;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .sms-user-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .sms-user-role {
+            margin-top: 2px;
+            font-size: 10px;
+            color: rgba(255,255,255,.62);
+        }
+
+        /* =========================
+           MAIN AREA
+        ========================= */
+
+        .sms-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .sms-topbar {
+            height: 54px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .sms-search {
+            width: min(280px, 100%);
+            position: relative;
+        }
+
+        .sms-search .material-symbols-outlined {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b8fa3;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .sms-search input {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #f8f9fc;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .sms-search input:focus {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .sms-top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sms-icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            color: #596070;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .sms-icon-btn .material-symbols-outlined {
+            font-size: 17px;
+        }
+
+        .sms-icon-btn:hover {
+            background: #f7f8fc;
+        }
+
+        .sms-top-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 10px;
+            border-left: 1px solid var(--border);
+        }
+
+        .sms-top-user-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: right;
+            line-height: 1.1;
+        }
+
+        .sms-top-user-role {
+            margin-top: 2px;
+            font-size: 10px;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .sms-top-user .sms-avatar {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sms-content {
+            padding: 20px 24px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @@media (max-width: 900px) {
+            :root {
+                --sidebar-width: 82px;
+            }
+
+            .sms-brand {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .sms-brand div:last-child,
+            .sms-role-pill,
+            .sms-nav-section,
+            .sms-nav-link span:not(.material-symbols-outlined),
+            .sms-user-mini div:last-child {
+                display: none;
+            }
+
+            .sms-nav-link {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+                border-left-width: 3px;
+            }
+
+            .sms-content {
+                padding: 18px;
+            }
+        }
+
+        @@media (max-width: 650px) {
+            .sms-topbar {
+                padding: 0 16px;
+            }
+
+            .sms-search {
+                width: 210px;
+            }
+
+            .sms-top-user {
+                display: none;
+            }
+        }
+    </style>
+
+    @RenderSection("Styles", required: false)
 </head>
-<body class="flex">
 
-<!-- ══════════════ SIDEBAR ══════════════ -->
-<aside class="sidebar">
+<body>
+    <div class="sms-shell">
+        <aside class="sms-sidebar">
+            <div class="sms-brand">
+                <div class="sms-brand-icon">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">school</span>
+                </div>
 
-  <!-- Brand -->
-  <div style="padding:1rem 1rem .8rem;border-bottom:1px solid rgba(255,255,255,.1)">
-    <div class="flex items-center gap-2">
-      <div style="width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:8px;
-                  display:flex;align-items:center;justify-content:center;
-                  color:#fff;font-size:1rem;flex-shrink:0">
-        <i class="bi bi-mortarboard-fill"></i>
-      </div>
-      <div>
-        <div style="color:#fff;font-weight:700;font-size:.88rem;line-height:1.2">SMS</div>
-        <div style="color:rgba(255,255,255,.4);font-size:.58rem;
-                    letter-spacing:.08em;text-transform:uppercase">
-          Administrative Portal
-        </div>
-      </div>
+                <div>
+                    <div class="sms-brand-title">Brait Inc SMS</div>
+                    <div class="sms-brand-subtitle">Administrative Portal</div>
+                </div>
+            </div>
+
+            <div class="sms-role-pill">
+                <span class="sms-role-dot"></span>
+                <span>@role Role</span>
+            </div>
+
+            <nav class="sms-nav">
+                <div class="sms-nav-section">Main</div>
+
+                <a class="@Active("Dashboard")" href="@Url.Action("Admin", "Dashboard")">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <div class="sms-nav-section">Management</div>
+
+                <a class="@Active("Students")" href="@Url.Action("Index", "Students")">
+                    <span class="material-symbols-outlined">groups</span>
+                    <span>Students</span>
+                </a>
+
+                <a class="@Active("Teachers")" href="@Url.Action("Index", "Teachers")">
+                    <span class="material-symbols-outlined">badge</span>
+                    <span>Teachers</span>
+                </a>
+
+                <a class="@Active("ClassSubjects")" href="@Url.Action("Index", "ClassSubjects")">
+                    <span class="material-symbols-outlined">fact_check</span>
+                    <span>Classes &amp; Subjects</span>
+                </a>
+
+                <div class="sms-nav-section">Academic</div>
+
+                <a class="@Active("Attendance")" href="@Url.Action("Index", "Attendance")">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <span>Attendance</span>
+                </a>
+
+                <a class="@Active("Exams")" href="@Url.Action("Index", "Exams")">
+                    <span class="material-symbols-outlined">assignment</span>
+                    <span>Exams</span>
+                </a>
+
+                <a class="@Active("Results")" href="@Url.Action("Index", "Results")">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span>Results</span>
+                </a>
+
+                <div class="sms-nav-section">Finance</div>
+
+                <a class="@Active("Payments")" href="@Url.Action("Index", "Payments")">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    <span>Payments</span>
+                </a>
+
+                <div class="sms-nav-section">System</div>
+
+                <a class="@Active("Help")" href="#">
+                    <span class="material-symbols-outlined">contact_support</span>
+                    <span>Help Center</span>
+                </a>
+
+                <a class="@Active("Settings")" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sms-sidebar-footer">
+                <div class="sms-user-mini">
+                    <div class="sms-avatar">@initials</div>
+
+                    <div>
+                        <div class="sms-user-name">@username</div>
+                        <div class="sms-user-role">Administrator</div>
+                    </div>
+                </div>
+
+                <a class="sms-nav-link" href="@Url.Action("Logout", "Account")">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="sms-main">
+            <header class="sms-topbar">
+                <form class="sms-search" method="get">
+                    <span class="material-symbols-outlined">search</span>
+                    <input name="search" value="@Context.Request.Query["search"]" placeholder="@searchPlaceholder" />
+                </form>
+
+                <div class="sms-top-actions">
+                    <button class="sms-icon-btn" type="button">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+
+                    <button class="sms-icon-btn" type="button">
+                        <span class="material-symbols-outlined">help_outline</span>
+                    </button>
+
+                    <button class="sms-icon-btn" type="button">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+
+                    <div class="sms-top-user">
+                        <div>
+                            <div class="sms-top-user-name">@username</div>
+                            <div class="sms-top-user-role">Administrator</div>
+                        </div>
+
+                        <div class="sms-avatar">@initials</div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="sms-content">
+                @RenderBody()
+            </section>
+        </main>
     </div>
-    <!-- Role badge -->
-    <div style="margin-top:.65rem;background:rgba(255,255,255,.08);border-radius:4px;
-                padding:.28rem .75rem;display:inline-flex;align-items:center;gap:6px;
-                font-size:.62rem;font-weight:600;color:#a5b4fc;
-                letter-spacing:.06em;text-transform:uppercase">
-      <span style="width:7px;height:7px;background:#22c55e;
-                   border-radius:50%;display:inline-block;flex-shrink:0"></span>
-      Admin Role
-    </div>
-  </div>
 
-  <!-- Navigation -->
-  <nav style="flex:1;padding:.4rem 0;overflow-y:auto">
-
-    <div class="nav-section">Main</div>
-    <a href="/Dashboard/Admin"
-       class="nav-link-item @(current == "Dashboard" ? "active" : "")">
-      <i class="bi bi-grid-1x2-fill"></i> Dashboard
-    </a>
-
-    <div class="nav-section">Management</div>
-    <a href="/Students/"
-       class="nav-link-item @(current == "Students" ? "active" : "")">
-      <i class="bi bi-people-fill"></i> Students
-    </a>
-    <a href="/Teachers"
-       class="nav-link-item @(current == "Teachers" ? "active" : "")">
-      <i class="bi bi-person-badge-fill"></i> Teachers
-    </a>
-    <a href="/Classes"
-       class="nav-link-item @(current == "Classes" ? "active" : "")">
-      <i class="bi bi-building"></i> Classes
-    </a>
-    <a href="/Subjects"
-       class="nav-link-item @(current == "Subjects" ? "active" : "")">
-      <i class="bi bi-book"></i> Subjects
-    </a>
-
-    <div class="nav-section">Academic</div>
-    <a href="/Attendance"
-       class="nav-link-item @(current == "Attendance" ? "active" : "")">
-      <i class="bi bi-calendar-check"></i> Attendance
-    </a>
-    <a href="/Exams"
-       class="nav-link-item @(current == "Exams" ? "active" : "")">
-      <i class="bi bi-journal-text"></i> Exams
-    </a>
-    <a href="/Results"
-       class="nav-link-item @(current == "Results" ? "active" : "")">
-      <i class="bi bi-bar-chart-line"></i> Results
-    </a>
-
-    <div class="nav-section">Finance</div>
-    <a href="/Payments"
-       class="nav-link-item @(current == "Payments" ? "active" : "")">
-      <i class="bi bi-cash-coin"></i> Payments
-    </a>
-
-    <div class="nav-section">System</div>
-    <a href="#"
-       class="nav-link-item @(current == "Help" ? "active" : "")">
-      <i class="bi bi-question-circle"></i> Help Center
-    </a>
-    <a href="#"
-       class="nav-link-item @(current == "Settings" ? "active" : "")">
-      <i class="bi bi-gear"></i> Settings
-    </a>
-
-  </nav>
-
-  <!-- Logout footer -->
-  <div style="padding:.9rem 1rem;border-top:1px solid rgba(255,255,255,.1)">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:.6rem">
-      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);
-                  display:flex;align-items:center;justify-content:center;
-                  color:#fff;font-size:.68rem;font-weight:700;flex-shrink:0">
-        @initials
-      </div>
-      <div>
-        <div style="color:#fff;font-size:.75rem;font-weight:600;line-height:1.2">@username</div>
-        <div style="color:rgba(255,255,255,.4);font-size:.65rem">Administrator</div>
-      </div>
-    </div>
-    <a href="/Account/Logout"
-       style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.45);
-              font-size:.76rem;text-decoration:none;transition:color .15s"
-       onmouseover="this.style.color='#fff'"
-       onmouseout="this.style.color='rgba(255,255,255,.45)'">
-      <i class="bi bi-box-arrow-left"></i> Sign Out
-    </a>
-  </div>
-
-</aside>
-
-<!-- ══════════════ MAIN ══════════════ -->
-<div class="main flex-1 flex flex-col">
-
-  <!-- Topbar -->
-  <div class="bg-white border-b border-gray-200 px-6 py-2 flex items-center gap-3 sticky top-0 z-10">
-
-    <!-- Search -->
-    <div class="relative flex-1 max-w-xs">
-      <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-      <input type="text"
-             placeholder="Search students, teachers, or files..."
-             class="w-full border border-gray-200 rounded-md pl-7 pr-3 py-1.5
-                    text-xs bg-gray-50 outline-none focus:border-indigo-400
-                    focus:bg-white transition"/>
-    </div>
-
-    <!-- Right side -->
-    <div class="ml-auto flex items-center gap-2">
-
-      <!-- Bell -->
-      <button class="w-8 h-8 rounded-md border border-gray-200 bg-white
-                     flex items-center justify-center text-gray-500
-                     hover:border-indigo-300 transition relative">
-        <i class="bi bi-bell text-sm"></i>
-        <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-      </button>
-
-      <!-- Gear -->
-      <button class="w-8 h-8 rounded-md border border-gray-200 bg-white
-                     flex items-center justify-center text-gray-500
-                     hover:border-indigo-300 transition">
-        <i class="bi bi-gear text-sm"></i>
-      </button>
-
-      <!-- User chip -->
-      <div class="flex items-center gap-2 pl-2 border-l border-gray-200">
-        <div class="text-right hidden sm:block">
-          <div class="font-semibold text-gray-800 text-xs leading-tight">@username</div>
-          <div class="text-gray-400 text-xs">Administrator</div>
-        </div>
-        <div style="width:30px;height:30px;border-radius:50%;background:#1e2a78;
-                    color:#fff;display:flex;align-items:center;justify-content:center;
-                    font-size:.68rem;font-weight:700;flex-shrink:0">
-          @initials
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Page body -->
-  <div class="flex-1 p-5">
-    @RenderBody()
-  </div>
-
-</div><!-- /main -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@RenderSection("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

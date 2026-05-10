@@ -79,7 +79,7 @@ namespace School_Management_System.Controllers
                 .FirstOrDefault(s => s.Id == id);
 
             if (student == null) return NotFound();
-            return View(student);
+            return View("Detail", student);
         }
 
         // GET: /Students/Create

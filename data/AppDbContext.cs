@@ -69,6 +69,14 @@ namespace School_Management_System.Data
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+                modelBuilder.Entity<Payment>()
+        .Property(p => p.Amount)
+        .HasPrecision(18, 2);
+
+    modelBuilder.Entity<Payment>()
+        .Property(p => p.Balance)
+        .HasPrecision(18, 2);
+
             // Seed default classes
             modelBuilder.Entity<Class>().HasData(
                 new Class { Id = 1, Name = "S1-A", Capacity = 40 },

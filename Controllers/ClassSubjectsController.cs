@@ -24,6 +24,17 @@ namespace School_Management_System.Controllers
             return null;
         }
 
+        private void LogActivity(string action, string status = "Complete")
+        {
+            _context.ActivityLogs.Add(new ActivityLog
+            {
+                UserName = HttpContext.Session.GetString("Username") ?? "Admin",
+                UserRole = "Admin",
+                Action = action,
+                Status = status
+            });
+        }
+
         public IActionResult Index(string? search)
         {
             var guard = Guard(); if (guard != null) return guard;
@@ -73,7 +84,7 @@ namespace School_Management_System.Controllers
                 SubjectCount = cls.ClassSubjects.Count,
                 ClassTeacherName = cls.Teacher?.FullName ?? "Unassigned",
                 TeacherId = cls.TeacherId,
-                AccentClass = index % 3 switch
+                AccentClass = (index % 3) switch
                 {
                     0 => "accent-indigo",
                     1 => "accent-green",
@@ -149,6 +160,7 @@ namespace School_Management_System.Controllers
 
                 existing.Name = vm.Name;
                 existing.Capacity = vm.Capacity;
+                LogActivity($"Updated class {existing.Name}");
                 TempData["Success"] = $"Updated {existing.Name}.";
             }
             else
@@ -158,6 +170,7 @@ namespace School_Management_System.Controllers
                     Name = vm.Name,
                     Capacity = vm.Capacity
                 });
+                LogActivity($"Created class {vm.Name}", "Verified");
                 TempData["Success"] = $"Created class {vm.Name}.";
             }
 
@@ -177,7 +190,8 @@ namespace School_Management_System.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var duplicateCode = _context.Subjects.Any(s => s.Code == vm.Code && s.Id != vm.Id);
+            var normalizedCode = vm.Code.Trim().ToUpperInvariant();
+            var duplicateCode = _context.Subjects.Any(s => s.Code == normalizedCode && s.Id != vm.Id);
             if (duplicateCode)
             {
                 TempData["Error"] = "That subject code already exists.";
@@ -189,19 +203,21 @@ namespace School_Management_System.Controllers
                 var existing = await _context.Subjects.FindAsync(vm.Id.Value);
                 if (existing == null) return NotFound();
 
-                existing.Code = vm.Code;
+                existing.Code = normalizedCode;
                 existing.Name = vm.Name;
                 existing.Department = vm.Department;
+                LogActivity($"Updated subject {existing.Name}");
                 TempData["Success"] = $"Updated subject {existing.Name}.";
             }
             else
             {
                 _context.Subjects.Add(new Subject
                 {
-                    Code = vm.Code,
+                    Code = normalizedCode,
                     Name = vm.Name,
                     Department = vm.Department
                 });
+                LogActivity($"Created subject {vm.Name}", "Verified");
                 TempData["Success"] = $"Created subject {vm.Name}.";
             }
 
@@ -219,6 +235,17 @@ namespace School_Management_System.Controllers
             if (cls == null) return NotFound();
 
             cls.TeacherId = vm.TeacherId;
+            var teacherName = vm.TeacherId.HasValue
+                ? await _context.Teachers
+                    .Where(t => t.Id == vm.TeacherId.Value)
+                    .Select(t => t.FullName)
+                    .FirstOrDefaultAsync()
+                : null;
+
+            LogActivity(vm.TeacherId.HasValue
+                ? $"Assigned {teacherName ?? "a teacher"} to {cls.Name}"
+                : $"Cleared class teacher for {cls.Name}");
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = vm.TeacherId.HasValue
@@ -246,6 +273,17 @@ namespace School_Management_System.Controllers
                 ClassId = vm.ClassId,
                 SubjectId = vm.SubjectId
             });
+
+            var className = await _context.Classes
+                .Where(c => c.Id == vm.ClassId)
+                .Select(c => c.Name)
+                .FirstOrDefaultAsync();
+            var subjectName = await _context.Subjects
+                .Where(s => s.Id == vm.SubjectId)
+                .Select(s => s.Name)
+                .FirstOrDefaultAsync();
+            LogActivity($"Linked {subjectName ?? "subject"} to {className ?? "class"}", "Verified");
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Linked subject to class.";
@@ -266,6 +304,15 @@ namespace School_Management_System.Controllers
             }
 
             _context.ClassSubjects.Remove(link);
+            var className = await _context.Classes
+                .Where(c => c.Id == vm.ClassId)
+                .Select(c => c.Name)
+                .FirstOrDefaultAsync();
+            var subjectName = await _context.Subjects
+                .Where(s => s.Id == vm.SubjectId)
+                .Select(s => s.Name)
+                .FirstOrDefaultAsync();
+            LogActivity($"Removed {subjectName ?? "subject"} from {className ?? "class"}", "Action Req.");
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Removed subject from class.";

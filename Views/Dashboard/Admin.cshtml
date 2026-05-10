@@ -1,444 +1,517 @@
-﻿@model School_Management_System.Models.ViewModels.AdminDashboardViewModel
+@model School_Management_System.Models.ViewModels.AdminDashboardViewModel
 @{
-    Layout = null;
-    var username = Context.Session.GetString("Username") ?? "Admin";
-    var initials = username.Length >= 2 ? username[..2].ToUpper() : username.ToUpper();
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Admin Dashboard — EduFlow SMS</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',sans-serif;background:#f4f6fb;display:flex;min-height:100vh;font-size:14px}
 
-/* ── Sidebar ── */
-.sidebar{width:200px;min-height:100vh;background:#1e2a78;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:200}
-.sb-brand{padding:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
-.sb-logo{display:flex;align-items:center;gap:8px}
-.sb-logo-icon{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.95rem}
-.sb-logo-text{color:#fff;font-weight:700;font-size:.95rem;line-height:1.1}
-.sb-logo-sub{color:rgba(255,255,255,.45);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase}
-.sb-role-badge{margin:.6rem 1rem;background:rgba(255,255,255,.08);border-radius:4px;padding:.3rem .7rem;font-size:.65rem;font-weight:600;color:#a5b4fc;letter-spacing:.06em;text-transform:uppercase;display:inline-block}
-.sb-role-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px}
-.sb-nav{flex:1;padding:.5rem 0;overflow-y:auto}
-.sb-nav a{display:flex;align-items:center;gap:9px;padding:.55rem 1rem;color:rgba(255,255,255,.65);text-decoration:none;font-size:.82rem;transition:background .15s,color .15s}
-.sb-nav a:hover,.sb-nav a.active{background:rgba(255,255,255,.1);color:#fff}
-.sb-nav a.active{border-left:3px solid #818cf8}
-.sb-nav a i{font-size:.95rem;width:18px;text-align:center}
-.nav-section{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.32);padding:.8rem 1rem .25rem}
-.sb-footer{padding:.9rem 1rem;border-top:1px solid rgba(255,255,255,.1)}
-.sb-user{display:flex;align-items:center;gap:8px;margin-bottom:.55rem}
-.sb-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700;flex-shrink:0}
-.sb-user-name{color:#fff;font-size:.76rem;font-weight:600;line-height:1.2}
-.sb-user-role{color:rgba(255,255,255,.4);font-size:.64rem}
-.sb-signout{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.5);font-size:.76rem;text-decoration:none;transition:color .15s}
-.sb-signout:hover{color:#fff}
-.sb-signout i{font-size:.88rem}
+@section Styles {
+    <style>
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
 
-/* ── Main ── */
-.main{margin-left:200px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+        .dash-title {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.2;
+            color: #000666;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
 
-/* ── Topbar ── */
-.topbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:.65rem 1.5rem;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
-.topbar .search-box{position:relative;flex:1;max-width:280px}
-.topbar .search-box input{width:100%;border:1px solid #e5e7eb;border-radius:6px;padding:.35rem .75rem .35rem 2rem;font-size:.8rem;background:#f9fafb;outline:none}
-.topbar .search-box input:focus{border-color:#6366f1}
-.topbar .search-box i{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:.85rem}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;display:flex;align-items:center;justify-content:center;color:#6b7280;cursor:pointer;position:relative;font-size:.9rem}
-.icon-btn .badge-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#ef4444}
-.user-chip{display:flex;align-items:center;gap:8px}
-.user-chip .name{font-size:.82rem;font-weight:600;color:#111827;line-height:1.1}
-.user-chip .role{font-size:.7rem;color:#6b7280}
-.user-chip .avatar{width:32px;height:32px;border-radius:50%;background:#1e2a78;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
-.logout-link{font-size:.78rem;color:#ef4444;text-decoration:none;font-weight:500}
-.logout-link:hover{text-decoration:underline}
+        .dash-subtitle {
+            margin: 6px 0 0;
+            color: #767683;
+            font-size: 12px;
+        }
 
-/* ── Content ── */
-.content{padding:1.25rem 1.5rem;flex:1}
-.page-title{font-size:1.4rem;font-weight:700;color:#1e2a78}
-.page-sub{font-size:.82rem;color:#6b7280;margin-bottom:1.1rem}
+        .dash-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 9px 14px;
+            background: #000666;
+            color: #fff;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-/* ── Stat cards ── */
-.stat-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.1rem;height:100%}
-.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
-.stat-badge{font-size:.7rem;font-weight:600;padding:.15rem .5rem;border-radius:999px}
-.stat-badge.green{background:#dcfce7;color:#15803d}
-.stat-badge.blue{background:#eff6ff;color:#1d4ed8}
-.stat-badge.gray{background:#f3f4f6;color:#6b7280}
-.stat-badge.amber{background:#fffbeb;color:#b45309}
-.stat-icon-sm{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
-.stat-label{font-size:.68rem;font-weight:600;color:#1e2a78;text-transform:uppercase;letter-spacing:.06em}
-.stat-value{font-size:1.7rem;font-weight:800;color:#111827;line-height:1.1;margin:.15rem 0}
-.stat-sub{font-size:.73rem;color:#9ca3af}
-.stat-border-blue{border-top:3px solid #6366f1}
-.stat-border-green{border-top:3px solid #22c55e}
-.stat-border-gray{border-top:3px solid #94a3b8}
-.stat-border-amber{border-top:3px solid #f59e0b}
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
 
-/* Quick report button */
-.btn-quick{background:#1e2a78;color:#fff;border:none;border-radius:7px;padding:.45rem 1rem;font-size:.8rem;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none}
-.btn-quick:hover{background:#162060;color:#fff}
+        .dash-stat {
+            background: #fff;
+            border: 1px solid #dfe2ec;
+            border-top: 4px solid #000666;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 118px;
+        }
 
-/* ── Activity table ── */
-.card-panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
-.card-panel-head{padding:.8rem 1.1rem;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
-.card-panel-head .ttl{font-size:.85rem;font-weight:700;color:#1e2a78;display:flex;align-items:center;gap:6px}
-.card-panel-head a{font-size:.75rem;color:#6366f1;text-decoration:none}
-table.act-table{width:100%;border-collapse:collapse}
-table.act-table th{background:#f9fafb;font-size:.68rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;padding:.55rem 1rem;text-align:left}
-table.act-table td{padding:.65rem 1rem;font-size:.8rem;color:#374151;border-top:1px solid #f3f4f6;vertical-align:middle}
-.user-avatar-sm{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
-.status-pill{font-size:.68rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;white-space:nowrap}
-.s-verified{background:#dcfce7;color:#15803d}
-.s-complete{background:#eff6ff;color:#1d4ed8}
-.s-action{background:#fef2f2;color:#dc2626}
-.s-pending{background:#fffbeb;color:#b45309}
-.view-link{font-size:.75rem;color:#6366f1;text-decoration:none;font-weight:500}
-.view-link:hover{text-decoration:underline}
+        .dash-stat.green { border-top-color: #1b6d24; }
+        .dash-stat.slate { border-top-color: #64748b; }
+        .dash-stat.amber { border-top-color: #b76400; }
 
-/* ── Right panels ── */
-.pulse-bar-wrap{margin-bottom:.9rem}
-.pulse-label{display:flex;justify-content:space-between;font-size:.78rem;color:#374151;margin-bottom:.3rem}
-.pulse-label span:last-child{font-weight:700}
-.pulse-label .pct-green{color:#22c55e}
-.pulse-label .pct-blue{color:#6366f1}
-.progress-track{height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
-.progress-fill{height:100%;border-radius:4px;transition:width .4s}
-.fill-green{background:#22c55e}
-.fill-blue{background:#6366f1}
+        .dash-stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-.events-panel{background:#1e2a78;border-radius:10px;padding:1rem 1.1rem;color:#fff}
-.events-panel .ep-title{font-size:.85rem;font-weight:700;margin-bottom:.8rem}
-.event-item{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem}
-.event-date{background:rgba(255,255,255,.12);border-radius:6px;padding:.3rem .5rem;text-align:center;min-width:38px}
-.event-date .em{font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase}
-.event-date .ed{font-size:.95rem;font-weight:800;color:#fff;line-height:1}
-.event-info .et{font-size:.78rem;font-weight:600;color:#fff}
-.event-info .el{font-size:.7rem;color:rgba(255,255,255,.55)}
+        .dash-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            background: #eef0ff;
+            color: #000666;
+        }
 
-.help-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:.9rem 1rem;margin-top:.8rem}
-.help-box .hl{font-size:.7rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
-.help-box p{font-size:.75rem;color:#6b7280;margin-bottom:.6rem}
-.btn-support{width:100%;border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:.4rem;font-size:.78rem;color:#374151;cursor:pointer}
-.btn-support:hover{background:#f3f4f6}
+        .dash-stat.green .dash-stat-icon {
+            background: #e8f8ea;
+            color: #1b6d24;
+        }
 
-/* Avatar colour palette */
-.av-blue   {background:#3b82f6}
-.av-green  {background:#22c55e}
-.av-amber  {background:#f59e0b}
-.av-purple {background:#8b5cf6}
-.av-red    {background:#ef4444}
-.av-indigo {background:#6366f1}
-</style>
-</head>
-<body>
+        .dash-stat.slate .dash-stat-icon {
+            background: #f1f5f9;
+            color: #64748b;
+        }
 
-<!-- ══════════════ SIDEBAR ══════════════ -->
-<aside class="sidebar">
-    <div class="sb-brand">
-        <div class="sb-logo">
-            <div class="sb-logo-icon"><i class="bi bi-mortarboard-fill"></i></div>
-            <div>
-                <div class="sb-logo-text">EduFlow SMS</div>
-                <div class="sb-logo-sub">Administrative Portal</div>
-            </div>
-        </div>
-        <div class="sb-role-badge">
-            <span class="sb-role-dot"></span>Admin Role
-        </div>
+        .dash-stat.amber .dash-stat-icon {
+            background: #fff4df;
+            color: #b76400;
+        }
+
+        .dash-badge {
+            border-radius: 999px;
+            background: #eef0ff;
+            color: #000666;
+            padding: 4px 9px;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .dash-stat-label {
+            color: #1a237e;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 900;
+        }
+
+        .dash-stat-value {
+            margin-top: 4px;
+            font-size: 26px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #111827;
+        }
+
+        .dash-stat-sub {
+            color: #8b8fa3;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+            gap: 14px;
+        }
+
+        .dash-panel {
+            background: #fff;
+            border: 1px solid #dfe2ec;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dash-panel-head {
+            padding: 13px 16px;
+            border-bottom: 1px solid #dfe2ec;
+            background: #fbfcff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dash-panel-title {
+            margin: 0;
+            color: #1a237e;
+            font-size: 13px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activity-table th {
+            background: #f9f9f9;
+            color: #767683;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            padding: 10px 16px;
+            text-align: left;
+        }
+
+        .activity-table td {
+            border-top: 1px solid #f1f2f7;
+            padding: 11px 16px;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .activity-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .activity-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #1a237e;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .status-pill {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 11px;
+            font-weight: 900;
+            background: #eef0ff;
+            color: #000666;
+            white-space: nowrap;
+        }
+
+        .status-pill.verified {
+            background: #e8f8ea;
+            color: #1b6d24;
+        }
+
+        .status-pill.action {
+            background: #ffefed;
+            color: #ba1a1a;
+        }
+
+        .status-pill.pending {
+            background: #fff4df;
+            color: #b76400;
+        }
+
+        .pulse-body {
+            padding: 14px;
+        }
+
+        .pulse-item {
+            margin-bottom: 18px;
+        }
+
+        .pulse-label {
+            display: flex;
+            justify-content: space-between;
+            color: #454652;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .pulse-track {
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #eef0ff;
+        }
+
+        .pulse-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: #1b6d24;
+        }
+
+        .pulse-fill.blue {
+            background: #000666;
+        }
+
+        .event-panel {
+            margin-top: 14px;
+            background: #1a237e;
+            border-radius: 8px;
+            color: #fff;
+            padding: 16px;
+        }
+
+        .event-title {
+            font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .event-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .event-date {
+            min-width: 44px;
+            border-radius: 6px;
+            background: rgba(255,255,255,.12);
+            text-align: center;
+            padding: 7px;
+        }
+
+        .event-date span {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,.62);
+            font-weight: 900;
+        }
+
+        .event-date strong {
+            font-size: 18px;
+        }
+
+        .event-name {
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .event-meta {
+            color: rgba(255,255,255,.65);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        @@media (max-width: 1100px) {
+            .dash-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 720px) {
+            .dash-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dash-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-table {
+                min-width: 720px;
+            }
+
+            .dash-panel {
+                overflow-x: auto;
+            }
+        }
+    </style>
+}
+
+<div class="dash-header">
+    <div>
+        <h1 class="dash-title">Dashboard</h1>
+        <p class="dash-subtitle">Welcome back. Live student, teacher, class, and finance activity appears here.</p>
     </div>
-    <nav class="sb-nav">
-        <div class="nav-section">Main</div>
-        <a href="/Dashboard/Admin" class="active">
-            <i class="bi bi-grid-1x2-fill"></i> Dashboard
-        </a>
+    <a class="dash-btn" href="@Url.Action("Index", "ClassSubjects")">
+        <span class="material-symbols-outlined">fact_check</span>
+        Manage Classes
+    </a>
+</div>
 
-        <div class="nav-section">Management</div>
-        <a href="/Students"><i class="bi bi-people-fill"></i> Students</a>
-        <a href="/Teachers"><i class="bi bi-person-badge-fill"></i> Teachers</a>
-        <a href="/Classes"><i class="bi bi-building"></i> Classes</a>
-        <a href="/Subjects"><i class="bi bi-book"></i> Subjects</a>
-
-        <div class="nav-section">Academic</div>
-        <a href="/Attendance"><i class="bi bi-calendar-check"></i> Attendance</a>
-        <a href="/Exams"><i class="bi bi-journal-text"></i> Exams</a>
-        <a href="/Results"><i class="bi bi-bar-chart-line"></i> Results</a>
-
-        <div class="nav-section">Finance</div>
-        <a href="/Payments"><i class="bi bi-cash-coin"></i> Payments</a>
-
-        <div class="nav-section">System</div>
-        <a href="#"><i class="bi bi-question-circle"></i> Help Center</a>
-        <a href="#"><i class="bi bi-gear"></i> Settings</a>
-    </nav>
-    <div class="sb-footer">
-        <div class="sb-user">
-            <div class="sb-avatar">@initials</div>
-            <div>
-                <div class="sb-user-name">@username</div>
-                <div class="sb-user-role">Administrator</div>
-            </div>
+<div class="dash-stats">
+    <div class="dash-stat">
+        <div class="dash-stat-top">
+            <div class="dash-stat-icon"><span class="material-symbols-outlined">groups</span></div>
+            <span class="dash-badge">Live</span>
         </div>
-        <a href="/Account/Logout" class="sb-signout">
-            <i class="bi bi-box-arrow-left"></i> Sign Out
-        </a>
-    </div>
-</aside>
-
-<!-- ══════════════ MAIN ══════════════ -->
-<div class="main">
-
-    <!-- Topbar -->
-    <div class="topbar">
-        <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Global search..."/>
-        </div>
-        <div class="topbar-right">
-            <div class="icon-btn">
-                <i class="bi bi-bell"></i>
-                <span class="badge-dot"></span>
-            </div>
-            <div class="icon-btn">
-                <i class="bi bi-gear"></i>
-            </div>
-            <div class="user-chip">
-                <div>
-                    <div class="name">Alex Sterling</div>
-                    <div class="role">Super Admin</div>
-                </div>
-                <div class="avatar">@initials</div>
-            </div>
-            <a href="/Account/Logout" class="logout-link">Logout</a>
-        </div>
+        <div class="dash-stat-label">Total Students</div>
+        <div class="dash-stat-value">@Model.TotalStudents.ToString("N0")</div>
+        <div class="dash-stat-sub">Across @Model.GradeLevels grade levels</div>
     </div>
 
-    <!-- Content -->
-    <div class="content">
+    <div class="dash-stat green">
+        <div class="dash-stat-top">
+            <div class="dash-stat-icon"><span class="material-symbols-outlined">badge</span></div>
+            <span class="dash-badge">Live</span>
+        </div>
+        <div class="dash-stat-label">Total Teachers</div>
+        <div class="dash-stat-value">@Model.TotalTeachers.ToString("N0")</div>
+        <div class="dash-stat-sub">@Model.StudentRatio student ratio</div>
+    </div>
 
-        <!-- Page heading -->
-        <div class="d-flex align-items-start justify-content-between mb-3">
-            <div>
-                <div class="page-title">Dashboard</div>
-                <div class="page-sub">Welcome back. Here's what's happening today.</div>
-            </div>
-            <a href="#" class="btn-quick">
-                <i class="bi bi-plus-lg"></i> Quick Report
-            </a>
+    <div class="dash-stat slate">
+        <div class="dash-stat-top">
+            <div class="dash-stat-icon"><span class="material-symbols-outlined">meeting_room</span></div>
+            <span class="dash-badge">Stable</span>
+        </div>
+        <div class="dash-stat-label">Total Classes</div>
+        <div class="dash-stat-value">@Model.TotalClasses.ToString("N0")</div>
+        <div class="dash-stat-sub">Room occupancy: @Model.RoomOccupancyPercent%</div>
+    </div>
+
+    <div class="dash-stat amber">
+        <div class="dash-stat-top">
+            <div class="dash-stat-icon"><span class="material-symbols-outlined">payments</span></div>
+            <span class="dash-badge">Finance</span>
+        </div>
+        <div class="dash-stat-label">Fees Collected</div>
+        <div class="dash-stat-value">@Model.TotalFeesCollected.ToString("N0")</div>
+        <div class="dash-stat-sub">@Model.MonthlyGoalPercent% of monthly goal</div>
+    </div>
+</div>
+
+<div class="dash-grid">
+    <div class="dash-panel">
+        <div class="dash-panel-head">
+            <h2 class="dash-panel-title">
+                <span class="material-symbols-outlined">history</span>
+                Recent Activity
+            </h2>
         </div>
 
-        <!-- ── Stat cards ── -->
-        <div class="row g-3 mb-3">
-            <div class="col-6 col-xl-3">
-                <div class="stat-card stat-border-blue">
-                    <div class="stat-top">
-                        <div class="stat-icon-sm" style="background:#eff6ff">
-                            <i class="bi bi-people-fill" style="color:#6366f1"></i>
-                        </div>
-                        <span class="stat-badge green">↑ 12%</span>
-                    </div>
-                    <div class="stat-label">Total Students</div>
-                    <div class="stat-value">@Model.TotalStudents.ToString("N0")</div>
-                    <div class="stat-sub">Across @Model.GradeLevels grade levels</div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="stat-card stat-border-green">
-                    <div class="stat-top">
-                        <div class="stat-icon-sm" style="background:#f0fdf4">
-                            <i class="bi bi-person-badge-fill" style="color:#22c55e"></i>
-                        </div>
-                        <span class="stat-badge green">↑ 3%</span>
-                    </div>
-                    <div class="stat-label">Total Teachers</div>
-                    <div class="stat-value">@Model.TotalTeachers</div>
-                    <div class="stat-sub">@Model.StudentRatio student ratio</div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="stat-card stat-border-gray">
-                    <div class="stat-top">
-                        <div class="stat-icon-sm" style="background:#f8fafc">
-                            <i class="bi bi-building-fill" style="color:#64748b"></i>
-                        </div>
-                        <span class="stat-badge gray">Stable</span>
-                    </div>
-                    <div class="stat-label">Total Classes</div>
-                    <div class="stat-value">@Model.TotalClasses</div>
-                    <div class="stat-sub">Room occupancy: @Model.RoomOccupancyPercent%</div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="stat-card stat-border-amber">
-                    <div class="stat-top">
-                        <div class="stat-icon-sm" style="background:#fffbeb">
-                            <i class="bi bi-cash-stack" style="color:#f59e0b"></i>
-                        </div>
-                        <span class="stat-badge amber">⏳ Pending</span>
-                    </div>
-                    <div class="stat-label">Fees Collected</div>
-                    <div class="stat-value">
-                        $@Model.TotalFeesCollected.ToString("N0")
-                    </div>
-                    <div class="stat-sub">@Model.MonthlyGoalPercent% of monthly goal</div>
-                </div>
-            </div>
-        </div>
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.RecentActivity.Any())
+                {
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:28px;color:#767683;">
+                            No activity yet. It will appear here as you use the system.
+                        </td>
+                    </tr>
+                }
 
-        <!-- ── Bottom row: activity + right panels ── -->
-        <div class="row g-3">
-
-            <!-- Recent Activity -->
-            <div class="col-lg-8">
-                <div class="card-panel">
-                    <div class="card-panel-head">
-                        <div class="ttl">
-                            <i class="bi bi-arrow-repeat text-secondary"></i>
-                            Recent Activity
-                        </div>
-                        <a href="#">View All</a>
-                    </div>
-                    <table class="act-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Action</th>
-                                <th>Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @if (!Model.RecentActivity.Any())
-                        {
-                            <tr>
-                                <td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af">
-                                    No activity yet — it will appear here as you use the system.
-                                </td>
-                            </tr>
-                        }
-                        @{
-                            string[] avatarColors = {"av-blue","av-green","av-amber","av-purple","av-red","av-indigo"};
-                            int colorIdx = 0;
-                        }
-                        @foreach (var log in Model.RecentActivity)
-                        {
-                            var initStr = log.UserName.Length >= 2
-                                ? log.UserName[..2].ToUpper() : log.UserName.ToUpper();
-                            var avColor = avatarColors[colorIdx++ % avatarColors.Length];
-                            var pillClass = log.Status switch {
-                                "Complete"   => "s-complete",
-                                "Action Req."=> "s-action",
-                                "Pending"    => "s-pending",
-                                _            => "s-verified"
-                            };
-                            var elapsed = DateTime.Now - log.Timestamp;
-                            var timeStr = elapsed.TotalMinutes < 2    ? "Just now"
-                                        : elapsed.TotalMinutes < 60   ? $"{(int)elapsed.TotalMinutes} mins ago"
-                                        : elapsed.TotalHours   < 24   ? $"{(int)elapsed.TotalHours} hrs ago"
-                                        : $"{(int)elapsed.TotalDays} days ago";
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="user-avatar-sm @avColor">@initStr</div>
-                                        <div>
-                                            <div style="font-weight:600;font-size:.8rem">@log.UserName</div>
-                                            <div style="font-size:.7rem;color:#9ca3af">@log.UserRole</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="max-width:140px">@log.Action</td>
-                                <td style="color:#9ca3af;font-size:.75rem;white-space:nowrap">@timeStr</td>
-                                <td><span class="status-pill @pillClass">@log.Status</span></td>
-                                <td>
-                                    @if (log.RelatedUserId.HasValue)
-                                    {
-                                        <a href="/Students/Details/@log.RelatedUserId"
-                                           class="view-link">View<br/>Profile</a>
-                                    }
-                                    else
-                                    {
-                                        <span style="color:#d1d5db;font-size:.75rem">—</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Right panels -->
-            <div class="col-lg-4">
-
-                <!-- Academic Pulse -->
-                <div class="card-panel mb-3">
-                    <div class="card-panel-head">
-                        <div class="ttl" style="color:#6366f1;font-weight:800">
-                            Academic Pulse
-                        </div>
-                    </div>
-                    <div style="padding:.9rem 1.1rem">
-                        <div class="pulse-bar-wrap">
-                            <div class="pulse-label">
-                                <span>Daily Attendance</span>
-                                <span class="pct-green">@Model.DailyAttendancePercent%</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill fill-green"
-                                     style="width:@Model.DailyAttendancePercent%"></div>
-                            </div>
-                        </div>
-                        <div class="pulse-bar-wrap">
-                            <div class="pulse-label">
-                                <span>Staff Availability</span>
-                                <span class="pct-blue">@Model.StaffAvailabilityPercent%</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill fill-blue"
-                                     style="width:@Model.StaffAvailabilityPercent%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upcoming Events -->
-                <div class="events-panel mb-3">
-                    <div class="ep-title">Upcoming Events</div>
-                    @foreach (var ev in Model.UpcomingEvents)
+                @foreach (var log in Model.RecentActivity)
+                {
+                    var initStr = log.UserName.Length >= 2
+                        ? log.UserName[..2].ToUpper()
+                        : log.UserName.ToUpper();
+                    var elapsed = DateTime.Now - log.Timestamp;
+                    var timeStr = elapsed.TotalMinutes < 2 ? "Just now"
+                        : elapsed.TotalMinutes < 60 ? $"{(int)elapsed.TotalMinutes} mins ago"
+                        : elapsed.TotalHours < 24 ? $"{(int)elapsed.TotalHours} hrs ago"
+                        : $"{(int)elapsed.TotalDays} days ago";
+                    var pillClass = log.Status switch
                     {
-                        <div class="event-item">
-                            <div class="event-date">
-                                <div class="em">@ev.Month</div>
-                                <div class="ed">@ev.Day</div>
-                            </div>
-                            <div class="event-info">
-                                <div class="et">@ev.Title</div>
-                                <div class="el">@ev.Location • @ev.Time</div>
-                            </div>
-                        </div>
-                    }
-                </div>
+                        "Verified" => "verified",
+                        "Action Req." => "action",
+                        "Pending" => "pending",
+                        _ => ""
+                    };
 
-                <!-- Help -->
-                <div class="help-box">
-                    <div class="hl">Need Help?</div>
-                    <p>Contact the technical support team for system-wide issues.</p>
-                    <button class="btn-support">Open Support Ticket</button>
-                </div>
+                    <tr>
+                        <td>
+                            <div class="activity-user">
+                                <div class="activity-avatar">@initStr</div>
+                                <div>
+                                    <div style="font-weight:900;">@log.UserName</div>
+                                    <div style="font-size:12px;color:#767683;">@log.UserRole</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@log.Action</td>
+                        <td style="color:#767683;white-space:nowrap;">@timeStr</td>
+                        <td><span class="status-pill @pillClass">@log.Status</span></td>
+                        <td style="text-align:right;">
+                            @if (log.RelatedUserId.HasValue)
+                            {
+                                <a href="@Url.Action("Details", "Students", new { id = log.RelatedUserId.Value })" style="color:#000666;font-weight:900;font-size:12px;">View Profile</a>
+                            }
+                            else
+                            {
+                                <span style="color:#c6c5d4;">-</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
+    <div>
+        <div class="dash-panel">
+            <div class="dash-panel-head">
+                <h2 class="dash-panel-title">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    Academic Pulse
+                </h2>
             </div>
-        </div><!-- /row -->
+            <div class="pulse-body">
+                <div class="pulse-item">
+                    <div class="pulse-label">
+                        <span>Daily Attendance</span>
+                        <strong>@Model.DailyAttendancePercent%</strong>
+                    </div>
+                    <div class="pulse-track">
+                        <div class="pulse-fill" style="width:@Model.DailyAttendancePercent%"></div>
+                    </div>
+                </div>
 
-    </div><!-- /content -->
-</div><!-- /main -->
+                <div class="pulse-item" style="margin-bottom:0;">
+                    <div class="pulse-label">
+                        <span>Staff Availability</span>
+                        <strong>@Model.StaffAvailabilityPercent%</strong>
+                    </div>
+                    <div class="pulse-track">
+                        <div class="pulse-fill blue" style="width:@Model.StaffAvailabilityPercent%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <div class="event-panel">
+            <div class="event-title">Upcoming Events</div>
+            @foreach (var ev in Model.UpcomingEvents)
+            {
+                <div class="event-item">
+                    <div class="event-date">
+                        <span>@ev.Month</span>
+                        <strong>@ev.Day</strong>
+                    </div>
+                    <div>
+                        <div class="event-name">@ev.Title</div>
+                        <div class="event-meta">@ev.Location &bull; @ev.Time</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
