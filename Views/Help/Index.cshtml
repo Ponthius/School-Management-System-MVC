@@ -1,0 +1,61 @@
+@model School_Management_System.Models.ViewModels.HelpPageViewModel
+@{
+    ViewData["Title"] = "Help Center";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Help Center</h1>
+            <p class="portal-subtitle">Submit support requests and review important school notices.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">New Help Request</h2></div>
+            <form method="post" action="@Url.Action("CreateTicket", "Help")" style="padding:1rem;">
+                @Html.AntiForgeryToken()
+                <div class="portal-field"><label>Subject</label><input class="portal-input" name="Subject" required /></div>
+                <div class="portal-field"><label>Priority</label><select class="portal-select" name="Priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+                <div class="portal-field"><label>Message</label><textarea class="portal-textarea" name="Message" rows="5" required></textarea></div>
+                <button class="portal-btn primary" style="margin-top:1rem;">Submit Request</button>
+            </form>
+        </div>
+
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">My / School Tickets</h2></div>
+            <table class="portal-table">
+                <thead><tr><th>Subject</th><th>Status</th><th>Created</th></tr></thead>
+                <tbody>
+                @if (!Model.Tickets.Any()) { <tr><td colspan="3" class="portal-empty">No help tickets yet.</td></tr> }
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td><strong>@ticket.Subject</strong><div class="portal-subtitle">@ticket.Message</div></td>
+                        <td><span class="portal-pill">@ticket.Status</span></td>
+                        <td>@ticket.CreatedAt.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="portal-panel" style="margin-top:1rem;">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Helpful Notices</h2></div>
+        <table class="portal-table">
+            <tbody>
+            @if (!Model.Notices.Any()) { <tr><td class="portal-empty">No notices available.</td></tr> }
+            @foreach (var notice in Model.Notices)
+            {
+                <tr><td><strong style="color:#000666">@notice.Title</strong><div class="portal-subtitle">@notice.Body</div></td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -60,6 +60,25 @@ app.MapControllerRoute(
     defaults: new { controller = "Teachers" });
 
 app.MapControllerRoute(
+    name: "attendance",
+    pattern: "Attendance/{action=Index}/{id?}",
+    defaults: new { controller = "Attendance" });
+
+app.MapControllerRoute(
+    name: "exams",
+    pattern: "Exams/{action=Index}/{id?}",
+    defaults: new { controller = "Exams" });
+
+app.MapControllerRoute(
+    name: "results",
+    pattern: "Results/{action=Index}/{id?}",
+    defaults: new { controller = "Results" });
+
+app.MapControllerRoute(
+    name: "mvc-index-default",
+    pattern: "{controller}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 

@@ -1,0 +1,38 @@
+@model School_Management_System.Models.ViewModels.SettingsPageViewModel
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var role = Context.Session.GetString("UserRole") ?? "";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Settings</h1>
+            <p class="portal-subtitle">Manage school profile values and portal preferences.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+
+    <div class="portal-panel" style="max-width:820px;">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">School Settings</h2></div>
+        <form method="post" action="@Url.Action("Save", "Settings")" style="padding:1rem;">
+            @Html.AntiForgeryToken()
+            <div class="portal-form-grid" style="grid-template-columns:1fr 1fr;">
+                @foreach (var item in Model.Settings)
+                {
+                    <div class="portal-field">
+                        <label>@item.Key</label>
+                        <input class="portal-input" name="settings[@item.Key]" value="@item.Value" @(role == "Admin" ? "" : "readonly") />
+                    </div>
+                }
+            </div>
+            @if (role == "Admin")
+            {
+                <button class="portal-btn primary" style="margin-top:1rem;">Save Settings</button>
+            }
+        </form>
+    </div>
+</div>

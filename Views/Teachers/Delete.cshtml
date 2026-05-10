@@ -1,0 +1,54 @@
+@model School_Management_System.Models.Teacher
+@{
+    ViewData["Title"] = "Delete Teacher";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div style="max-width:560px;margin:0 auto">
+    <a href="/Teachers"
+       style="font-size:.78rem;color:#1e2a78;text-decoration:none;
+              display:inline-flex;align-items:center;gap:.3rem;margin-bottom:1rem">
+        <i class="bi bi-arrow-left"></i> Back to Teachers
+    </a>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;overflow:hidden">
+        <div style="padding:1.1rem 1.25rem;border-bottom:1px solid #f3f4f6">
+            <h2 style="margin:0;font-size:1.1rem;font-weight:800;color:#991b1b">
+                Remove teacher?
+            </h2>
+            <p style="margin:.35rem 0 0;color:#6b7280;font-size:.82rem">
+                This will delete the teacher record and their login account.
+            </p>
+        </div>
+
+        <div style="padding:1.25rem;display:flex;align-items:center;gap:.9rem">
+            <img src="@Model.PhotoPath"
+                 onerror="this.src='/images/default-avatar.png'"
+                 style="width:3rem;height:3rem;border-radius:50%;object-fit:cover;border:1px solid #e5e7eb"
+                 alt="@Model.FullName" />
+            <div>
+                <div style="font-weight:800;color:#111827">@Model.FullName</div>
+                <div style="font-size:.78rem;color:#6b7280">@Model.Email</div>
+                <div style="font-size:.78rem;color:#6b7280">
+                    Primary class: @(Model.PrimaryClass?.Name ?? "None")
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Delete" asp-controller="Teachers" asp-route-id="@Model.Id" method="post"
+              style="padding:1rem 1.25rem;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:.6rem">
+            @Html.AntiForgeryToken()
+            <a href="/Teachers"
+               style="border:1px solid #d1d5db;background:#fff;border-radius:.25rem;
+                      padding:.48rem 1rem;font-size:.8rem;font-weight:600;
+                      color:#374151;text-decoration:none">
+                Cancel
+            </a>
+            <button type="submit"
+                    style="border:0;background:#dc2626;color:#fff;border-radius:.25rem;
+                           padding:.48rem 1.1rem;font-size:.8rem;font-weight:700">
+                Yes, Remove
+            </button>
+        </form>
+    </div>
+</div>

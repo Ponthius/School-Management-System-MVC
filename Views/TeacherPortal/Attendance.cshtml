@@ -1,0 +1,81 @@
+@model School_Management_System.Models.ViewModels.TeacherAttendanceViewModel
+@{
+    ViewData["Title"] = "Teacher Attendance";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var statuses = new[] { "Present", "Absent", "Late", "Excused" };
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Attendance Tracking</h1>
+            <p class="portal-subtitle">Manage daily presence for your assigned students.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+
+    <form class="portal-form-grid" method="get" style="margin-bottom:1rem;">
+        <div class="portal-field">
+            <label>Select Class</label>
+            <select class="portal-select" name="classId">
+                @foreach (var cls in Model.Classes)
+                {
+                    <option value="@cls.Value" selected="@cls.Selected">@cls.Text</option>
+                }
+            </select>
+        </div>
+        <div class="portal-field">
+            <label>Date</label>
+            <input class="portal-input" type="date" name="date" value="@Model.Date.ToString("yyyy-MM-dd")" />
+        </div>
+        <button class="portal-btn ghost" type="submit">Load Register</button>
+    </form>
+
+    <div class="portal-grid-4" style="margin-bottom:1rem;">
+        <div class="portal-card"><div class="portal-label">Total Students</div><div class="portal-value">@Model.Students.Count</div></div>
+        <div class="portal-card green"><div class="portal-label">Present</div><div class="portal-value">@Model.PresentCount</div></div>
+        <div class="portal-card red"><div class="portal-label">Absent</div><div class="portal-value">@Model.AbsentCount</div></div>
+        <div class="portal-card amber"><div class="portal-label">Excused</div><div class="portal-value">@Model.ExcusedCount</div></div>
+    </div>
+
+    <form method="post" action="@Url.Action("SaveAttendance", "TeacherPortal")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ClassId" value="@Model.ClassId" />
+        <input type="hidden" name="AttendanceDate" value="@Model.Date.ToString("yyyy-MM-dd")" />
+        <div class="portal-panel">
+            <div class="portal-panel-head">
+                <h2 class="portal-panel-title">Student List</h2>
+                <button class="portal-btn primary" type="submit"><i class="bi bi-save"></i> Submit Attendance</button>
+            </div>
+            <table class="portal-table">
+                <thead><tr><th>Student</th><th>Status</th><th>Remarks / Notes</th></tr></thead>
+                <tbody>
+                @if (!Model.Students.Any()) { <tr><td colspan="3" class="portal-empty">No students found for this class.</td></tr> }
+                @for (var i = 0; i < Model.Students.Count; i++)
+                {
+                    var row = Model.Students[i];
+                    <tr>
+                        <td>
+                            <input type="hidden" name="Rows[@i].StudentId" value="@row.StudentId" />
+                            <div class="portal-avatar-row">
+                                <img class="portal-photo" src="@row.PhotoPath" onerror="this.src='/images/default-avatar.png'" />
+                                <strong>@row.StudentName</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="portal-select" name="Rows[@i].Status">
+                                @foreach (var status in statuses)
+                                {
+                                    <option value="@status" selected="@(row.Status == status)">@status</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input class="portal-input" name="Rows[@i].Notes" value="@row.Notes" placeholder="Add a note..." /></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>

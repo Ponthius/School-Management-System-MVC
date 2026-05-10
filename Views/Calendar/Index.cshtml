@@ -1,0 +1,88 @@
+@model List<School_Management_System.Models.AcademicCalendarEvent>
+@{
+    ViewData["Title"] = "Academic Calendar";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var notices = ViewBag.Notices as List<School_Management_System.Models.Notice> ?? new();
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Academic Calendar</h1>
+            <p class="portal-subtitle">Manage school-wide dates, events, and campus notices.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Events</h2></div>
+            <form method="post" action="@Url.Action("SaveEvent", "Calendar")" style="padding:1rem;">
+                @Html.AntiForgeryToken()
+                <div class="portal-form-grid" style="grid-template-columns:1fr 1fr;">
+                    <div class="portal-field"><label>Title</label><input class="portal-input" name="Title" required /></div>
+                    <div class="portal-field"><label>Date</label><input class="portal-input" type="date" name="EventDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" required /></div>
+                    <div class="portal-field"><label>Start</label><input class="portal-input" type="time" name="StartTime" /></div>
+                    <div class="portal-field"><label>End</label><input class="portal-input" type="time" name="EndTime" /></div>
+                    <div class="portal-field"><label>Location</label><input class="portal-input" name="Location" /></div>
+                    <div class="portal-field"><label>Audience</label><select class="portal-select" name="Audience"><option>All</option><option>Teacher</option><option>Student</option></select></div>
+                    <div class="portal-field" style="grid-column:1 / -1;"><label>Description</label><textarea class="portal-textarea" name="Description" rows="3"></textarea></div>
+                </div>
+                <button class="portal-btn primary" style="margin-top:1rem;">Save Event</button>
+            </form>
+            <table class="portal-table">
+                <thead><tr><th>Date</th><th>Event</th><th>Audience</th><th></th></tr></thead>
+                <tbody>
+                @if (!Model.Any()) { <tr><td colspan="4" class="portal-empty">No calendar events yet.</td></tr> }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.EventDate.ToString("dd MMM yyyy")</td>
+                        <td><strong>@item.Title</strong><div class="portal-subtitle">@item.Location</div></td>
+                        <td><span class="portal-pill">@item.Audience</span></td>
+                        <td style="text-align:right;">
+                            <form method="post" action="@Url.Action("DeleteEvent", "Calendar")">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button class="portal-btn danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Campus Notices</h2></div>
+            <form method="post" action="@Url.Action("SaveNotice", "Calendar")" style="padding:1rem;">
+                @Html.AntiForgeryToken()
+                <div class="portal-field"><label>Title</label><input class="portal-input" name="Title" required /></div>
+                <div class="portal-field"><label>Notice</label><textarea class="portal-textarea" name="Body" rows="4" required></textarea></div>
+                <div class="portal-form-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                    <div class="portal-field"><label>Audience</label><select class="portal-select" name="Audience"><option>All</option><option>Teacher</option><option>Student</option></select></div>
+                    <div class="portal-field"><label>Priority</label><select class="portal-select" name="Priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+                    <div class="portal-field"><label>Publish Date</label><input class="portal-input" type="date" name="PublishDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" /></div>
+                </div>
+                <button class="portal-btn primary" style="margin-top:1rem;">Save Notice</button>
+            </form>
+            <table class="portal-table">
+                <tbody>
+                @if (!notices.Any()) { <tr><td class="portal-empty">No notices yet.</td></tr> }
+                @foreach (var notice in notices.Take(8))
+                {
+                    <tr>
+                        <td>
+                            <strong style="color:#000666">@notice.Title</strong>
+                            <div class="portal-subtitle">@notice.Body</div>
+                            <span class="portal-pill @(notice.Priority == "Urgent" ? "red" : notice.Priority == "High" ? "amber" : "slate")">@notice.Audience | @notice.Priority</span>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

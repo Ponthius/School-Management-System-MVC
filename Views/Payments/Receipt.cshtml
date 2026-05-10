@@ -1,0 +1,31 @@
+@model School_Management_System.Models.Payment
+@{
+    ViewData["Title"] = "Payment Receipt";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Payment Receipt</h1>
+            <p class="portal-subtitle">@Model.ReceiptNumber</p>
+        </div>
+        <button class="portal-btn primary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+    </div>
+
+    <div class="portal-panel" style="max-width:520px;">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Brait Inc SMS</h2></div>
+        <table class="portal-table">
+            <tbody>
+                <tr><td>Student</td><td><strong>@Model.Student?.FullName</strong></td></tr>
+                <tr><td>Receipt</td><td>@Model.ReceiptNumber</td></tr>
+                <tr><td>Date</td><td>@Model.Date.ToString("dd MMM yyyy HH:mm")</td></tr>
+                <tr><td>Term</td><td>@Model.Term</td></tr>
+                <tr><td>Method</td><td>@Model.PaymentMethod</td></tr>
+                <tr><td>Amount Paid</td><td><strong>@Model.Amount.ToString("N0")</strong></td></tr>
+                <tr><td>Remaining Balance</td><td>@Model.Balance.ToString("N0")</td></tr>
+                <tr><td>Status</td><td><span class="portal-pill @(Model.Balance <= 0 ? "green" : "amber")">@Model.Status</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

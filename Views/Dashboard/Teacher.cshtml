@@ -1,6 +1,110 @@
-﻿@{
-    Layout = null;
+@model School_Management_System.Models.ViewModels.TeacherDashboardViewModel
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 style="font-family:sans-serif;padding:2rem">
-    Teacher Dashboard — coming in Day 5
-</h2>
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Teacher Dashboard</h1>
+            <p class="portal-subtitle">Welcome back, @(Model.Teacher?.FullName ?? "Teacher"). Manage today&apos;s classes, attendance, and marks.</p>
+        </div>
+        <a class="portal-btn primary" href="@Url.Action("Attendance", "TeacherPortal")">
+            <i class="bi bi-check2-circle"></i>
+            Mark Attendance
+        </a>
+    </div>
+
+    <div class="portal-grid-3" style="margin-bottom:1rem;">
+        <div class="portal-card">
+            <div class="portal-stat-icon"><i class="bi bi-bookmark-fill"></i></div>
+            <div class="portal-label">My Assigned Classes</div>
+            <div class="portal-value">@Model.AssignedClassCount</div>
+            <p class="portal-subtitle">Class teacher and subject-linked classes</p>
+        </div>
+        <div class="portal-card green">
+            <div class="portal-stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="portal-label">Students In Classes</div>
+            <div class="portal-value">@Model.StudentCount</div>
+            <p class="portal-subtitle">Active enrolments connected to you</p>
+        </div>
+        <div class="portal-card amber">
+            <div class="portal-stat-icon"><i class="bi bi-clipboard2-check-fill"></i></div>
+            <div class="portal-label">Pending Marks</div>
+            <div class="portal-value">@Model.PendingMarks</div>
+            <p class="portal-subtitle">Scheduled assessments needing results</p>
+        </div>
+    </div>
+
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head">
+                <h2 class="portal-panel-title">Today&apos;s Schedule</h2>
+                <a class="portal-btn ghost" href="@Url.Action("Classes", "TeacherPortal")">View Classes</a>
+            </div>
+            <table class="portal-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (!Model.TodaySchedules.Any())
+                {
+                    <tr><td colspan="5" class="portal-empty">No scheduled exams/classes today.</td></tr>
+                }
+                @foreach (var item in Model.TodaySchedules)
+                {
+                    <tr>
+                        <td><strong>@item.Class?.Name</strong></td>
+                        <td>@item.Subject?.Name</td>
+                        <td>@item.StartTime.ToString("hh\\:mm") - @item.EndTime.ToString("hh\\:mm")</td>
+                        <td>@item.RoomNumber</td>
+                        <td><a class="portal-btn ghost" href="@Url.Action("Marks", "TeacherPortal", new { classId = item.ClassId, subjectId = item.SubjectId, examTermId = item.ExamTermId })">Marks</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <div class="portal-panel" style="margin-bottom:1rem;">
+                <div class="portal-panel-head">
+                    <h2 class="portal-panel-title">Quick Actions</h2>
+                </div>
+                <div class="portal-grid-2" style="padding:1rem;">
+                    <a class="portal-btn ghost" href="@Url.Action("Materials", "TeacherPortal")"><i class="bi bi-upload"></i> Upload Lesson</a>
+                    <a class="portal-btn ghost" href="@Url.Action("Marks", "TeacherPortal")"><i class="bi bi-shield-check"></i> Submit Marks</a>
+                    <a class="portal-btn ghost" href="@Url.Action("Index", "Help")"><i class="bi bi-envelope-fill"></i> Contact Admin</a>
+                    <a class="portal-btn ghost" href="@Url.Action("Assignments", "TeacherPortal")"><i class="bi bi-exclamation-octagon-fill"></i> Assignments</a>
+                </div>
+            </div>
+
+            <div class="portal-panel">
+                <div class="portal-panel-head"><h2 class="portal-panel-title">Announcements</h2></div>
+                <table class="portal-table">
+                    <tbody>
+                    @if (!Model.Announcements.Any())
+                    {
+                        <tr><td class="portal-empty">No announcements yet.</td></tr>
+                    }
+                    @foreach (var item in Model.Announcements)
+                    {
+                        <tr>
+                            <td>
+                                <strong style="color:#000666">@item.Title</strong>
+                                <div class="portal-subtitle">@item.EventDate.ToString("dd MMM yyyy") @item.Location</div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

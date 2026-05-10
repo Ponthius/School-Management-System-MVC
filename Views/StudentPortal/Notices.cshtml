@@ -1,0 +1,27 @@
+@model List<School_Management_System.Models.Notice>
+@{
+    ViewData["Title"] = "Campus Notices";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Campus Notices</h1><p class="portal-subtitle">Important school announcements and reminders.</p></div></div>
+    <div class="portal-panel">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Notices</h2></div>
+        <table class="portal-table">
+            <tbody>
+            @if (!Model.Any()) { <tr><td class="portal-empty">No notices yet.</td></tr> }
+            @foreach (var notice in Model)
+            {
+                <tr>
+                    <td>
+                        <strong style="color:#000666">@notice.Title</strong>
+                        <div class="portal-subtitle">@notice.Body</div>
+                        <span class="portal-pill @(notice.Priority == "Urgent" ? "red" : notice.Priority == "High" ? "amber" : "slate")">@notice.Priority | @notice.PublishDate.ToString("dd MMM yyyy")</span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

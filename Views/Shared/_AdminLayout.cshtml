@@ -4,13 +4,25 @@
     var initials = username.Length >= 2 ? username[..2].ToUpper() : username.ToUpper();
     var current = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
 
-    var searchPlaceholder = string.Equals(current, "ClassSubjects", StringComparison.OrdinalIgnoreCase)
-        ? "Search class, subject or teacher..."
-        : "Search students, teachers, classes...";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var portalName = role == "Teacher"
+        ? "Teacher Portal"
+        : role == "Student"
+            ? "Student Portal"
+            : "Administrative Portal";
+    var searchPlaceholder = role == "Teacher"
+        ? "Search classes, attendance, or marks..."
+        : role == "Student"
+            ? "Search results, fees, or materials..."
+            : string.Equals(current, "ClassSubjects", StringComparison.OrdinalIgnoreCase)
+                ? "Search class, subject or teacher..."
+                : "Search students, teachers, classes...";
 
-    string Active(string controller)
+    string Active(string controller, string? action = null)
     {
-        return string.Equals(current, controller, StringComparison.OrdinalIgnoreCase)
+        var controllerMatches = string.Equals(current, controller, StringComparison.OrdinalIgnoreCase);
+        var actionMatches = action == null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+        return controllerMatches && actionMatches
             ? "sms-nav-link active"
             : "sms-nav-link";
     }
@@ -26,6 +38,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="~/css/portal.css" rel="stylesheet" asp-append-version="true">
 
     <style>
         :root {
@@ -440,7 +454,7 @@
 
                 <div>
                     <div class="sms-brand-title">Brait Inc SMS</div>
-                    <div class="sms-brand-subtitle">Administrative Portal</div>
+                    <div class="sms-brand-subtitle">@portalName</div>
                 </div>
             </div>
 
@@ -450,65 +464,107 @@
             </div>
 
             <nav class="sms-nav">
-                <div class="sms-nav-section">Main</div>
-
-                <a class="@Active("Dashboard")" href="@Url.Action("Admin", "Dashboard")">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span>Dashboard</span>
-                </a>
-
-                <div class="sms-nav-section">Management</div>
-
-                <a class="@Active("Students")" href="@Url.Action("Index", "Students")">
-                    <span class="material-symbols-outlined">groups</span>
-                    <span>Students</span>
-                </a>
-
-                <a class="@Active("Teachers")" href="@Url.Action("Index", "Teachers")">
-                    <span class="material-symbols-outlined">badge</span>
-                    <span>Teachers</span>
-                </a>
-
-                <a class="@Active("ClassSubjects")" href="@Url.Action("Index", "ClassSubjects")">
-                    <span class="material-symbols-outlined">fact_check</span>
-                    <span>Classes &amp; Subjects</span>
-                </a>
-
-                <div class="sms-nav-section">Academic</div>
-
-                <a class="@Active("Attendance")" href="@Url.Action("Index", "Attendance")">
-                    <span class="material-symbols-outlined">event_available</span>
-                    <span>Attendance</span>
-                </a>
-
-                <a class="@Active("Exams")" href="@Url.Action("Index", "Exams")">
-                    <span class="material-symbols-outlined">assignment</span>
-                    <span>Exams</span>
-                </a>
-
-                <a class="@Active("Results")" href="@Url.Action("Index", "Results")">
-                    <span class="material-symbols-outlined">monitoring</span>
-                    <span>Results</span>
-                </a>
-
-                <div class="sms-nav-section">Finance</div>
-
-                <a class="@Active("Payments")" href="@Url.Action("Index", "Payments")">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                    <span>Payments</span>
-                </a>
-
-                <div class="sms-nav-section">System</div>
-
-                <a class="@Active("Help")" href="#">
-                    <span class="material-symbols-outlined">contact_support</span>
-                    <span>Help Center</span>
-                </a>
-
-                <a class="@Active("Settings")" href="#">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span>Settings</span>
-                </a>
+                @if (role == "Teacher")
+                {
+                    <div class="sms-nav-section">Main</div>
+                    <a class="@Active("Dashboard", "Teacher")" href="@Url.Action("Teacher", "Dashboard")">
+                        <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <div class="sms-nav-section">Teaching</div>
+                    <a class="@Active("TeacherPortal", "Classes")" href="@Url.Action("Classes", "TeacherPortal")">
+                        <span class="material-symbols-outlined">school</span><span>My Classes</span>
+                    </a>
+                    <a class="@Active("TeacherPortal", "Attendance")" href="@Url.Action("Attendance", "TeacherPortal")">
+                        <span class="material-symbols-outlined">how_to_reg</span><span>Attendance</span>
+                    </a>
+                    <a class="@Active("TeacherPortal", "Marks")" href="@Url.Action("Marks", "TeacherPortal")">
+                        <span class="material-symbols-outlined">edit_square</span><span>Mark Entry</span>
+                    </a>
+                    <a class="@Active("TeacherPortal", "Materials")" href="@Url.Action("Materials", "TeacherPortal")">
+                        <span class="material-symbols-outlined">upload_file</span><span>Materials</span>
+                    </a>
+                    <a class="@Active("TeacherPortal", "Assignments")" href="@Url.Action("Assignments", "TeacherPortal")">
+                        <span class="material-symbols-outlined">assignment</span><span>Assignments</span>
+                    </a>
+                    <div class="sms-nav-section">System</div>
+                    <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
+                        <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                    </a>
+                    <a class="@Active("Settings")" href="@Url.Action("Index", "Settings")">
+                        <span class="material-symbols-outlined">settings</span><span>Settings</span>
+                    </a>
+                }
+                else if (role == "Student")
+                {
+                    <div class="sms-nav-section">Main</div>
+                    <a class="@Active("Dashboard", "Student")" href="@Url.Action("Student", "Dashboard")">
+                        <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <div class="sms-nav-section">Student</div>
+                    <a class="@Active("StudentPortal", "Profile")" href="@Url.Action("Profile", "StudentPortal")">
+                        <span class="material-symbols-outlined">person</span><span>My Profile</span>
+                    </a>
+                    <a class="@Active("StudentPortal", "Results")" href="@Url.Action("Results", "StudentPortal")">
+                        <span class="material-symbols-outlined">star</span><span>Academic Results</span>
+                    </a>
+                    <a class="@Active("StudentPortal", "Fees")" href="@Url.Action("Fees", "StudentPortal")">
+                        <span class="material-symbols-outlined">payments</span><span>Fee Status</span>
+                    </a>
+                    <a class="@Active("StudentPortal", "Schedule")" href="@Url.Action("Schedule", "StudentPortal")">
+                        <span class="material-symbols-outlined">calendar_month</span><span>Class Schedule</span>
+                    </a>
+                    <a class="@Active("StudentPortal", "Materials")" href="@Url.Action("Materials", "StudentPortal")">
+                        <span class="material-symbols-outlined">menu_book</span><span>Learning Materials</span>
+                    </a>
+                    <a class="@Active("StudentPortal", "Notices")" href="@Url.Action("Notices", "StudentPortal")">
+                        <span class="material-symbols-outlined">campaign</span><span>Notices</span>
+                    </a>
+                    <div class="sms-nav-section">System</div>
+                    <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
+                        <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                    </a>
+                }
+                else
+                {
+                    <div class="sms-nav-section">Main</div>
+                    <a class="@Active("Dashboard", "Admin")" href="@Url.Action("Admin", "Dashboard")">
+                        <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <div class="sms-nav-section">Management</div>
+                    <a class="@Active("Students")" href="@Url.Action("Index", "Students")">
+                        <span class="material-symbols-outlined">groups</span><span>Students</span>
+                    </a>
+                    <a class="@Active("Teachers")" href="@Url.Action("Index", "Teachers")">
+                        <span class="material-symbols-outlined">badge</span><span>Teachers</span>
+                    </a>
+                    <a class="@Active("ClassSubjects")" href="@Url.Action("Index", "ClassSubjects")">
+                        <span class="material-symbols-outlined">fact_check</span><span>Classes &amp; Subjects</span>
+                    </a>
+                    <div class="sms-nav-section">Academic</div>
+                    <a class="@Active("Attendance")" href="@Url.Action("Index", "Attendance")">
+                        <span class="material-symbols-outlined">event_available</span><span>Attendance</span>
+                    </a>
+                    <a class="@Active("Exams")" href="@Url.Action("Index", "Exams")">
+                        <span class="material-symbols-outlined">assignment</span><span>Exams</span>
+                    </a>
+                    <a class="@Active("Results")" href="@Url.Action("Index", "Results")">
+                        <span class="material-symbols-outlined">monitoring</span><span>Results</span>
+                    </a>
+                    <a class="@Active("Calendar")" href="@Url.Action("Index", "Calendar")">
+                        <span class="material-symbols-outlined">calendar_month</span><span>Calendar</span>
+                    </a>
+                    <div class="sms-nav-section">Finance</div>
+                    <a class="@Active("Payments")" href="@Url.Action("Index", "Payments")">
+                        <span class="material-symbols-outlined">account_balance_wallet</span><span>Payments</span>
+                    </a>
+                    <div class="sms-nav-section">System</div>
+                    <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
+                        <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                    </a>
+                    <a class="@Active("Settings")" href="@Url.Action("Index", "Settings")">
+                        <span class="material-symbols-outlined">settings</span><span>Settings</span>
+                    </a>
+                }
             </nav>
 
             <div class="sms-sidebar-footer">
@@ -517,7 +573,7 @@
 
                     <div>
                         <div class="sms-user-name">@username</div>
-                        <div class="sms-user-role">Administrator</div>
+                            <div class="sms-user-role">@role</div>
                     </div>
                 </div>
 
@@ -551,7 +607,7 @@
                     <div class="sms-top-user">
                         <div>
                             <div class="sms-top-user-name">@username</div>
-                            <div class="sms-top-user-role">Administrator</div>
+                            <div class="sms-top-user-role">@role</div>
                         </div>
 
                         <div class="sms-avatar">@initials</div>

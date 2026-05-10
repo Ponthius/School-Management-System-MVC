@@ -1,0 +1,35 @@
+@model School_Management_System.Models.ViewModels.StudentResultsViewModel
+@{
+    ViewData["Title"] = "Academic Results";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div><h1 class="portal-title">Academic Results</h1><p class="portal-subtitle">Published performance report for your current subjects.</p></div>
+        <button class="portal-btn primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Report</button>
+    </div>
+    <div class="portal-grid-3" style="margin-bottom:1rem;">
+        <div class="portal-card"><div class="portal-label">Current Average</div><div class="portal-value">@Model.Average.ToString("0.0")%</div></div>
+        <div class="portal-card green"><div class="portal-label">Overall Grade</div><div class="portal-value">@Model.Grade</div></div>
+        <div class="portal-card amber"><div class="portal-label">Subjects</div><div class="portal-value">@Model.Subjects.Count</div></div>
+    </div>
+    <div class="portal-panel">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Subject-wise Performance</h2></div>
+        <table class="portal-table">
+            <thead><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Status</th></tr></thead>
+            <tbody>
+            @if (!Model.Subjects.Any()) { <tr><td colspan="4" class="portal-empty">No published results yet.</td></tr> }
+            @foreach (var row in Model.Subjects)
+            {
+                <tr>
+                    <td><strong>@row.SubjectName</strong><div class="portal-subtitle">@row.SubjectCode</div></td>
+                    <td><strong style="color:#000666">@row.Score.ToString("0.#")%</strong></td>
+                    <td>@row.Grade</td>
+                    <td><span class="portal-pill @(row.Status == "Excellent" || row.Status == "Passed" ? "green" : row.Status == "Missing" ? "slate" : "amber")">@row.Status</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

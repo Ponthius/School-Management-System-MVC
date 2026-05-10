@@ -1,0 +1,53 @@
+@model School_Management_System.Models.ViewModels.TeacherMarksViewModel
+@{
+    ViewData["Title"] = "Mark Entry";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Mark Entry</h1>
+            <p class="portal-subtitle">Enter and save marks for your assigned students.</p>
+        </div>
+    </div>
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+
+    <form class="portal-form-grid" method="get" style="margin-bottom:1rem;">
+        <div class="portal-field"><label>Exam Term</label><select class="portal-select" name="examTermId">@foreach (var o in Model.Terms){<option value="@o.Value" selected="@o.Selected">@o.Text</option>}</select></div>
+        <div class="portal-field"><label>Class</label><select class="portal-select" name="classId">@foreach (var o in Model.Classes){<option value="@o.Value" selected="@o.Selected">@o.Text</option>}</select></div>
+        <div class="portal-field"><label>Subject</label><select class="portal-select" name="subjectId">@foreach (var o in Model.Subjects){<option value="@o.Value" selected="@o.Selected">@o.Text</option>}</select></div>
+        <button class="portal-btn ghost" type="submit">Load Students</button>
+    </form>
+
+    <form method="post" action="@Url.Action("SaveMarks", "TeacherPortal")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ExamTermId" value="@Model.ExamTermId" />
+        <input type="hidden" name="ClassId" value="@Model.ClassId" />
+        <input type="hidden" name="SubjectId" value="@Model.SubjectId" />
+        <div class="portal-panel">
+            <div class="portal-panel-head">
+                <h2 class="portal-panel-title">Results Draft</h2>
+                <button class="portal-btn primary" type="submit">Save Marks</button>
+            </div>
+            <table class="portal-table">
+                <thead><tr><th>ID</th><th>Student</th><th>Score %</th><th>Status</th><th>Comments</th></tr></thead>
+                <tbody>
+                @if (!Model.Students.Any()) { <tr><td colspan="5" class="portal-empty">No students available for the selected filters.</td></tr> }
+                @for (var i = 0; i < Model.Students.Count; i++)
+                {
+                    var row = Model.Students[i];
+                    <tr>
+                        <td>@row.StudentCode<input type="hidden" name="Scores[@i].StudentId" value="@row.StudentId" /></td>
+                        <td><div class="portal-avatar-row"><img class="portal-photo" src="@row.PhotoPath" onerror="this.src='/images/default-avatar.png'" /><strong>@row.StudentName</strong></div></td>
+                        <td><input class="portal-input" style="max-width:7rem;" type="number" min="0" max="100" step="0.01" name="Scores[@i].Score" value="@(row.Score?.ToString("0.##") ?? "")" /></td>
+                        <td><span class="portal-pill @(row.Status == "Passed" ? "green" : row.Status == "Failed" ? "red" : "slate")">@row.Status</span></td>
+                        <td><input class="portal-input" name="Scores[@i].TeacherComments" value="@row.TeacherComments" /></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>

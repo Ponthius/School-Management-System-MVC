@@ -1,6 +1,93 @@
-﻿@{
-    Layout = null;
+@model School_Management_System.Models.ViewModels.StudentDashboardViewModel
+@{
+    ViewData["Title"] = "Student Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 style="font-family:sans-serif;padding:2rem">
-    Student Dashboard — coming in Day 5
-</h2>
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">Student Dashboard</h1>
+            <p class="portal-subtitle">Welcome back, @(Model.Student?.FullName ?? "Student"). Here is your academic overview.</p>
+        </div>
+        <button class="portal-btn primary" onclick="window.print()"><i class="bi bi-printer-fill"></i> Print Report</button>
+    </div>
+
+    <div class="portal-grid-2" style="margin-bottom:1rem;">
+        <div class="portal-card">
+            <div class="portal-avatar-row">
+                <img class="portal-photo" style="width:8rem;height:8rem;border-radius:.45rem;" src="@Model.Student?.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.Student?.FullName" />
+                <div>
+                    <h2 style="margin:0;color:#111827;">@Model.Student?.FullName</h2>
+                    <span class="portal-pill">@Model.Student?.Class?.Name</span>
+                    <p class="portal-subtitle"><strong>Student ID:</strong> EDU-@Model.Student?.Id.ToString("D4")</p>
+                    <p class="portal-subtitle"><strong>Guardian:</strong> @Model.Student?.GuardianName</p>
+                </div>
+            </div>
+        </div>
+        <div class="portal-grid-1">
+            <div class="portal-card amber">
+                <div class="portal-label">Fees Balance</div>
+                <div class="portal-value">@Model.FeeBalance.ToString("N0")</div>
+                <a href="@Url.Action("Fees", "StudentPortal")" class="portal-btn ghost" style="margin-top:.7rem;">View Fees</a>
+            </div>
+            <div class="portal-card green" style="margin-top:.9rem;">
+                <div class="portal-label">Average Score</div>
+                <div class="portal-value">@Model.AverageScore.ToString("0.0")%</div>
+                <a href="@Url.Action("Results", "StudentPortal")" class="portal-btn ghost" style="margin-top:.7rem;">View Results</a>
+            </div>
+            <div class="portal-card slate" style="margin-top:.9rem;">
+                <div class="portal-label">My Subjects</div>
+                <div class="portal-value">@Model.SubjectCount</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head">
+                <h2 class="portal-panel-title">Recent Grades</h2>
+                <a href="@Url.Action("Results", "StudentPortal")" class="portal-btn ghost">View All</a>
+            </div>
+            <table class="portal-table">
+                <thead><tr><th>Subject</th><th>Assessment</th><th>Score</th><th>Status</th></tr></thead>
+                <tbody>
+                @if (!Model.RecentResults.Any())
+                {
+                    <tr><td colspan="4" class="portal-empty">No published results yet.</td></tr>
+                }
+                @foreach (var result in Model.RecentResults)
+                {
+                    <tr>
+                        <td><strong>@result.Subject?.Name</strong></td>
+                        <td>@result.ExamTerm?.Name</td>
+                        <td>@(result.Score?.ToString("0.#") ?? "0")/100</td>
+                        <td><span class="portal-pill @(result.Score >= 50 ? "green" : "red")">@(result.Score >= 50 ? "Passed" : "Review")</span></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Announcements</h2></div>
+            <table class="portal-table">
+                <tbody>
+                @if (!Model.Notices.Any())
+                {
+                    <tr><td class="portal-empty">No notices yet.</td></tr>
+                }
+                @foreach (var notice in Model.Notices)
+                {
+                    <tr>
+                        <td>
+                            <strong style="color:#000666">@notice.Title</strong>
+                            <div class="portal-subtitle">@notice.Body</div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

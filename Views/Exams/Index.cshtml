@@ -1,0 +1,913 @@
+@model School_Management_System.Models.ViewModels.ExamManagementViewModel
+
+@{
+    ViewData["Title"] = "Exam Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .exam-page {
+        --primary: #000666;
+        --primary-soft: #eef0ff;
+        --green: #1b6d24;
+        --green-soft: #e8f8ea;
+        --amber: #b76400;
+        --amber-soft: #fff4df;
+        --red: #ba1a1a;
+        --red-soft: #ffefed;
+        --border: #dfe2ec;
+        --muted: #607089;
+        color: #172033;
+    }
+
+    .exam-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.25rem;
+    }
+
+    .exam-title {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.55rem;
+        font-weight: 900;
+        letter-spacing: -.02em;
+    }
+
+    .exam-sub {
+        margin: .35rem 0 0;
+        color: var(--muted);
+        font-size: .84rem;
+    }
+
+    .exam-actions,
+    .table-actions {
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+        flex-wrap: wrap;
+    }
+
+    .exam-btn {
+        min-height: 2.35rem;
+        border: 0;
+        border-radius: .25rem;
+        padding: .55rem .9rem;
+        font-size: .78rem;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .45rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .exam-btn.primary { background: var(--primary); color: #fff; }
+    .exam-btn.green { background: var(--green); color: #fff; }
+    .exam-btn.ghost { background: #fff; color: var(--primary); border: 1px solid var(--border); }
+    .exam-btn.danger { background: var(--red); color: #fff; }
+
+    .exam-alert {
+        border-radius: .3rem;
+        padding: .65rem .8rem;
+        margin-bottom: .85rem;
+        font-size: .78rem;
+        font-weight: 800;
+    }
+
+    .exam-alert.ok { background: var(--green-soft); color: #155d1e; border: 1px solid #bbe8c1; }
+    .exam-alert.err { background: var(--red-soft); color: var(--red); border: 1px solid #ffd0cb; }
+
+    .exam-filter {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .45rem;
+        padding: .8rem;
+        display: grid;
+        grid-template-columns: 1.2fr .75fr .95fr auto;
+        gap: .6rem;
+        margin-bottom: 1rem;
+        align-items: end;
+    }
+
+    .exam-field label {
+        display: block;
+        color: #50586b;
+        font-size: .66rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        margin-bottom: .3rem;
+    }
+
+    .exam-input,
+    .exam-select,
+    .exam-textarea {
+        width: 100%;
+        border: 1px solid #cfd5e3;
+        border-radius: .25rem;
+        background: #fff;
+        color: #111827;
+        font-size: .8rem;
+        padding: .48rem .6rem;
+        outline: none;
+    }
+
+    .exam-input,
+    .exam-select {
+        height: 2.35rem;
+    }
+
+    .exam-input:focus,
+    .exam-select:focus,
+    .exam-textarea:focus {
+        border-color: var(--primary);
+    }
+
+    .exam-stats {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .exam-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .5rem;
+        padding: 1.25rem;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+    }
+
+    .exam-card.top-green { border-top: 4px solid var(--green); }
+    .exam-card.top-amber { border-top: 4px solid #ffb865; }
+
+    .metric-label {
+        color: #4f6380;
+        font-size: .72rem;
+        font-weight: 900;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .metric-value {
+        margin-top: .55rem;
+        color: var(--primary);
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .mini-bars {
+        margin-top: 1.15rem;
+        display: grid;
+        gap: .7rem;
+    }
+
+    .mini-bar {
+        display: grid;
+        grid-template-columns: 6rem 1fr 3rem;
+        align-items: center;
+        gap: .7rem;
+        font-size: .78rem;
+        color: #526070;
+    }
+
+    .bar-track {
+        height: .42rem;
+        background: #eef1f6;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: var(--green);
+    }
+
+    .ring {
+        width: 8.3rem;
+        height: 8.3rem;
+        border-radius: 50%;
+        margin: 1rem auto;
+        background: conic-gradient(var(--green) calc(var(--percent) * 1%), #eef1f6 0);
+        display: grid;
+        place-items: center;
+    }
+
+    .ring-inner {
+        width: 5.9rem;
+        height: 5.9rem;
+        border-radius: 50%;
+        background: #fff;
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        font-size: 1.55rem;
+        font-weight: 900;
+    }
+
+    .standing-row {
+        display: grid;
+        grid-template-columns: 2.1rem 1fr auto;
+        gap: .6rem;
+        align-items: center;
+        margin-top: .75rem;
+        font-size: .82rem;
+    }
+
+    .standing-code {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: .25rem;
+        padding: .35rem .25rem;
+        text-align: center;
+        font-weight: 900;
+        font-size: .72rem;
+    }
+
+    .exam-panel {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .5rem;
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+    .exam-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid var(--border);
+        background: #fbfcff;
+        flex-wrap: wrap;
+    }
+
+    .exam-panel-title {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.05rem;
+        font-weight: 900;
+    }
+
+    .exam-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .exam-table th {
+        background: #f5f6fa;
+        color: #526070;
+        font-size: .68rem;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        padding: .75rem 1rem;
+        text-align: left;
+    }
+
+    .exam-table td {
+        border-top: 1px solid #edf0f6;
+        padding: .9rem 1rem;
+        vertical-align: middle;
+        font-size: .82rem;
+    }
+
+    .term-name {
+        color: var(--primary);
+        font-weight: 900;
+        line-height: 1.25;
+    }
+
+    .term-sub {
+        margin-top: .16rem;
+        color: #8190a7;
+        font-size: .72rem;
+    }
+
+    .status-pill {
+        border-radius: 999px;
+        padding: .28rem .62rem;
+        font-size: .68rem;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        white-space: nowrap;
+    }
+
+    .status-active { background: var(--green-soft); color: var(--green); }
+    .status-upcoming { background: var(--amber-soft); color: var(--amber); }
+    .status-completed { background: #eef1f6; color: #42526a; }
+
+    .subject-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .35rem;
+    }
+
+    .subject-badge {
+        background: #eef0ff;
+        color: var(--primary);
+        border-radius: 999px;
+        padding: .23rem .48rem;
+        font-size: .68rem;
+        font-weight: 900;
+    }
+
+    .row-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: .35rem;
+        flex-wrap: wrap;
+    }
+
+    .text-action {
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+        font-size: .74rem;
+        font-weight: 900;
+        cursor: pointer;
+        text-decoration: none;
+        padding: .25rem .1rem;
+    }
+
+    .empty-cell {
+        text-align: center;
+        color: #7a8294;
+        padding: 2.2rem 1rem !important;
+    }
+
+    .integrity-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .report-card {
+        background: #34328a;
+        border-radius: .65rem;
+        padding: 1.3rem;
+        color: #fff;
+        min-height: 11rem;
+    }
+
+    .policy-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .65rem;
+        padding: 1.3rem;
+    }
+
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, .45);
+        z-index: 100;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-backdrop.show {
+        display: flex;
+    }
+
+    .exam-modal {
+        width: min(680px, 100%);
+        background: #fff;
+        border-radius: .65rem;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .24);
+        overflow: hidden;
+    }
+
+    .modal-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.1rem;
+        font-weight: 900;
+    }
+
+    .modal-close {
+        border: 0;
+        background: #f1f3f7;
+        width: 2rem;
+        height: 2rem;
+        border-radius: .25rem;
+        cursor: pointer;
+    }
+
+    .modal-form {
+        padding: 1.1rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .8rem;
+    }
+
+    .form-grid .full {
+        grid-column: 1 / -1;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: .55rem;
+        margin-top: 1rem;
+    }
+
+    @@media (max-width: 1120px) {
+        .exam-stats,
+        .integrity-grid {
+            grid-template-columns: 1fr;
+        }
+        .exam-filter { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .exam-table { min-width: 980px; }
+        .exam-panel { overflow-x: auto; }
+    }
+
+    @@media (max-width: 700px) {
+        .exam-filter,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+}
+
+<div class="exam-page">
+    <div class="exam-head">
+        <div>
+            <h1 class="exam-title">Exam Management</h1>
+            <p class="exam-sub">Configure academic terms, schedule assessments, assign invigilators, and prepare printable timetables.</p>
+        </div>
+        <div class="exam-actions">
+            <button class="exam-btn ghost" type="button" onclick="openScheduleModal()">
+                <i class="bi bi-calendar-plus"></i>
+                Add Schedule
+            </button>
+            <button class="exam-btn primary" type="button" onclick="openTermModal()">
+                <i class="bi bi-plus-square-fill"></i>
+                Create New Exam Term
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="exam-alert ok">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="exam-alert err">@TempData["Error"]</div>
+    }
+
+    <form class="exam-filter" method="get" action="@Url.Action("Index", "Exams")">
+        <div class="exam-field">
+            <label>Search</label>
+            <input class="exam-input" name="search" value="@Model.Search" placeholder="Search exams, classes, subjects, or rooms..." />
+        </div>
+        <div class="exam-field">
+            <label>Status</label>
+            <select class="exam-select" name="status">
+                <option value="">All statuses</option>
+                <option value="Active" selected="@(Model.Status == "Active")">Active</option>
+                <option value="Upcoming" selected="@(Model.Status == "Upcoming")">Upcoming</option>
+                <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+            </select>
+        </div>
+        <div class="exam-field">
+            <label>Timetable Term</label>
+            <select class="exam-select" name="termId">
+                <option value="">All terms</option>
+                @foreach (var term in Model.TermOptions)
+                {
+                    <option value="@term.Value" selected="@term.Selected">@term.Text</option>
+                }
+            </select>
+        </div>
+        <button class="exam-btn primary" type="submit">
+            <i class="bi bi-search"></i>
+            Apply
+        </button>
+    </form>
+
+    <div class="exam-stats">
+        <div class="exam-card top-green">
+            <div class="metric-label">Overall School Average</div>
+            <div class="metric-value">@Model.OverallAverage.ToString("0.0")%</div>
+            <div class="mini-bars">
+                <div class="mini-bar">
+                    <span>Last Term</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:72%;background:#cbd5e1;"></div></div>
+                    <span>72%</span>
+                </div>
+                <div class="mini-bar">
+                    <span>Current</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:@Math.Min(Model.OverallAverage, 100)%"></div></div>
+                    <span>@Model.OverallAverage.ToString("0.#")%</span>
+                </div>
+            </div>
+            <a href="@Url.Action("Index", "Results", new { examTermId = Model.SelectedTermId })" style="display:inline-flex;margin-top:1rem;color:var(--primary);font-weight:900;text-decoration:none;">
+                View Results Entry <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="exam-card">
+            <div class="metric-label">Passing Rate</div>
+            <div class="ring" style="--percent:@Math.Min(Model.PassingRate, 100)">
+                <div class="ring-inner">@Model.PassingRate.ToString("0.#")%</div>
+            </div>
+            <div style="text-align:center;color:#607089;font-size:.8rem;">Based on saved result scores</div>
+        </div>
+        <div class="exam-card top-amber">
+            <div class="metric-label">Class Standings</div>
+            @foreach (var schedule in Model.Schedules.Take(3))
+            {
+                <div class="standing-row">
+                    <div class="standing-code">@schedule.ClassName</div>
+                    <div>@schedule.SubjectName</div>
+                    <strong style="color:var(--green);">@schedule.ExamDate.ToString("dd MMM")</strong>
+                </div>
+            }
+            @if (!Model.Schedules.Any())
+            {
+                <p style="color:#7a8294;font-size:.82rem;margin-top:1rem;">Schedules will appear here after you add them.</p>
+            }
+        </div>
+    </div>
+
+    <div class="exam-panel">
+        <div class="exam-panel-head">
+            <h2 class="exam-panel-title">Exam Terms & Schedules</h2>
+            <div class="table-actions">
+                <a class="exam-btn ghost" href="@Url.Action("DownloadTimetable", "Exams", new { termId = Model.SelectedTermId })">
+                    <i class="bi bi-download"></i>
+                    Download TXT
+                </a>
+                <a class="exam-btn ghost" target="_blank" href="@Url.Action("PrintTimetable", "Exams", new { termId = Model.SelectedTermId })">
+                    <i class="bi bi-printer"></i>
+                    Print Timetable
+                </a>
+            </div>
+        </div>
+
+        <table class="exam-table">
+            <thead>
+                <tr>
+                    <th>Exam Term Name</th>
+                    <th>Date Range</th>
+                    <th>Subjects</th>
+                    <th>Status</th>
+                    <th>Participants</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Terms.Any())
+            {
+                <tr>
+                    <td colspan="6" class="empty-cell">No exam terms yet. Create an exam term to begin scheduling.</td>
+                </tr>
+            }
+            @foreach (var term in Model.Terms)
+            {
+                var badgeClass = term.Status == "Active" ? "status-active" : term.Status == "Completed" ? "status-completed" : "status-upcoming";
+                var subjects = Model.Schedules.Where(s => s.ExamTermId == term.Id).Select(s => s.SubjectName).Distinct().Take(4).ToList();
+                <tr>
+                    <td>
+                        <div class="term-name">@term.Name</div>
+                        <div class="term-sub">@(!string.IsNullOrWhiteSpace(term.Description) ? term.Description : "Academic assessment cycle")</div>
+                    </td>
+                    <td>@term.StartDate.ToString("dd MMM yyyy") - @term.EndDate.ToString("dd MMM yyyy")</td>
+                    <td>
+                        <div class="subject-badges">
+                            @foreach (var subject in subjects)
+                            {
+                                <span class="subject-badge">@subject</span>
+                            }
+                            @if (!subjects.Any())
+                            {
+                                <span style="color:#7a8294;">No schedules</span>
+                            }
+                        </div>
+                    </td>
+                    <td><span class="status-pill @badgeClass"><i class="bi bi-circle-fill" style="font-size:.42rem;"></i>@term.Status</span></td>
+                    <td>@term.ParticipantCount students</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="text-action" type="button"
+                                    data-id="@term.Id"
+                                    data-name="@term.Name"
+                                    data-description="@term.Description"
+                                    data-start="@term.StartDate.ToString("yyyy-MM-dd")"
+                                    data-end="@term.EndDate.ToString("yyyy-MM-dd")"
+                                    data-status="@term.Status"
+                                    onclick="editTerm(this)">Edit</button>
+                            <a class="text-action" href="@Url.Action("Index", "Results", new { examTermId = term.Id })">Results</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="exam-panel">
+        <div class="exam-panel-head">
+            <h2 class="exam-panel-title">Detailed Timetable</h2>
+            <button class="exam-btn green" type="button" onclick="openScheduleModal()">
+                <i class="bi bi-plus-lg"></i>
+                Add Exam Schedule
+            </button>
+        </div>
+        <table class="exam-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Invigilator</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Schedules.Any())
+            {
+                <tr>
+                    <td colspan="6" class="empty-cell">No timetable rows yet.</td>
+                </tr>
+            }
+            @foreach (var schedule in Model.Schedules)
+            {
+                <tr>
+                    <td>
+                        <strong style="color:var(--primary);">@schedule.ExamDate.ToString("dd MMM yyyy")</strong>
+                        <div class="term-sub">@schedule.StartTime.ToString("hh\\:mm") - @schedule.EndTime.ToString("hh\\:mm")</div>
+                    </td>
+                    <td>@schedule.ClassName</td>
+                    <td>@schedule.SubjectName</td>
+                    <td>@schedule.RoomNumber</td>
+                    <td>@schedule.InvigilatorName</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="text-action" type="button"
+                                    data-id="@schedule.Id"
+                                    data-term="@schedule.ExamTermId"
+                                    data-class="@schedule.ClassId"
+                                    data-subject="@schedule.SubjectId"
+                                    data-teacher="@schedule.InvigilatorTeacherId"
+                                    data-room="@schedule.RoomNumber"
+                                    data-date="@schedule.ExamDate.ToString("yyyy-MM-dd")"
+                                    data-start="@schedule.StartTime.ToString("hh\\:mm")"
+                                    data-end="@schedule.EndTime.ToString("hh\\:mm")"
+                                    data-notes="@schedule.Notes"
+                                    onclick="editSchedule(this)">Edit</button>
+                            <form method="post" action="@Url.Action("DeleteSchedule", "Exams")" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@schedule.Id" />
+                                <input type="hidden" name="termId" value="@Model.SelectedTermId" />
+                                <button class="text-action" type="submit" style="color:#ba1a1a;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="integrity-grid">
+        <div class="report-card">
+            <h3 style="margin:0 0 .5rem;font-size:1.1rem;">Generate Automated Reports</h3>
+            <p style="margin:0;color:#d7dcff;line-height:1.45;max-width:34rem;">Exam schedules are connected to Results, so performance reports can be generated once marks are entered.</p>
+            <a class="exam-btn ghost" style="margin-top:1.15rem;" href="@Url.Action("Index", "Results", new { examTermId = Model.SelectedTermId })">
+                <i class="bi bi-stars"></i>
+                Open Results Entry
+            </a>
+        </div>
+        <div class="policy-card">
+            <h3 style="margin:0;color:var(--primary);font-size:1.1rem;">School Integrity Policy</h3>
+            <p style="color:#607089;line-height:1.45;max-width:42rem;">Every schedule records class, subject, room, time, and invigilator so printed timetables stay auditable.</p>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.1rem;font-size:.72rem;font-weight:900;color:#344054;">
+                <span><i class="bi bi-circle-fill" style="font-size:.45rem;color:var(--green);"></i> Secure Portal</span>
+                <span><i class="bi bi-circle-fill" style="font-size:.45rem;color:var(--green);"></i> Audit Logging</span>
+                <span><i class="bi bi-circle-fill" style="font-size:.45rem;color:var(--green);"></i> Printable Timetable</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="termModal" class="modal-backdrop">
+    <div class="exam-modal">
+        <div class="modal-head">
+            <h3 class="modal-title" id="termModalTitle">Create Exam Term</h3>
+            <button class="modal-close" type="button" onclick="closeModal('termModal')">&times;</button>
+        </div>
+        <form class="modal-form" method="post" action="@Url.Action("SaveTerm", "Exams")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="termId" />
+            <div class="form-grid">
+                <div class="exam-field full">
+                    <label>Exam Term Name</label>
+                    <input class="exam-input" name="Name" id="termName" placeholder="Example: Midterm 2026" required />
+                </div>
+                <div class="exam-field full">
+                    <label>Description</label>
+                    <textarea class="exam-textarea" name="Description" id="termDescription" rows="3" placeholder="Main academic cycle, practical block, mock tests..."></textarea>
+                </div>
+                <div class="exam-field">
+                    <label>Start Date</label>
+                    <input class="exam-input" type="date" name="StartDate" id="termStartDate" required />
+                </div>
+                <div class="exam-field">
+                    <label>End Date</label>
+                    <input class="exam-input" type="date" name="EndDate" id="termEndDate" required />
+                </div>
+                <div class="exam-field full">
+                    <label>Status</label>
+                    <select class="exam-select" name="Status" id="termStatus">
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="exam-btn ghost" type="button" onclick="closeModal('termModal')">Cancel</button>
+                <button class="exam-btn primary" type="submit">Save Exam Term</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="scheduleModal" class="modal-backdrop">
+    <div class="exam-modal">
+        <div class="modal-head">
+            <h3 class="modal-title" id="scheduleModalTitle">Add Exam Schedule</h3>
+            <button class="modal-close" type="button" onclick="closeModal('scheduleModal')">&times;</button>
+        </div>
+        <form class="modal-form" method="post" action="@Url.Action("SaveSchedule", "Exams")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="scheduleId" />
+            <div class="form-grid">
+                <div class="exam-field full">
+                    <label>Exam Term</label>
+                    <select class="exam-select" name="ExamTermId" id="scheduleTermId" required>
+                        <option value="">Select term</option>
+                        @foreach (var term in Model.TermOptions)
+                        {
+                            <option value="@term.Value">@term.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="exam-field">
+                    <label>Class</label>
+                    <select class="exam-select" name="ClassId" id="scheduleClassId" required>
+                        <option value="">Select class</option>
+                        @foreach (var item in Model.ClassOptions)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="exam-field">
+                    <label>Subject</label>
+                    <select class="exam-select" name="SubjectId" id="scheduleSubjectId" required>
+                        <option value="">Select subject</option>
+                        @foreach (var item in Model.SubjectOptions)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="exam-field">
+                    <label>Invigilating Teacher</label>
+                    <select class="exam-select" name="InvigilatorTeacherId" id="scheduleTeacherId">
+                        <option value="">Unassigned</option>
+                        @foreach (var item in Model.TeacherOptions)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="exam-field">
+                    <label>Room No.</label>
+                    <input class="exam-input" name="RoomNumber" id="scheduleRoom" placeholder="Room 04" required />
+                </div>
+                <div class="exam-field">
+                    <label>Date</label>
+                    <input class="exam-input" type="date" name="ExamDate" id="scheduleDate" required />
+                </div>
+                <div class="exam-field">
+                    <label>Start Time</label>
+                    <input class="exam-input" type="time" name="StartTime" id="scheduleStart" required />
+                </div>
+                <div class="exam-field">
+                    <label>End Time</label>
+                    <input class="exam-input" type="time" name="EndTime" id="scheduleEnd" required />
+                </div>
+                <div class="exam-field full">
+                    <label>Notes</label>
+                    <textarea class="exam-textarea" name="Notes" id="scheduleNotes" rows="3" placeholder="Materials, special instructions, seating rules..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="exam-btn ghost" type="button" onclick="closeModal('scheduleModal')">Cancel</button>
+                <button class="exam-btn primary" type="submit">Save Schedule</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function openModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+}
+
+function today() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function openTermModal() {
+    document.getElementById('termModalTitle').textContent = 'Create Exam Term';
+    document.getElementById('termId').value = '';
+    document.getElementById('termName').value = '';
+    document.getElementById('termDescription').value = '';
+    document.getElementById('termStartDate').value = today();
+    document.getElementById('termEndDate').value = today();
+    document.getElementById('termStatus').value = 'Upcoming';
+    openModal('termModal');
+}
+
+function editTerm(button) {
+    document.getElementById('termModalTitle').textContent = 'Edit Exam Term';
+    document.getElementById('termId').value = button.dataset.id;
+    document.getElementById('termName').value = button.dataset.name;
+    document.getElementById('termDescription').value = button.dataset.description || '';
+    document.getElementById('termStartDate').value = button.dataset.start;
+    document.getElementById('termEndDate').value = button.dataset.end;
+    document.getElementById('termStatus').value = button.dataset.status || 'Upcoming';
+    openModal('termModal');
+}
+
+function openScheduleModal() {
+    document.getElementById('scheduleModalTitle').textContent = 'Add Exam Schedule';
+    document.getElementById('scheduleId').value = '';
+    document.getElementById('scheduleTermId').value = '@(Model.SelectedTermId?.ToString() ?? "")';
+    document.getElementById('scheduleClassId').value = '';
+    document.getElementById('scheduleSubjectId').value = '';
+    document.getElementById('scheduleTeacherId').value = '';
+    document.getElementById('scheduleRoom').value = '';
+    document.getElementById('scheduleDate').value = today();
+    document.getElementById('scheduleStart').value = '09:00';
+    document.getElementById('scheduleEnd').value = '11:00';
+    document.getElementById('scheduleNotes').value = '';
+    openModal('scheduleModal');
+}
+
+function editSchedule(button) {
+    document.getElementById('scheduleModalTitle').textContent = 'Edit Exam Schedule';
+    document.getElementById('scheduleId').value = button.dataset.id;
+    document.getElementById('scheduleTermId').value = button.dataset.term;
+    document.getElementById('scheduleClassId').value = button.dataset.class;
+    document.getElementById('scheduleSubjectId').value = button.dataset.subject;
+    document.getElementById('scheduleTeacherId').value = button.dataset.teacher || '';
+    document.getElementById('scheduleRoom').value = button.dataset.room;
+    document.getElementById('scheduleDate').value = button.dataset.date;
+    document.getElementById('scheduleStart').value = button.dataset.start;
+    document.getElementById('scheduleEnd').value = button.dataset.end;
+    document.getElementById('scheduleNotes').value = button.dataset.notes || '';
+    openModal('scheduleModal');
+}
+
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('modal-backdrop')) {
+        event.target.classList.remove('show');
+    }
+});
+</script>
+}

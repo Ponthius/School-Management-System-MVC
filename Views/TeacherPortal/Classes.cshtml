@@ -1,0 +1,36 @@
+@model School_Management_System.Models.ViewModels.TeacherClassesViewModel
+@{
+    ViewData["Title"] = "My Classes";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head">
+        <div>
+            <h1 class="portal-title">My Classes</h1>
+            <p class="portal-subtitle">Assigned classes, linked subjects, and student rosters.</p>
+        </div>
+    </div>
+
+    <div class="portal-grid-3">
+        @if (!Model.Classes.Any())
+        {
+            <div class="portal-card"><div class="portal-empty">No classes assigned yet.</div></div>
+        }
+        @foreach (var cls in Model.Classes)
+        {
+            <div class="portal-card">
+                <div class="portal-label">@cls.Name</div>
+                <div class="portal-value">@cls.Students.Count</div>
+                <p class="portal-subtitle">students | capacity @cls.Capacity</p>
+                <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin:.8rem 0;">
+                    @foreach (var subject in cls.ClassSubjects.Select(cs => cs.Subject).Where(s => s != null).Take(5))
+                    {
+                        <span class="portal-pill">@subject!.Name</span>
+                    }
+                </div>
+                <a class="portal-btn primary" href="@Url.Action("Attendance", "TeacherPortal", new { classId = cls.Id })">Open Register</a>
+            </div>
+        }
+    </div>
+</div>

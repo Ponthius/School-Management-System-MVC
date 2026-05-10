@@ -1,0 +1,40 @@
+@model School_Management_System.Models.ViewModels.StudentFeesViewModel
+@{
+    ViewData["Title"] = "Fee Status";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Fee Status</h1><p class="portal-subtitle">Invoices, balances, and payment receipts.</p></div></div>
+    <div class="portal-grid-3" style="margin-bottom:1rem;">
+        <div class="portal-card amber"><div class="portal-label">Outstanding Balance</div><div class="portal-value">@Model.Balance.ToString("N0")</div></div>
+        <div class="portal-card green"><div class="portal-label">Payments Made</div><div class="portal-value">@Model.Payments.Sum(p => p.Amount).ToString("N0")</div></div>
+        <div class="portal-card"><div class="portal-label">Invoices</div><div class="portal-value">@Model.Invoices.Count</div></div>
+    </div>
+    <div class="portal-panel">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Invoices</h2></div>
+        <table class="portal-table">
+            <thead><tr><th>Term</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+            <tbody>
+            @if (!Model.Invoices.Any()) { <tr><td colspan="5" class="portal-empty">No fee invoices yet.</td></tr> }
+            @foreach (var invoice in Model.Invoices)
+            {
+                <tr><td>@invoice.Term</td><td>@invoice.AmountDue.ToString("N0")</td><td>@invoice.AmountPaid.ToString("N0")</td><td>@invoice.Balance.ToString("N0")</td><td><span class="portal-pill @(invoice.Balance <= 0 ? "green" : "amber")">@invoice.Status</span></td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="portal-panel" style="margin-top:1rem;">
+        <div class="portal-panel-head"><h2 class="portal-panel-title">Payment History</h2></div>
+        <table class="portal-table">
+            <thead><tr><th>Date</th><th>Receipt</th><th>Method</th><th>Amount</th><th>Balance</th></tr></thead>
+            <tbody>
+            @if (!Model.Payments.Any()) { <tr><td colspan="5" class="portal-empty">No payments recorded.</td></tr> }
+            @foreach (var payment in Model.Payments)
+            {
+                <tr><td>@payment.Date.ToString("dd MMM yyyy")</td><td>@payment.ReceiptNumber</td><td>@payment.PaymentMethod</td><td>@payment.Amount.ToString("N0")</td><td>@payment.Balance.ToString("N0")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

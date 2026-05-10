@@ -103,20 +103,30 @@
                 Assigned Subjects
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:.5rem">
-                @foreach (var sub in allSubjects)
+                @if (allSubjects.Any())
                 {
-                    bool isChecked = Model.SelectedSubjects.Contains(sub);
-                    <label style="display:inline-flex;align-items:center;gap:.35rem;
-                                  cursor:pointer;font-size:.8rem;color:#374151;
-                                  background:#f3f4f6;border:1px solid @(isChecked ? "#1e2a78" : "#e5e7eb");
-                                  border-radius:.25rem;padding:.32rem .65rem">
-                        <input type="checkbox"
-                               name="SelectedSubjects"
-                               value="@sub"
-                               style="accent-color:#1e2a78"
-                               @(isChecked ? "checked" : "")/>
-                        @sub
-                    </label>
+                    @foreach (var sub in allSubjects)
+                    {
+                        bool isChecked = Model.SelectedSubjects.Contains(sub);
+                        <label style="display:inline-flex;align-items:center;gap:.35rem;
+                                      cursor:pointer;font-size:.8rem;color:#374151;
+                                      background:#f3f4f6;border:1px solid @(isChecked ? "#1e2a78" : "#e5e7eb");
+                                      border-radius:.25rem;padding:.32rem .65rem">
+                            <input type="checkbox"
+                                   name="SelectedSubjects"
+                                   value="@sub"
+                                   style="accent-color:#1e2a78"
+                                   @(isChecked ? "checked" : "")/>
+                            @sub
+                        </label>
+                    }
+                }
+                else
+                {
+                    <div style="font-size:.8rem;color:#6b7280">
+                        No subjects have been created yet.
+                        <a href="/ClassSubjects" style="color:#1e2a78;font-weight:700">Add subjects first</a>.
+                    </div>
                 }
             </div>
         </div>

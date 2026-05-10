@@ -1,0 +1,54 @@
+@model School_Management_System.Models.ViewModels.MaterialsPageViewModel
+@{
+    ViewData["Title"] = "Learning Materials";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var assignmentVm = ViewBag.Assignments as School_Management_System.Models.ViewModels.StudentAssignmentsViewModel;
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Learning Materials</h1><p class="portal-subtitle">Resources and assignments shared by your teachers.</p></div></div>
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Materials</h2></div>
+            <table class="portal-table">
+                <tbody>
+                @if (!Model.Materials.Any()) { <tr><td class="portal-empty">No materials available yet.</td></tr> }
+                @foreach (var item in Model.Materials)
+                {
+                    <tr><td><strong>@item.Title</strong><div class="portal-subtitle">@item.Subject?.Name | @item.Teacher?.FullName</div>@if(!string.IsNullOrWhiteSpace(item.FilePath)){<a href="@item.FilePath" target="_blank">Open file</a>}</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Assignments</h2></div>
+            <table class="portal-table">
+                <tbody>
+                @if (assignmentVm == null || !assignmentVm.Assignments.Any()) { <tr><td class="portal-empty">No assignments yet.</td></tr> }
+                @if (assignmentVm != null)
+                {
+                    @foreach (var item in assignmentVm.Assignments)
+                    {
+                        var submitted = assignmentVm.Submissions.Any(s => s.AssignmentId == item.Id);
+                        <tr>
+                            <td>
+                                <strong>@item.Title</strong>
+                                <div class="portal-subtitle">Due @item.DueDate.ToString("dd MMM yyyy") | @item.Subject?.Name</div>
+                                <span class="portal-pill @(submitted ? "green" : "amber")">@(submitted ? "Submitted" : "Pending")</span>
+                                <form method="post" enctype="multipart/form-data" action="@Url.Action("SubmitAssignment", "StudentPortal")" style="margin-top:.7rem;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="AssignmentId" value="@item.Id" />
+                                    <input class="portal-input" type="file" name="File" />
+                                    <input class="portal-input" name="Notes" placeholder="Submission note..." style="margin-top:.4rem;" />
+                                    <button class="portal-btn primary" style="margin-top:.4rem;">Submit</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,522 @@
+@model School_Management_System.Models.ViewModels.ResultsEntryViewModel
+
+@{
+    ViewData["Title"] = "Results Entry";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .results-page {
+        --primary: #000666;
+        --primary-soft: #eef0ff;
+        --green: #1b6d24;
+        --green-soft: #e8f8ea;
+        --amber: #b76400;
+        --amber-soft: #fff4df;
+        --red: #ba1a1a;
+        --red-soft: #ffefed;
+        --border: #dfe2ec;
+        --muted: #607089;
+        color: #172033;
+    }
+
+    .results-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.2rem;
+    }
+
+    .crumbs {
+        color: #53647d;
+        font-size: .78rem;
+        margin-bottom: .3rem;
+    }
+
+    .results-title {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.75rem;
+        font-weight: 900;
+        letter-spacing: -.03em;
+    }
+
+    .results-actions {
+        display: flex;
+        gap: .55rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .results-btn {
+        min-height: 2.5rem;
+        border: 0;
+        border-radius: .25rem;
+        padding: .55rem 1rem;
+        font-size: .82rem;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .45rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .results-btn.primary { background: var(--primary); color: #fff; }
+    .results-btn.ghost { background: #fff; color: var(--primary); border: 1px solid #cfd5e3; }
+
+    .results-alert {
+        border-radius: .3rem;
+        padding: .65rem .8rem;
+        margin-bottom: .85rem;
+        font-size: .78rem;
+        font-weight: 800;
+    }
+
+    .results-alert.ok { background: var(--green-soft); color: #155d1e; border: 1px solid #bbe8c1; }
+    .results-alert.err { background: var(--red-soft); color: var(--red); border: 1px solid #ffd0cb; }
+
+    .filter-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .45rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1.1fr auto;
+        gap: .75rem;
+        align-items: end;
+    }
+
+    .results-field label {
+        display: block;
+        color: #303946;
+        font-size: .76rem;
+        font-weight: 900;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: .35rem;
+    }
+
+    .results-input,
+    .results-select {
+        width: 100%;
+        height: 2.5rem;
+        border: 1px solid #cfd5e3;
+        border-radius: .18rem;
+        background: #fff;
+        color: #111827;
+        font-size: .82rem;
+        padding: .45rem .6rem;
+        outline: none;
+    }
+
+    .results-input:focus,
+    .results-select:focus {
+        border-color: var(--primary);
+    }
+
+    .results-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .results-stat {
+        background: #fff;
+        border: 1px solid #edf0f6;
+        border-top: 4px solid var(--primary);
+        border-radius: .15rem;
+        padding: 1rem;
+    }
+
+    .stat-label {
+        color: #303946;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        margin-bottom: .35rem;
+    }
+
+    .stat-value {
+        color: var(--primary);
+        font-size: 1.4rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .results-panel {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .45rem;
+        overflow: hidden;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .results-table th {
+        background: #f5f6fa;
+        color: #233348;
+        font-size: .74rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        padding: .85rem 1rem;
+        text-align: left;
+    }
+
+    .results-table td {
+        border-top: 1px solid #edf0f6;
+        padding: .85rem 1rem;
+        vertical-align: middle;
+        font-size: .84rem;
+    }
+
+    .student-cell {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .student-photo {
+        width: 2.35rem;
+        height: 2.35rem;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #e5e7eb;
+    }
+
+    .student-name {
+        color: #111827;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+    .student-code {
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .score-input {
+        width: 5.5rem;
+        height: 2.1rem;
+        border: 1px solid #c8cedc;
+        border-radius: .15rem;
+        padding: .35rem .5rem;
+        font-weight: 900;
+        color: var(--primary);
+        outline: none;
+    }
+
+    .score-input:focus {
+        border-color: var(--primary);
+    }
+
+    .comment-input {
+        width: 100%;
+        max-width: 20rem;
+        height: 2.1rem;
+        border: 1px solid transparent;
+        background: #f8fafc;
+        border-radius: .12rem;
+        padding: .35rem .55rem;
+        color: #334155;
+        outline: none;
+    }
+
+    .comment-input:focus {
+        border-color: var(--primary);
+        background: #fff;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .32rem;
+        border-radius: 999px;
+        padding: .25rem .62rem;
+        font-size: .72rem;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .status-passed { background: var(--green-soft); color: var(--green); }
+    .status-failed { background: var(--red-soft); color: var(--red); }
+    .status-marginal { background: var(--amber-soft); color: var(--amber); }
+    .status-missing { background: #eef1f6; color: #667085; }
+
+    .grade-pill {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: .25rem;
+        padding: .25rem .45rem;
+        font-weight: 900;
+        display: inline-block;
+        min-width: 2rem;
+        text-align: center;
+    }
+
+    .panel-foot {
+        border-top: 1px solid var(--border);
+        background: #fbfcff;
+        padding: .85rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .8rem;
+        flex-wrap: wrap;
+        color: #607089;
+        font-size: .82rem;
+    }
+
+    .integrity-note {
+        margin-top: 1rem;
+        border: 1px solid #bcc3d7;
+        background: #e9ebf5;
+        border-radius: .35rem;
+        padding: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: .8rem;
+    }
+
+    .integrity-icon {
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .empty-cell {
+        text-align: center;
+        color: #7a8294;
+        padding: 2.4rem 1rem !important;
+    }
+
+    @@media (max-width: 1150px) {
+        .filter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .results-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .results-table {
+            min-width: 980px;
+        }
+        .results-panel {
+            overflow-x: auto;
+        }
+    }
+
+    @@media (max-width: 720px) {
+        .filter-grid,
+        .results-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+}
+
+<div class="results-page">
+    <div class="results-head">
+        <div>
+            <div class="crumbs">Exams <i class="bi bi-chevron-right"></i> Results Entry</div>
+            <h1 class="results-title">Results Entry</h1>
+        </div>
+        <div class="results-actions">
+            <button class="results-btn ghost" type="submit" form="resultsForm">
+                <i class="bi bi-save-fill"></i>
+                Save Draft
+            </button>
+            <button class="results-btn primary" type="submit" form="resultsForm" formaction="@Url.Action("Publish", "Results")">
+                <i class="bi bi-upload"></i>
+                Publish Results
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="results-alert ok">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="results-alert err">@TempData["Error"]</div>
+    }
+
+    <div class="filter-card">
+        <form class="filter-grid" method="get" action="@Url.Action("Index", "Results")">
+            <div class="results-field">
+                <label>Exam Term</label>
+                <select class="results-select" name="examTermId">
+                    @if (!Model.ExamTermOptions.Any())
+                    {
+                        <option value="">No exam terms</option>
+                    }
+                    @foreach (var option in Model.ExamTermOptions)
+                    {
+                        <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="results-field">
+                <label>Class</label>
+                <select class="results-select" name="classId">
+                    @if (!Model.ClassOptions.Any())
+                    {
+                        <option value="">No classes</option>
+                    }
+                    @foreach (var option in Model.ClassOptions)
+                    {
+                        <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="results-field">
+                <label>Subject</label>
+                <select class="results-select" name="subjectId">
+                    @if (!Model.SubjectOptions.Any())
+                    {
+                        <option value="">No subjects</option>
+                    }
+                    @foreach (var option in Model.SubjectOptions)
+                    {
+                        <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="results-field">
+                <label>Search Student</label>
+                <input class="results-input" name="search" value="@Model.Search" placeholder="Search student records..." />
+            </div>
+            <button class="results-btn primary" type="submit">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+        </form>
+    </div>
+
+    <div class="results-stats">
+        <div class="results-stat">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value">@Model.TotalStudents</div>
+        </div>
+        <div class="results-stat" style="border-top-color:#1b6d24">
+            <div class="stat-label">Pass Threshold</div>
+            <div class="stat-value" style="color:#1b6d24">@Model.PassThreshold.ToString("0")%</div>
+        </div>
+        <div class="results-stat" style="border-top-color:#1b6d24">
+            <div class="stat-label">Current Average</div>
+            <div class="stat-value" style="color:#1b6d24">@Model.CurrentAverage.ToString("0.0")%</div>
+        </div>
+        <div class="results-stat" style="border-top-color:#ffb865">
+            <div class="stat-label">Missing Scores</div>
+            <div class="stat-value" style="color:#b76400">@Model.MissingScores</div>
+        </div>
+    </div>
+
+    <form id="resultsForm" method="post" action="@Url.Action("SaveScores", "Results")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ExamTermId" value="@Model.ExamTermId" />
+        <input type="hidden" name="ClassId" value="@Model.ClassId" />
+        <input type="hidden" name="SubjectId" value="@Model.SubjectId" />
+        <input type="hidden" name="Search" value="@Model.Search" />
+
+        <div class="results-panel">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student Name</th>
+                        <th>Score (%)</th>
+                        <th>Status</th>
+                        <th>Teacher Comments</th>
+                        <th>Average / Grade</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (!Model.Students.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="empty-cell">No students found for the selected filters.</td>
+                    </tr>
+                }
+                @for (var i = 0; i < Model.Students.Count; i++)
+                {
+                    var row = Model.Students[i];
+                    var statusClass = row.Status.ToLowerInvariant();
+                    <tr>
+                        <td class="student-code">@row.StudentCode</td>
+                        <td>
+                            <input type="hidden" name="Scores[@i].StudentId" value="@row.StudentId" />
+                            <div class="student-cell">
+                                <img class="student-photo" src="@row.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@row.StudentName" />
+                                <div class="student-name">@row.StudentName</div>
+                            </div>
+                        </td>
+                        <td>
+                            <input class="score-input"
+                                   type="number"
+                                   name="Scores[@i].Score"
+                                   min="0"
+                                   max="100"
+                                   step="0.01"
+                                   value="@(row.Score.HasValue ? row.Score.Value.ToString("0.##") : "")"
+                                   placeholder="0" />
+                        </td>
+                        <td>
+                            <span class="status-pill status-@statusClass">
+                                <i class="bi bi-circle-fill" style="font-size:.42rem;"></i>
+                                @row.Status
+                            </span>
+                        </td>
+                        <td>
+                            <input class="comment-input" name="Scores[@i].TeacherComments" value="@row.TeacherComments" placeholder="Comment or teacher note..." />
+                        </td>
+                        <td>
+                            <strong>@row.Average.ToString("0.0")%</strong>
+                            <span class="grade-pill">@row.Grade</span>
+                        </td>
+                        <td style="text-align:right;">
+                            <button class="results-btn ghost" style="min-height:2rem;padding:.35rem .55rem;" type="button" onclick="this.closest('tr').querySelector('.score-input').focus()">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            <div class="panel-foot">
+                <span>Showing @Model.Students.Count of @Model.TotalStudents students</span>
+                <span>@Model.SelectedTermName | @Model.SelectedClassName | @Model.SelectedSubjectName</span>
+            </div>
+        </div>
+    </form>
+
+    <div class="integrity-note">
+        <div class="integrity-icon"><i class="bi bi-info-lg"></i></div>
+        <div>
+            <div style="color:var(--primary);font-weight:900;margin-bottom:.25rem;">Data Integrity Note</div>
+            <div style="color:#334155;font-size:.86rem;line-height:1.45;">
+                Draft scores save immediately to the database. Class averages use every subject linked to the selected class,
+                and missing subject scores are counted as zero until a mark is entered.
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+@model School_Management_System.Models.ViewModels.MaterialsPageViewModel
+@{
+    ViewData["Title"] = "Learning Materials";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Learning Materials</h1><p class="portal-subtitle">Upload lesson files and resources for classes.</p></div></div>
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Upload Material</h2></div>
+            <form method="post" enctype="multipart/form-data" action="@Url.Action("UploadMaterial", "TeacherPortal")" style="padding:1rem;">
+                @Html.AntiForgeryToken()
+                <div class="portal-field"><label>Title</label><input class="portal-input" name="Title" required /></div>
+                <div class="portal-field"><label>Description</label><textarea class="portal-textarea" name="Description" rows="3"></textarea></div>
+                <div class="portal-field"><label>Class</label><select class="portal-select" name="ClassId"><option value="">All my classes</option>@foreach (var c in Model.Classes){<option value="@c.Value">@c.Text</option>}</select></div>
+                <div class="portal-field"><label>Subject</label><select class="portal-select" name="SubjectId"><option value="">General</option>@foreach (var s in Model.Subjects){<option value="@s.Value">@s.Text</option>}</select></div>
+                <div class="portal-field"><label>File</label><input class="portal-input" type="file" name="File" /></div>
+                <button class="portal-btn primary" style="margin-top:1rem;">Upload</button>
+            </form>
+        </div>
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Uploaded Materials</h2></div>
+            <table class="portal-table">
+                <tbody>
+                @if (!Model.Materials.Any()) { <tr><td class="portal-empty">No materials uploaded yet.</td></tr> }
+                @foreach (var item in Model.Materials)
+                {
+                    <tr><td><strong>@item.Title</strong><div class="portal-subtitle">@item.Class?.Name | @item.Subject?.Name | @item.UploadedAt.ToString("dd MMM")</div>@if(!string.IsNullOrWhiteSpace(item.FilePath)){<a href="@item.FilePath" target="_blank">Open file</a>}</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

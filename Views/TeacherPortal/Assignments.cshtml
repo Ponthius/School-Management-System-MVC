@@ -1,0 +1,42 @@
+@model School_Management_System.Models.ViewModels.AssignmentsPageViewModel
+@{
+    ViewData["Title"] = "Assignments";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Assignments</h1><p class="portal-subtitle">Create assignments and monitor submissions.</p></div></div>
+    @if (TempData["Success"] != null) { <div class="portal-alert ok">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="portal-alert err">@TempData["Error"]</div> }
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Create Assignment</h2></div>
+            <form method="post" action="@Url.Action("CreateAssignment", "TeacherPortal")" style="padding:1rem;">
+                @Html.AntiForgeryToken()
+                <div class="portal-field"><label>Title</label><input class="portal-input" name="Title" required /></div>
+                <div class="portal-field"><label>Description</label><textarea class="portal-textarea" name="Description" rows="3"></textarea></div>
+                <div class="portal-field"><label>Class</label><select class="portal-select" name="ClassId" required>@foreach (var c in Model.Classes){<option value="@c.Value">@c.Text</option>}</select></div>
+                <div class="portal-field"><label>Subject</label><select class="portal-select" name="SubjectId"><option value="">General</option>@foreach (var s in Model.Subjects){<option value="@s.Value">@s.Text</option>}</select></div>
+                <div class="portal-field"><label>Due Date</label><input class="portal-input" type="date" name="DueDate" value="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" /></div>
+                <button class="portal-btn primary" style="margin-top:1rem;">Create</button>
+            </form>
+        </div>
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Assignment List</h2></div>
+            <table class="portal-table">
+                <thead><tr><th>Assignment</th><th>Due</th><th>Submissions</th></tr></thead>
+                <tbody>
+                @if (!Model.Assignments.Any()) { <tr><td colspan="3" class="portal-empty">No assignments yet.</td></tr> }
+                @foreach (var item in Model.Assignments)
+                {
+                    <tr>
+                        <td><strong>@item.Title</strong><div class="portal-subtitle">@item.Class?.Name | @item.Subject?.Name</div></td>
+                        <td>@item.DueDate.ToString("dd MMM yyyy")</td>
+                        <td>@item.Submissions.Count</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

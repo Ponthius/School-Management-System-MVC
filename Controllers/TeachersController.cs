@@ -12,9 +12,6 @@ namespace School_Management_System.Controllers
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
 
-        // All available subjects for the multi-select
-        private static readonly List<string> AllSubjects = SubjectCatalog.Names.ToList();
-
         public TeachersController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
@@ -27,6 +24,61 @@ namespace School_Management_System.Controllers
             if (role == null) return RedirectToAction("Login", "Account");
             if (role != "Admin") return RedirectToAction("Admin", "Dashboard");
             return null;
+        }
+
+        private void PopulateTeacherLookups(int? selectedPrimaryClassId = null, int? selectedHeadClassId = null)
+        {
+            var classes = _context.Classes
+                .OrderBy(c => c.Name)
+                .ToList();
+
+            ViewBag.Classes = new SelectList(classes, "Id", "Name", selectedPrimaryClassId);
+            ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", selectedHeadClassId);
+            ViewBag.AllSubjects = _context.Subjects
+                .OrderBy(s => s.Name)
+                .Select(s => s.Name)
+                .ToList();
+        }
+
+        private async Task<IActionResult?> DeleteTeacherRecord(int id)
+        {
+            var teacher = await _context.Teachers
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (teacher == null) return NotFound();
+
+            string name = teacher.FullName;
+
+            foreach (var cls in _context.Classes.Where(c => c.TeacherId == teacher.Id))
+                cls.TeacherId = null;
+
+            if (!string.IsNullOrEmpty(teacher.PhotoPath)
+                && !teacher.PhotoPath.Contains("default-avatar"))
+            {
+                var fullPath = Path.Combine(_env.WebRootPath,
+                    teacher.PhotoPath.TrimStart('/')
+                        .Replace('/', Path.DirectorySeparatorChar));
+                if (System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+            }
+
+            var user = teacher.User;
+            _context.Teachers.Remove(teacher);
+            if (user != null) _context.Users.Remove(user);
+
+            _context.ActivityLogs.Add(new ActivityLog
+            {
+                UserName = HttpContext.Session.GetString("Username") ?? "Admin",
+                UserRole = "Admin",
+                Action = $"Removed teacher record for {name}",
+                Status = "Action Req."
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{name} has been removed.";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: /Teachers
@@ -92,10 +144,7 @@ namespace School_Management_System.Controllers
         {
             var guard = Guard(); if (guard != null) return guard;
 
-            var classes = _context.Classes.ToList();
-            ViewBag.Classes     = new SelectList(classes, "Id", "Name");
-            ViewBag.HeadClasses = new SelectList(classes, "Id", "Name");
-            ViewBag.AllSubjects = AllSubjects;
+            PopulateTeacherLookups();
             return View(new TeacherCreateViewModel());
         }
 
@@ -128,10 +177,7 @@ namespace School_Management_System.Controllers
 
             if (!ModelState.IsValid)
             {
-                var classes = _context.Classes.ToList();
-                ViewBag.Classes     = new SelectList(classes, "Id", "Name", vm.PrimaryClassId);
-                ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", vm.HeadClassId);
-                ViewBag.AllSubjects = AllSubjects;
+                PopulateTeacherLookups(vm.PrimaryClassId, vm.HeadClassId);
                 return View(vm);
             }
 
@@ -225,10 +271,7 @@ namespace School_Management_System.Controllers
                 HeadClassId      = headClassId
             };
 
-            var classes = _context.Classes.ToList();
-            ViewBag.Classes     = new SelectList(classes, "Id", "Name", teacher.PrimaryClassId);
-            ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", headClassId);
-            ViewBag.AllSubjects = AllSubjects;
+            PopulateTeacherLookups(teacher.PrimaryClassId, headClassId);
             return View(vm);
         }
 
@@ -258,10 +301,7 @@ namespace School_Management_System.Controllers
 
             if (!ModelState.IsValid)
             {
-                var classes = _context.Classes.ToList();
-                ViewBag.Classes     = new SelectList(classes, "Id", "Name", vm.PrimaryClassId);
-                ViewBag.HeadClasses = new SelectList(classes, "Id", "Name", vm.HeadClassId);
-                ViewBag.AllSubjects = AllSubjects;
+                PopulateTeacherLookups(vm.PrimaryClassId, vm.HeadClassId);
                 return View(vm);
             }
 
@@ -318,52 +358,29 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /Teachers/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        // GET: /Teachers/Delete/5
+        public IActionResult Delete(int id)
         {
             var guard = Guard(); if (guard != null) return guard;
 
             var teacher = _context.Teachers
                 .Include(t => t.User)
+                .Include(t => t.PrimaryClass)
                 .FirstOrDefault(t => t.Id == id);
 
             if (teacher == null) return NotFound();
+            return View(teacher);
+        }
 
-            string name = teacher.FullName;
-
-            // Clear any class-teacher assignment(s) for this teacher.
-            foreach (var cls in _context.Classes.Where(c => c.TeacherId == teacher.Id))
-                cls.TeacherId = null;
-
-            // Delete photo file
-            if (!string.IsNullOrEmpty(teacher.PhotoPath)
-                && !teacher.PhotoPath.Contains("default-avatar"))
-            {
-                var fullPath = Path.Combine(_env.WebRootPath,
-                    teacher.PhotoPath.TrimStart('/')
-                           .Replace('/', Path.DirectorySeparatorChar));
-                if (System.IO.File.Exists(fullPath))
-                    System.IO.File.Delete(fullPath);
-            }
-
-            var user = teacher.User;
-            _context.Teachers.Remove(teacher);
-            if (user != null) _context.Users.Remove(user);
-
-            _context.ActivityLogs.Add(new ActivityLog
-            {
-                UserName = HttpContext.Session.GetString("Username") ?? "Admin",
-                UserRole = "Admin",
-                Action   = $"Removed teacher record for {name}",
-                Status   = "Action Req."
-            });
-
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"{name} has been removed.";
-            return RedirectToAction(nameof(Index));
+        // POST: /Teachers/Delete/5
+        [HttpPost]
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var guard = Guard(); if (guard != null) return guard;
+            var result = await DeleteTeacherRecord(id);
+            return result ?? RedirectToAction(nameof(Index));
         }
     }
 }

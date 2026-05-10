@@ -1,0 +1,36 @@
+@model School_Management_System.Models.ViewModels.StudentScheduleViewModel
+@{
+    ViewData["Title"] = "Class Schedule";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">Class Schedule</h1><p class="portal-subtitle">Upcoming exams and academic events for your class.</p></div></div>
+    <div class="portal-grid-2">
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Exam Schedule</h2></div>
+            <table class="portal-table">
+                <thead><tr><th>Date</th><th>Subject</th><th>Time</th><th>Room</th></tr></thead>
+                <tbody>
+                @if (!Model.Schedules.Any()) { <tr><td colspan="4" class="portal-empty">No scheduled exams yet.</td></tr> }
+                @foreach (var item in Model.Schedules)
+                {
+                    <tr><td>@item.ExamDate.ToString("dd MMM yyyy")</td><td>@item.Subject?.Name</td><td>@item.StartTime.ToString("hh\\:mm") - @item.EndTime.ToString("hh\\:mm")</td><td>@item.RoomNumber</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="portal-panel">
+            <div class="portal-panel-head"><h2 class="portal-panel-title">Academic Events</h2></div>
+            <table class="portal-table">
+                <tbody>
+                @if (!Model.Events.Any()) { <tr><td class="portal-empty">No events yet.</td></tr> }
+                @foreach (var item in Model.Events)
+                {
+                    <tr><td><strong>@item.Title</strong><div class="portal-subtitle">@item.EventDate.ToString("dd MMM yyyy") @item.Location</div></td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

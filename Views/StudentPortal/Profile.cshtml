@@ -1,0 +1,22 @@
+@model School_Management_System.Models.Student
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="portal-page">
+    <div class="portal-head"><div><h1 class="portal-title">My Profile</h1><p class="portal-subtitle">Student registration and guardian details.</p></div></div>
+    <div class="portal-card">
+        <div class="portal-avatar-row">
+            <img class="portal-photo" style="width:9rem;height:9rem;border-radius:.45rem;" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" />
+            <div>
+                <h2 style="margin:0;color:#000666;">@Model.FullName</h2>
+                <span class="portal-pill">@Model.Class?.Name</span>
+                <p class="portal-subtitle"><strong>Gender:</strong> @Model.Gender</p>
+                <p class="portal-subtitle"><strong>Date of Birth:</strong> @Model.DOB.ToString("dd MMM yyyy")</p>
+                <p class="portal-subtitle"><strong>Guardian:</strong> @Model.GuardianName (@Model.GuardianContact)</p>
+                <p class="portal-subtitle"><strong>Status:</strong> @Model.Status</p>
+            </div>
+        </div>
+    </div>
+</div>
