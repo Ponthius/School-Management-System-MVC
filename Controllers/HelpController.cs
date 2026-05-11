@@ -68,5 +68,22 @@ namespace School_Management_System.Controllers
             TempData["Success"] = "Help request submitted.";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseTicket(int id)
+        {
+            var guard = Guard(); if (guard != null) return guard;
+            if (HttpContext.Session.GetString("UserRole") != "Admin")
+                return Forbid();
+
+            var ticket = await _context.HelpTickets.FindAsync(id);
+            if (ticket == null) return NotFound();
+
+            ticket.Status = "Closed";
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Help ticket closed.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

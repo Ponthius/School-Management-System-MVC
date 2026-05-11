@@ -1,6 +1,8 @@
 ﻿@{
     var username = Context.Session.GetString("Username") ?? "admin";
     var role = Context.Session.GetString("UserRole") ?? "Admin";
+    var db = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<School_Management_System.Data.AppDbContext>(Context.RequestServices);
+    var openHelpTickets = role == "Admin" ? db.HelpTickets.Count(t => t.Status == "Open") : 0;
     var initials = username.Length >= 2 ? username[..2].ToUpper() : username.ToUpper();
     var current = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
 
@@ -213,6 +215,7 @@
             border-left: 4px solid transparent;
             transition: .18s ease;
             min-height: 39px;
+            position: relative;
         }
 
         .sms-nav-link:hover {
@@ -236,6 +239,18 @@
             font-size: 12px;
             line-height: 1.2;
             white-space: nowrap;
+        }
+
+        .sms-nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #35d66b;
+            box-shadow: 0 0 0 3px rgba(53, 214, 107, .18);
+            margin-left: auto;
+            flex-shrink: 0;
+            font-size: 0 !important;
+            line-height: 0 !important;
         }
 
         .sms-sidebar-footer {
@@ -409,9 +424,17 @@
             .sms-brand div:last-child,
             .sms-role-pill,
             .sms-nav-section,
-            .sms-nav-link span:not(.material-symbols-outlined),
+            .sms-nav-link span:not(.material-symbols-outlined):not(.sms-nav-dot),
             .sms-user-mini div:last-child {
                 display: none;
+            }
+
+            .sms-nav-dot {
+                position: absolute;
+                top: 8px;
+                right: 18px;
+                display: block;
+                margin-left: 0;
             }
 
             .sms-nav-link {
@@ -489,6 +512,10 @@
                     <div class="sms-nav-section">System</div>
                     <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
                         <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                        @if (openHelpTickets > 0)
+                        {
+                            <span class="sms-nav-dot" title="@openHelpTickets open help ticket(s)"></span>
+                        }
                     </a>
                     <a class="@Active("Settings")" href="@Url.Action("Index", "Settings")">
                         <span class="material-symbols-outlined">settings</span><span>Settings</span>
@@ -522,6 +549,10 @@
                     <div class="sms-nav-section">System</div>
                     <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
                         <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                        @if (openHelpTickets > 0)
+                        {
+                            <span class="sms-nav-dot" title="@openHelpTickets open help ticket(s)"></span>
+                        }
                     </a>
                 }
                 else
@@ -560,6 +591,10 @@
                     <div class="sms-nav-section">System</div>
                     <a class="@Active("Help")" href="@Url.Action("Index", "Help")">
                         <span class="material-symbols-outlined">contact_support</span><span>Help Center</span>
+                        @if (openHelpTickets > 0)
+                        {
+                            <span class="sms-nav-dot" title="@openHelpTickets open help ticket(s)"></span>
+                        }
                     </a>
                     <a class="@Active("Settings")" href="@Url.Action("Index", "Settings")">
                         <span class="material-symbols-outlined">settings</span><span>Settings</span>

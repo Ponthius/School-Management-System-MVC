@@ -30,15 +30,25 @@
         <div class="portal-panel">
             <div class="portal-panel-head"><h2 class="portal-panel-title">My / School Tickets</h2></div>
             <table class="portal-table">
-                <thead><tr><th>Subject</th><th>Status</th><th>Created</th></tr></thead>
+                <thead><tr><th>Subject</th><th>Status</th><th>Created</th><th style="text-align:right;">Action</th></tr></thead>
                 <tbody>
-                @if (!Model.Tickets.Any()) { <tr><td colspan="3" class="portal-empty">No help tickets yet.</td></tr> }
+                @if (!Model.Tickets.Any()) { <tr><td colspan="4" class="portal-empty">No help tickets yet.</td></tr> }
                 @foreach (var ticket in Model.Tickets)
                 {
                     <tr>
                         <td><strong>@ticket.Subject</strong><div class="portal-subtitle">@ticket.Message</div></td>
                         <td><span class="portal-pill">@ticket.Status</span></td>
                         <td>@ticket.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td style="text-align:right;">
+                            @if ((Context.Session.GetString("UserRole") ?? "") == "Admin" && ticket.Status == "Open")
+                            {
+                                <form method="post" action="@Url.Action("CloseTicket", "Help")">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@ticket.Id" />
+                                    <button class="portal-btn ghost" type="submit">Close</button>
+                                </form>
+                            }
+                        </td>
                     </tr>
                 }
                 </tbody>

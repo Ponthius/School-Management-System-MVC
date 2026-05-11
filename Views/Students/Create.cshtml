@@ -1,173 +1,309 @@
-﻿@model School_Management_System.Models.ViewModels.StudentCreateViewModel
+@model School_Management_System.Models.ViewModels.StudentCreateViewModel
 @{
     ViewData["Title"] = "Add New Student";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="max-w-3xl mx-auto">
-    <div class="mb-4">
-        <a href="/Students" class="text-xs text-indigo-600 hover:underline flex items-center gap-1">
-            <i class="bi bi-arrow-left"></i> Back to Students
-        </a>
-        <div class="text-indigo-700 text-sm font-semibold mt-1">Add New Student</div>
-        <div class="text-gray-400 text-xs">Fill in all details. Admin creates the student's login credentials.</div>
+@section Styles {
+<style>
+    .student-create {
+        --primary: #000666;
+        --border: #dfe2ec;
+        --muted: #667085;
+    }
+
+    .student-create-wrap { max-width: 980px; }
+
+    .student-create-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .back-link {
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        font-size: .82rem;
+        font-weight: 800;
+        margin-bottom: .45rem;
+    }
+
+    .student-create-title {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.45rem;
+        font-weight: 900;
+        letter-spacing: -.02em;
+    }
+
+    .student-create-subtitle {
+        margin: .35rem 0 0;
+        color: var(--muted);
+        font-size: .86rem;
+    }
+
+    .student-form { display: grid; gap: 1rem; }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: .5rem;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+        overflow: hidden;
+    }
+
+    .form-card-head {
+        padding: .85rem 1rem;
+        background: #fbfcff;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        color: var(--primary);
+        font-size: .76rem;
+        font-weight: 900;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .form-card-body { padding: 1rem; }
+
+    .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .85rem;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+        display: block;
+        color: #344054;
+        font-size: .72rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: .35rem;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        height: 2.45rem;
+        border: 1px solid #cfd5e3;
+        background: #fff;
+        border-radius: .28rem;
+        padding: .48rem .65rem;
+        font-size: .84rem;
+        color: #111827;
+        outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0, 6, 102, .08);
+    }
+
+    .validation-text {
+        color: #ba1a1a;
+        display: block;
+        font-size: .72rem;
+        font-weight: 700;
+        margin-top: .25rem;
+    }
+
+    .photo-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .photo-preview {
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e5e7eb;
+        background: #f8fafc;
+    }
+
+    .hint {
+        color: #8a93a5;
+        font-size: .76rem;
+        margin-top: .35rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: .65rem;
+        flex-wrap: wrap;
+        margin-top: .25rem;
+    }
+
+    .student-btn {
+        min-height: 2.35rem;
+        border: 0;
+        border-radius: .28rem;
+        padding: .55rem 1rem;
+        font-size: .82rem;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .student-btn.primary { background: var(--primary); color: #fff; }
+    .student-btn.ghost { background: #fff; color: var(--primary); border: 1px solid var(--border); }
+
+    @@media (max-width: 760px) {
+        .field-grid { grid-template-columns: 1fr; }
+    }
+</style>
+}
+
+<div class="student-create student-create-wrap">
+    <div class="student-create-head">
+        <div>
+            <a href="@Url.Action("Index", "Students")" class="back-link">
+                <i class="bi bi-arrow-left"></i>
+                Back to Students
+            </a>
+            <h1 class="student-create-title">Add New Student</h1>
+            <p class="student-create-subtitle">Fill in all details. Admin creates the student's login credentials.</p>
+        </div>
     </div>
 
-    <form asp-action="Create" asp-controller="Students"
-          method="post" enctype="multipart/form-data">
+    <form class="student-form" asp-action="Create" asp-controller="Students" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
 
-        <!-- Login credentials -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
-            <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <i class="bi bi-key-fill text-indigo-500"></i> Login Credentials
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Username</label>
-                    <input asp-for="Username" class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50"
-                           placeholder="e.g. john.doe2025" />
-                    <span asp-validation-for="Username" class="text-red-500 text-xs"></span>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Password</label>
-                    <input asp-for="Password" type="password"
-                           class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50"
-                           placeholder="Min 6 characters" />
-                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+        <section class="form-card">
+            <div class="form-card-head"><i class="bi bi-key-fill"></i> Login Credentials</div>
+            <div class="form-card-body">
+                <div class="field-grid">
+                    <div class="field">
+                        <label asp-for="Username">Username</label>
+                        <input asp-for="Username" placeholder="e.g. john.doe2025" />
+                        <span asp-validation-for="Username" class="validation-text"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Password">Password</label>
+                        <input asp-for="Password" type="password" placeholder="Min 6 characters" />
+                        <span asp-validation-for="Password" class="validation-text"></span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Personal info -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
-            <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <i class="bi bi-person-fill text-indigo-500"></i> Personal Information
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2">
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Full Name</label>
-                    <input asp-for="FullName"
-                           class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50"
-                           placeholder="First and last name" />
-                    <span asp-validation-for="FullName" class="text-red-500 text-xs"></span>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Gender</label>
-                    <select asp-for="Gender"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2
-                        text-sm outline-none focus:border-indigo-400 bg-gray-50">
-                        <option value="">— Select —</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                    <span asp-validation-for="Gender" class="text-red-500 text-xs"></span>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Date of Birth</label>
-                    <input asp-for="DOB" type="date"
-                           class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50" />
-                    <span asp-validation-for="DOB" class="text-red-500 text-xs"></span>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Class</label>
-                    <select asp-for="ClassId" asp-items="ViewBag.Classes"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2
-                        text-sm outline-none focus:border-indigo-400 bg-gray-50">
-                        <option value="">Select class</option>
-                    </select>
-                    <span asp-validation-for="ClassId" class="text-red-500 text-xs"></span>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Status</label>
-                    <select asp-for="Status"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2
-                        text-sm outline-none focus:border-indigo-400 bg-gray-50">
-                        <option value="New">New</option>
-                        <option value="Continuing">Continuing</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Term</label>
-                    <select asp-for="Term"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2
-                        text-sm outline-none focus:border-indigo-400 bg-gray-50">
-                        <option value="">— Select —</option>
-                        <option value="Term 1">Term 1</option>
-                        <option value="Term 2">Term 2</option>
-                        <option value="Term 3">Term 3</option>
-                    </select>
+        <section class="form-card">
+            <div class="form-card-head"><i class="bi bi-person-fill"></i> Personal Information</div>
+            <div class="form-card-body">
+                <div class="field-grid">
+                    <div class="field full">
+                        <label asp-for="FullName">Full Name</label>
+                        <input asp-for="FullName" placeholder="First and last name" />
+                        <span asp-validation-for="FullName" class="validation-text"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Gender">Gender</label>
+                        <select asp-for="Gender">
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="validation-text"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="DOB">Date of Birth</label>
+                        <input asp-for="DOB" type="date" />
+                        <span asp-validation-for="DOB" class="validation-text"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="ClassId">Class</label>
+                        <select asp-for="ClassId" asp-items="ViewBag.Classes">
+                            <option value="">Select class</option>
+                        </select>
+                        <span asp-validation-for="ClassId" class="validation-text"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Status">Status</label>
+                        <select asp-for="Status">
+                            <option value="New">New</option>
+                            <option value="Continuing">Continuing</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Term">Term</label>
+                        <select asp-for="Term">
+                            <option value="">Select term</option>
+                            <option value="Term 1">Term 1</option>
+                            <option value="Term 2">Term 2</option>
+                            <option value="Term 3">Term 3</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Guardian info -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
-            <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <i class="bi bi-people-fill text-indigo-500"></i> Guardian Information
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Guardian Name</label>
-                    <input asp-for="GuardianName"
-                           class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50"
-                           placeholder="Full name" />
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-600 block mb-1">Guardian Contact</label>
-                    <input asp-for="GuardianContact"
-                           class="w-full border border-gray-200 rounded-lg px-3 py-2
-                    text-sm outline-none focus:border-indigo-400 bg-gray-50"
-                           placeholder="+256 700 000000" />
+        <section class="form-card">
+            <div class="form-card-head"><i class="bi bi-people-fill"></i> Guardian Information</div>
+            <div class="form-card-body">
+                <div class="field-grid">
+                    <div class="field">
+                        <label asp-for="GuardianName">Guardian Name</label>
+                        <input asp-for="GuardianName" placeholder="Full name" />
+                    </div>
+                    <div class="field">
+                        <label asp-for="GuardianContact">Guardian Contact</label>
+                        <input asp-for="GuardianContact" placeholder="+256 700 000000" />
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Photo upload -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
-            <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <i class="bi bi-camera-fill text-indigo-500"></i> Student Photo
-            </div>
-            <div class="flex items-center gap-4">
-                <img id="photoPreview" src="/images/default-avatar.png"
-                     class="w-16 h-16 rounded-full object-cover border-2 border-gray-200" />
-                <div>
-                    <input type="file" asp-for="Photo" accept="image/*"
-                           class="text-xs text-gray-600"
-                           onchange="previewPhoto(this)" />
-                    <div class="text-xs text-gray-400 mt-1">JPG, PNG — max 2MB</div>
+        <section class="form-card">
+            <div class="form-card-head"><i class="bi bi-camera-fill"></i> Student Photo</div>
+            <div class="form-card-body">
+                <div class="photo-row">
+                    <img id="photoPreview" src="/images/default-avatar.png" class="photo-preview" alt="Student preview" />
+                    <div class="field" style="min-width:260px;">
+                        <label asp-for="Photo">Upload Photo</label>
+                        <input asp-for="Photo" type="file" accept="image/*" onchange="previewPhoto(this)" />
+                        <div class="hint">JPG or PNG recommended.</div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Actions -->
-        <div class="flex justify-end gap-3">
-            <a href="/Students/Index"
-                   class="text-xs px-5 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600">
-                Cancel
-            </a>
-            <button type="submit"
-                    class="text-xs px-6 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900">
-                <i class="bi bi-check-lg me-1"></i> Save Student
+        <div class="form-actions">
+            <a href="@Url.Action("Index", "Students")" class="student-btn ghost">Cancel</a>
+            <button type="submit" class="student-btn primary">
+                <i class="bi bi-check-lg"></i>
+                Save Student
             </button>
         </div>
-
     </form>
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         function previewPhoto(input) {
-          if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = e => document.getElementById('photoPreview').src = e.target.result;
-            reader.readAsDataURL(input.files[0]);
-          }
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => document.getElementById('photoPreview').src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     </script>
 }
