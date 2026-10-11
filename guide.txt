@@ -1,0 +1,50 @@
+SCHOOL MANAGEMENT SYSTEM - QUICK COMMANDS
+(run everything from the folder containing "School Management System.csproj")
+
+--- 1. CONNECTION STRING (appsettings.json) ---
+"DefaultConnection": "Server=POEL-WORKSAPCE\\SQLEXPRESS;Database=SchoolManagementDB;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=true"
+
+--- 2. ONE-TIME SETUP ---
+dotnet tool install --global dotnet-ef
+dotnet restore
+dotnet build
+dotnet ef database update
+
+--- 3. START SERVER ---
+dotnet run
+(or hot reload:)
+dotnet watch run
+
+Open: http://localhost:5168   or   https://localhost:7277
+Login: admin / admin123
+Stop:  Ctrl + C
+
+--- 4. AFTER CHANGING A MODEL ---
+dotnet ef migrations add NameOfChange
+dotnet ef database update
+
+--- 5. DATABASE RESET (DELETES ALL DATA) ---
+dotnet ef database drop
+dotnet ef database update
+
+--- 6. OTHER USEFUL ---
+dotnet --version
+dotnet ef migrations list
+dotnet ef database update PreviousMigrationName
+dotnet ef migrations remove
+dotnet dev-certs https --trust
+
+--- QUICK FIXES ---
+Can't connect to server  -> check server name above (double \\ in JSON), start SQL Server (SQLEXPRESS) in services.msc
+Cannot open database     -> dotnet ef database update
+dotnet ef not found      -> dotnet tool install --global dotnet-ef (reopen terminal)
+Port in use              -> change applicationUrl in Properties/launchSettings.json
+HTTPS warning            -> dotnet dev-certs https --trust
+
+--- HOW IT FLOWS (SHORT) ---
+Login (/Account/Login) -> checks Users table -> saves role in session
+  Admin   -> /Dashboard/Admin   (students, teachers, classes/subjects, attendance, exams, results, payments, calendar, settings)
+  Teacher -> /Dashboard/Teacher (classes, attendance, marks, materials, assignments)
+  Student -> /Dashboard/Student (results, fees, schedule, materials, notices)
+
+First-time data order (admin): Classes & Subjects -> Teachers -> Students -> Exams -> Calendar -> Payments
