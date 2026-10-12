@@ -55,7 +55,11 @@ namespace School_Management_System.Controllers
 
             ViewBag.TotalStudents = _context.Students.Count();
             ViewBag.NewEnrolments = _context.Students.Count(s => s.Status == "New");
-            ViewBag.AttendanceAlerts = 18;
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            ViewBag.AttendanceAlerts = _context.AttendanceRecords
+                .Count(a => a.AttendanceDate >= today && a.AttendanceDate < tomorrow
+                         && (a.Status == "Absent" || a.Status == "Late"));
             ViewBag.UnpaidFees = _context.Payments.Count(p => p.Status == "Pending");
 
             ViewBag.Classes = new SelectList(_context.Classes.ToList(), "Id", "Name", classId);
