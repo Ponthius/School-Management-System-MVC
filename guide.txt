@@ -48,3 +48,22 @@ Login (/Account/Login) -> checks Users table -> saves role in session
   Student -> /Dashboard/Student (results, fees, schedule, materials, notices)
 
 First-time data order (admin): Classes & Subjects -> Teachers -> Students -> Exams -> Calendar -> Payments
+
+Create the classes first, then the teachers, then the students. This comes from how the code handles each one.
+
+What each one depends on
+
+Class: a class can be created with no teacher. Class.TeacherId is optional, so it has no dependency on anything.
+Teacher: if you tick “is class teacher”, the form requires you to pick an existing class. If you don’t, it shows “Select the class this teacher heads”. The primary class is optional. The subject checkboxes come from the Subjects list, and the form says “Add subjects first” if that list is empty.
+Student: a class is required. ClassId is not nullable and the form validates it. A teacher is not needed.
+
+So classes and subjects have to come before teachers, and classes also have to come before students.
+
+Recommended order
+
+Subjects (Classes & Subjects page): create these so the teacher form has subject checkboxes to pick from.
+Classes (same page): create them without a teacher.
+Teachers: while creating each one, tick “class teacher” and pick the class they head. That assigns them in one step. Alternatively, use the Assign Teacher button on the Classes & Subjects page later.
+Add subjects to each class (Classes & Subjects page).
+Students: pick their class in the form.
+After that, create the exam terms and schedules, then attendance, results and payments.
