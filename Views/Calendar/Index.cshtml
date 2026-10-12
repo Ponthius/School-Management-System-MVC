@@ -9,7 +9,7 @@
     <div class="portal-head">
         <div>
             <h1 class="portal-title">Academic Calendar</h1>
-            <p class="portal-subtitle">Manage school-wide dates, events, and campus notices.</p>
+            <p class="portal-subtitle">Manage school wide dates, events, and school notices.</p>
         </div>
     </div>
 
@@ -56,7 +56,7 @@
         </div>
 
         <div class="portal-panel">
-            <div class="portal-panel-head"><h2 class="portal-panel-title">Campus Notices</h2></div>
+            <div class="portal-panel-head"><h2 class="portal-panel-title">School Notices</h2></div>
             <form method="post" action="@Url.Action("SaveNotice", "Calendar")" style="padding:1rem;">
                 @Html.AntiForgeryToken()
                 <div class="portal-field"><label>Title</label><input class="portal-input" name="Title" required /></div>
