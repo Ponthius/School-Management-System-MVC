@@ -93,13 +93,23 @@ namespace School_Management_System.Controllers
                 DailyAttendancePercent = dailyAttendancePercent,
                 StaffAvailabilityPercent = staffAvail,
                 RecentActivity = recentActivity,
-                UpcomingEvents = new List<UpcomingEvent>
-                {
-                    new() { Month="OCT", Day="12", Title="Annual Sports Meet",
-                            Location="Main Stadium", Time="09:00 AM" },
-                    new() { Month="OCT", Day="15", Title="PTA Meeting.",
-                            Location="Virtual Session", Time="02:00 PM" }
-                }
+                UpcomingEvents = _context.AcademicCalendarEvents
+                    .Where(e => e.EventDate >= DateTime.Today)
+                    .OrderBy(e => e.EventDate)
+                    .ThenBy(e => e.StartTime)
+                    .Take(3)
+                    .AsEnumerable()
+                    .Select(e => new UpcomingEvent
+                    {
+                        Month    = e.EventDate.ToString("MMM").ToUpper(),
+                        Day      = e.EventDate.Day.ToString(),
+                        Title    = e.Title,
+                        Location = string.IsNullOrWhiteSpace(e.Location) ? "TBA" : e.Location,
+                        Time     = e.StartTime.HasValue
+                                       ? DateTime.Today.Add(e.StartTime.Value).ToString("hh:mm tt")
+                                       : "All day"
+                    })
+                    .ToList()
             };
 
             return View(vm);

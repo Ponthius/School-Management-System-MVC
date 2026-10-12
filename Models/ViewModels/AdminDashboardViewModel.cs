@@ -14,7 +14,7 @@
         public int RoomOccupancyPercent { get; set; }
         public int MonthlyGoalPercent { get; set; }
 
-        // Academic Pulse
+        // Academic Records
         public int DailyAttendancePercent { get; set; }
         public int StaffAvailabilityPercent { get; set; }
 

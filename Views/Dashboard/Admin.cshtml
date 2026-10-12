@@ -471,7 +471,7 @@
             <div class="dash-panel-head">
                 <h2 class="dash-panel-title">
                     <span class="material-symbols-outlined">monitoring</span>
-                    Academic Pulse
+                    Academic Stats
                 </h2>
             </div>
             <div class="pulse-body">
@@ -499,6 +499,10 @@
 
         <div class="event-panel">
             <div class="event-title">Upcoming Events</div>
+            @if (!Model.UpcomingEvents.Any())
+            {
+                <div class="event-meta">No upcoming events. Add one from the Calendar page.</div>
+            }
             @foreach (var ev in Model.UpcomingEvents)
             {
                 <div class="event-item">
