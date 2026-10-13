@@ -23,5 +23,8 @@
     <PackageReference Include="NuGet.Protocol" Version="6.12.5" />
     <PackageReference Include="NuGet.Packaging" Version="6.12.5" />
   </ItemGroup>
+  <ItemGroup>
+  <Watch Remove="wwwroot\uploads\**" />
+</ItemGroup>
 
 </Project>
