@@ -4,192 +4,220 @@
 }
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login — Brait Inc SMS</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0d1b6e 0%, #1a2fa0 50%, #0d1b6e 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-        }
+            body {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #0d1b6e 0%, #1a2fa0 50%, #0d1b6e 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Segoe UI', sans-serif;
+            }
 
-        .login-card {
-            background: #fff;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 440px;
-            padding: 2.5rem 2rem 2rem;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-        }
+            .login-card {
+                background: #fff;
+                border-radius: 12px;
+                width: 100%;
+                max-width: 440px;
+                padding: 2.5rem 2rem 2rem;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+            }
 
-        .brand-icon {
-            width: 52px; height: 52px;
-            background: #1a2fa0;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 1rem;
-        }
+            .brand-icon {
+                width: 52px;
+                height: 52px;
+                background: #1a2fa0;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+            }
 
-        .brand-icon i { color: #fff; font-size: 1.5rem; }
+            .brand-icon i {
+                color: #fff;
+                font-size: 1.5rem;
+            }
 
-        .brand-name {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a2fa0;
-            margin-bottom: 0.1rem;
-        }
+            .brand-name {
+                text-align: center;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1a2fa0;
+                margin-bottom: 0.1rem;
+            }
 
-        .brand-sub {
-            text-align: center;
-            font-size: 0.72rem;
-            letter-spacing: 0.12em;
-            color: #6b7280;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
+            .brand-sub {
+                text-align: center;
+                font-size: 0.72rem;
+                letter-spacing: 0.12em;
+                color: #6b7280;
+                text-transform: uppercase;
+                margin-bottom: 1.5rem;
+            }
 
-        .divider { border-top: 1px solid #e5e7eb; margin-bottom: 1.5rem; }
+            .divider {
+                border-top: 1px solid #e5e7eb;
+                margin-bottom: 1.5rem;
+            }
 
-        .login-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #111827;
-            text-align: center;
-            margin-bottom: 0.25rem;
-        }
+            .login-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #111827;
+                text-align: center;
+                margin-bottom: 0.25rem;
+            }
 
-        .login-sub {
-            font-size: 0.85rem;
-            color: #6b7280;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
+            .login-sub {
+                font-size: 0.85rem;
+                color: #6b7280;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
 
-        .form-label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.4rem;
-        }
+            .form-label {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: #374151;
+                margin-bottom: 0.4rem;
+            }
 
-        .input-group-text {
-            background: #f9fafb;
-            border-right: none;
-            color: #9ca3af;
-            border-color: #d1d5db;
-        }
+            .input-group-text {
+                background: #f9fafb;
+                border-right: none;
+                color: #9ca3af;
+                border-color: #d1d5db;
+            }
 
-        .form-control {
-            border-left: none;
-            border-color: #d1d5db;
-            font-size: 0.9rem;
-            background: #f9fafb;
-        }
+            .form-control {
+                border-left: none;
+                border-color: #d1d5db;
+                font-size: 0.9rem;
+                background: #f9fafb;
+            }
 
-        .form-control:focus {
-            box-shadow: none;
-            border-color: #1a2fa0;
-            background: #fff;
-        }
+            .form-control:focus {
+                box-shadow: none;
+                border-color: #1a2fa0;
+                background: #fff;
+            }
 
-        .input-group:focus-within .input-group-text {
-            border-color: #1a2fa0;
-            background: #fff;
-        }
+            .input-group:focus-within .input-group-text {
+                border-color: #1a2fa0;
+                background: #fff;
+            }
 
-        .toggle-password {
-            cursor: pointer;
-            background: #f9fafb;
-            border-left: none;
-            border-color: #d1d5db;
-            color: #9ca3af;
-        }
+            .toggle-password {
+                cursor: pointer;
+                background: #f9fafb;
+                border-left: none;
+                border-color: #d1d5db;
+                color: #9ca3af;
+            }
 
-        .forgot-link {
-            font-size: 0.82rem;
-            color: #1a2fa0;
-            text-decoration: none;
-            float: right;
-            margin-top: -1.8rem;
-        }
+            .forgot-link {
+                font-size: 0.82rem;
+                color: #1a2fa0;
+                text-decoration: none;
+                float: right;
+                margin-top: -1.8rem;
+            }
 
-        .forgot-link:hover { text-decoration: underline; }
+            .forgot-link:hover {
+                text-decoration: underline;
+            }
 
-        .form-check-label { font-size: 0.85rem; color: #6b7280; }
+            .form-check-label {
+                font-size: 0.85rem;
+                color: #6b7280;
+            }
 
-        .btn-signin {
-            background: #1a2fa0;
-            border: none;
-            color: #fff;
-            width: 100%;
-            padding: 0.7rem;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: background 0.2s;
-        }
+            .btn-signin {
+                background: #1a2fa0;
+                border: none;
+                color: #fff;
+                width: 100%;
+                padding: 0.7rem;
+                border-radius: 6px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                transition: background 0.2s;
+            }
 
-        .btn-signin:hover { background: #152580; color: #fff; }
+            .btn-signin:hover {
+                background: #152580;
+                color: #fff;
+            }
 
-        .help-text {
-            text-align: center;
-            font-size: 0.82rem;
-            color: #6b7280;
-            margin-top: 1.25rem;
-        }
+            .help-text {
+                text-align: center;
+                font-size: 0.82rem;
+                color: #6b7280;
+                margin-top: 1.25rem;
+            }
 
-        .help-text a { color: #1a2fa0; text-decoration: none; }
-        .help-text a:hover { text-decoration: underline; }
+            .help-text a {
+                color: #1a2fa0;
+                text-decoration: none;
+            }
 
-        .alert-danger {
-            font-size: 0.85rem;
-            border-radius: 6px;
-            padding: 0.6rem 0.9rem;
-            margin-bottom: 1rem;
-        }
+            .help-text a:hover {
+                text-decoration: underline;
+            }
 
-        .status-bar {
-            display: flex;
-            gap: 10px;
-            margin-top: 1.5rem;
-        }
+            .alert-danger {
+                font-size: 0.85rem;
+                border-radius: 6px;
+                padding: 0.6rem 0.9rem;
+                margin-bottom: 1rem;
+            }
 
-        .status-pill {
-            background: rgba(255,255,255,0.12);
-            color: #e5e7eb;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            padding: 0.3rem 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
+            .status-bar {
+                display: flex;
+                gap: 10px;
+                margin-top: 1.5rem;
+            }
 
-        .status-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: #22c55e;
-            display: inline-block;
-        }
+            .status-pill {
+                background: rgba(255, 255, 255, 0.12);
+                color: #e5e7eb;
+                border-radius: 999px;
+                font-size: 0.75rem;
+                padding: 0.3rem 0.85rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #22c55e;
+                display: inline-block;
+            }
     </style>
 </head>
+
 <body>
 
     <div class="login-card">
@@ -225,9 +253,7 @@
                     <span class="input-group-text">
                         <i class="bi bi-person"></i>
                     </span>
-                    <input asp-for="Username"
-                           class="form-control"
-                           placeholder="Enter admin username"
+                    <input asp-for="Username" class="form-control" placeholder="Enter admin username"
                            autocomplete="username" />
                 </div>
                 <span asp-validation-for="Username" class="text-danger small"></span>
@@ -240,15 +266,9 @@
                     <span class="input-group-text">
                         <i class="bi bi-lock"></i>
                     </span>
-                    <input asp-for="Password"
-                           type="password"
-                           id="passwordInput"
-                           class="form-control"
-                           placeholder="••••••••"
-                           autocomplete="current-password" />
-                    <button type="button"
-                            class="btn toggle-password border"
-                            onclick="togglePassword()">
+                    <input asp-for="Password" type="password" id="passwordInput" class="form-control"
+                           placeholder="••••••••" autocomplete="current-password" />
+                    <button type="button" class="btn toggle-password border" onclick="togglePassword()">
                         <i class="bi bi-eye" id="eyeIcon"></i>
                     </button>
                 </div>
@@ -274,14 +294,16 @@
         </form>
 
         <div class="help-text">
-            Need help? <a href="#">Contact System Administrator</a>
-        </div>
-
+            Need help? <a href="mailto:ponthiuspaul@gmail.com?subject=System%20Administrator%20Support">
+            Contact System Administrator
+        </a>
     </div>
 
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
         function togglePassword() {
             const input = document.getElementById('passwordInput');
             const icon = document.getElementById('eyeIcon');
@@ -293,7 +315,8 @@
                 icon.classList.replace('bi-eye-slash', 'bi-eye');
             }
         }
-    </script>
+</script>
 
 </body>
+
 </html>
