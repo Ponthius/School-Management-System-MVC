@@ -1,4 +1,4 @@
-﻿@model School_Management_System.Models.Student
+@model School_Management_System.Models.Student
 @{
     ViewData["Title"] = "Student Details";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -6,92 +6,56 @@
 
 @section Styles {
 <style>
-    .max-w-2xl { max-width: 760px; margin: 0 auto; }
-    .max-w-2xl .bg-white { background: #fff; border: 1px solid #dfe2ec; border-radius: 12px; overflow: hidden; }
-    .max-w-2xl .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .max-w-2xl .grid { display: grid; }
-    .max-w-2xl .p-5 { padding: 1.25rem; }
-    @@media (max-width: 600px) { .max-w-2xl .grid-cols-2 { grid-template-columns: 1fr; } }
+    .student-detail { max-width: 900px; margin: 0 auto; }
+    .student-detail-head { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
+    .student-detail-back { color:#000666; font-size:.85rem; font-weight:700; text-decoration:none; }
+    .student-detail-back:hover { text-decoration:underline; }
+    .student-detail-actions { display:flex; gap:.6rem; }
+    .student-detail-btn { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem .9rem; border-radius:8px; font-size:.8rem; font-weight:700; text-decoration:none; }
+    .student-detail-btn.edit { border:1px solid #f2c078; color:#9a5b00; background:#fffaf0; }
+    .student-detail-card { overflow:hidden; background:#fff; border:1px solid #dfe2ec; border-radius:14px; box-shadow:0 4px 16px rgba(15,23,42,.06); }
+    .student-detail-banner { display:flex; align-items:center; gap:1rem; padding:1.5rem 1.75rem; background:linear-gradient(120deg,#000666,#243b9b); color:#fff; }
+    .student-detail-photo { width:78px; height:78px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.65); background:#fff; }
+    .student-detail-name { margin:0; font-size:1.35rem; font-weight:800; }
+    .student-detail-class { margin:.25rem 0 .6rem; color:#dbe3ff; font-size:.9rem; }
+    .student-detail-status { display:inline-block; padding:.25rem .65rem; border-radius:999px; background:rgba(255,255,255,.16); color:#fff; font-size:.72rem; font-weight:800; text-transform:uppercase; }
+    .student-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem 2rem; padding:1.5rem 1.75rem; }
+    .student-detail-field label { display:block; margin-bottom:.3rem; color:#667085; font-size:.7rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .student-detail-field span { color:#1d2939; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; }
+    @@media (max-width:600px) { .student-detail-grid { grid-template-columns:1fr; gap:1rem; padding:1.25rem; } .student-detail-banner { padding:1.25rem; } }
 </style>
 }
 
-<div class="max-w-2xl mx-auto">
-    <div class="mb-4 flex items-center justify-between">
-        <a href="/Students" class="text-xs text-indigo-600 hover:underline flex items-center gap-1">
-            <i class="bi bi-arrow-left"></i> Back to Students
-        </a>
-        <div class="flex gap-2">
-            <a href="/Students/Edit/@Model.Id"
-                   class="text-xs px-4 py-1.5 border border-amber-300 text-amber-600
-                rounded-lg hover:bg-amber-50 flex items-center gap-1">
-                <i class="bi bi-pencil"></i> Edit
-            </a>
+<div class="student-detail">
+    <div class="student-detail-head">
+        <a class="student-detail-back" href="/Students"><i class="bi bi-arrow-left"></i> Back to Students</a>
+        <div class="student-detail-actions">
+            <a class="student-detail-btn edit" href="/Students/Edit/@Model.Id"><i class="bi bi-pencil"></i> Edit Student</a>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <!-- Header band -->
-        <div class="bg-indigo-800 px-6 py-5 flex items-center gap-4">
-            <img src="@Model.PhotoPath"
-                 onerror="this.src='/images/default-avatar.png'"
-                 class="w-16 h-16 rounded-full object-cover border-2 border-white/30" />
+    <article class="student-detail-card">
+        <header class="student-detail-banner">
+            <img class="student-detail-photo" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.FullName" />
             <div>
-                <div class="text-white font-bold text-lg">@Model.FullName</div>
-                <div class="text-indigo-200 text-xs">@(Model.Class?.Name ?? "No class assigned")</div>
-                <span class="mt-1 inline-block text-xs font-semibold px-2 py-0.5 rounded-full
-                    @(Model.Status == "Continuing"
-                                    ? "bg-green-400/20 text-green-200"
-                                    : "bg-amber-400/20 text-amber-200")">
-                    @Model.Status
-                </span>
+                <h1 class="student-detail-name">@Model.FullName</h1>
+                <div class="student-detail-class">@(Model.Class?.Name ?? "No class assigned")</div>
+                <span class="student-detail-status">@Model.Status</span>
             </div>
-        </div>
+        </header>
 
-        <!-- Details grid -->
-        <div class="p-5 grid grid-cols-2 gap-x-6 gap-y-4">
-            @{
-                void Row(string label, string value)
-                {
-                    <div>
-                        <div class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">@label</div>
-                        <div class="text-sm text-gray-800 font-medium">@value</div>
-                    </div>
-              ;
-                }
-            }
-            @{
-                Row("Full Name", Model.FullName);
-            }
-            @{
-                Row("LIN", string.IsNullOrWhiteSpace(Model.LIN) ? "Not yet assigned" : Model.LIN);
-            }
-            @{
-                Row("Gender", Model.Gender);
-            }
-            @{
-                Row("Date of Birth", Model.DOB.ToString("dd MMM yyyy"));
-            }
-            @{
-                Row("Class", Model.Class?.Name ?? "—");
-            }
-            @{
-                Row("Status", Model.Status);
-            }
-            @{
-                Row("Term", Model.Term);
-            }
-            @{
-                Row("Guardian Name", Model.GuardianName);
-            }
-            @{
-                Row("Guardian Contact", Model.GuardianContact);
-            }
-            @{
-                Row("Enrolled", Model.EnrolledDate.ToString("dd MMM yyyy"));
-            }
-            @{
-                Row("Login Username", Model.User?.Username ?? "—");
-            }
+        <div class="student-detail-grid">
+            <div class="student-detail-field"><label>Full Name</label><span>@Model.FullName</span></div>
+            <div class="student-detail-field"><label>LIN</label><span>@(string.IsNullOrWhiteSpace(Model.LIN) ? "Not yet assigned" : Model.LIN)</span></div>
+            <div class="student-detail-field"><label>Gender</label><span>@Model.Gender</span></div>
+            <div class="student-detail-field"><label>Date of Birth</label><span>@Model.DOB.ToString("dd MMM yyyy")</span></div>
+            <div class="student-detail-field"><label>Class</label><span>@(Model.Class?.Name ?? "No class assigned")</span></div>
+            <div class="student-detail-field"><label>Status</label><span>@Model.Status</span></div>
+            <div class="student-detail-field"><label>Term</label><span>@(string.IsNullOrWhiteSpace(Model.Term) ? "—" : Model.Term)</span></div>
+            <div class="student-detail-field"><label>Guardian Name</label><span>@(string.IsNullOrWhiteSpace(Model.GuardianName) ? "—" : Model.GuardianName)</span></div>
+            <div class="student-detail-field"><label>Guardian Contact</label><span>@(string.IsNullOrWhiteSpace(Model.GuardianContact) ? "—" : Model.GuardianContact)</span></div>
+            <div class="student-detail-field"><label>Enrolled</label><span>@Model.EnrolledDate.ToString("dd MMM yyyy")</span></div>
+            <div class="student-detail-field"><label>Login Username</label><span>@(Model.User?.Username ?? "—")</span></div>
         </div>
-    </div>
+    </article>
 </div>
