@@ -49,7 +49,7 @@
                 <button class="portal-btn primary" type="submit"><i class="bi bi-save"></i> Submit Attendance</button>
             </div>
             <table class="portal-table">
-                <thead><tr><th>Student</th><th>Status</th><th>Remarks / Notes</th></tr></thead>
+                <thead><tr><th>Student</th><th>Status</th><th>Remarks / Notes (optional)</th></tr></thead>
                 <tbody>
                 @if (!Model.Students.Any()) { <tr><td colspan="3" class="portal-empty">No students found for this class.</td></tr> }
                 @for (var i = 0; i < Model.Students.Count; i++)
@@ -71,7 +71,7 @@
                                 }
                             </select>
                         </td>
-                        <td><input class="portal-input" name="Rows[@i].Notes" value="@row.Notes" placeholder="Add a note..." /></td>
+                        <td><input class="portal-input" name="Rows[@i].Notes" value="@row.Notes" placeholder="Optional note" /></td>
                     </tr>
                 }
                 </tbody>
