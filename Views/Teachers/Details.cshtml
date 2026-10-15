@@ -3,100 +3,175 @@
     ViewData["Title"] = "Teacher Profile";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var headClassName = ViewBag.HeadClassName as string;
-    var subjects = Model.AssignedSubjects
+    var subjects = (Model.AssignedSubjects ?? "")
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
         .Select(s => s.Trim())
         .Where(s => s.Length > 0)
         .ToList();
+    var statusKey = (Convert.ToString(Model.Status) ?? "").ToLowerInvariant().Replace(" ", "-");
 }
 
-<div style="max-width:680px;margin:0 auto">
-    <div style="margin-bottom:1rem;display:flex;
-                align-items:center;justify-content:space-between">
-        <a href="/Teachers"
-           style="font-size:.78rem;color:#1e2a78;text-decoration:none;
-                  display:inline-flex;align-items:center;gap:.3rem">
-            <i class="bi bi-arrow-left"></i> Back to Teachers
-        </a>
-        <a href="/Teachers/Edit/@Model.Id"
-           style="border:1px solid #d97706;color:#d97706;border-radius:.25rem;
-                  padding:.38rem .85rem;font-size:.78rem;font-weight:600;
-                  text-decoration:none;display:inline-flex;align-items:center;gap:.3rem">
-            <i class="bi bi-pencil"></i> Edit
-        </a>
-    </div>
+@section Styles {
+<style>
+    .tp { max-width: 1040px; margin: 0 auto; }
 
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:.4rem;overflow:hidden">
-        <!-- Header band -->
-        <div style="background:#1e2a78;padding:1.4rem 1.5rem;
-                    display:flex;align-items:center;gap:1rem">
-            <img src="@Model.PhotoPath"
-                 onerror="this.src='/images/default-avatar.png'"
-                 style="width:3.8rem;height:3.8rem;border-radius:50%;
-                        object-fit:cover;border:2px solid rgba(255,255,255,.3)"/>
-            <div>
-                <div style="color:#fff;font-size:1.1rem;font-weight:700">
-                    @Model.FullName
-                </div>
-                <div style="color:rgba(255,255,255,.65);font-size:.8rem">
-                    @Model.Email
-                </div>
-                <span style="margin-top:.35rem;display:inline-block;font-size:.7rem;
-                             font-weight:700;padding:.18rem .55rem;border-radius:999px;
-                             background:@(Model.Status=="Active"
-                                ? "rgba(34,197,94,.2)" : "rgba(239,68,68,.2)");
-                             color:@(Model.Status=="Active" ? "#86efac" : "#fca5a5")">
-                    @Model.Status
-                </span>
+    /* breadcrumb */
+    .tp-crumbs { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.85rem; color:#7a8199; }
+    .tp-crumbs a { color:#000666; text-decoration:none; font-weight:600; }
+    .tp-crumbs a:hover { text-decoration:underline; }
+
+    /* profile header */
+    .tp-profile { background:#fff; border:1px solid #e3e6ef; border-radius:12px; box-shadow:0 1px 3px rgba(16,24,40,.06); overflow:hidden; margin-bottom:1.25rem; }
+    .tp-head { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 1.75rem 1.25rem; flex-wrap:wrap; }
+    .tp-photo { width:112px; height:112px; border-radius:50%; object-fit:cover; background:#fff; border:1px solid #e3e6ef; box-shadow:0 2px 8px rgba(16,24,40,.12); }
+    .tp-id { flex:1; min-width:200px; padding-top:.9rem; }
+    .tp-name { margin:0; font-size:1.45rem; font-weight:700; color:#101828; line-height:1.2; }
+    .tp-sub { margin-top:.3rem; display:flex; align-items:center; gap:.65rem; flex-wrap:wrap; color:#667085; font-size:.9rem; }
+    .tp-pill { display:inline-flex; align-items:center; gap:.4rem; padding:.18rem .65rem .18rem .5rem; border-radius:999px; font-size:.78rem; font-weight:600; background:#eef1f8; color:#475467; }
+    .tp-pill::before { content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+    .tp-pill.active { background:#e3f8ec; color:#13794a; }
+    .tp-pill.inactive, .tp-pill.suspended, .tp-pill.terminated { background:#fde8e8; color:#b42318; }
+    .tp-pill.on-leave { background:#fff3dd; color:#9a5b00; }
+
+    .tp-actions { padding-top:.9rem; }
+    .tp-btn { display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1rem; border-radius:8px; font-size:.85rem; font-weight:600; text-decoration:none; background:#000666; color:#fff; border:1px solid #000666; }
+    .tp-btn:hover { background:#0a1180; color:#fff; }
+
+    /* quick facts strip */
+    .tp-facts { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid #e9ecf3; }
+    .tp-fact { padding:.9rem 1.75rem; border-right:1px solid #e9ecf3; }
+    .tp-fact:last-child { border-right:0; }
+    .tp-fact small { display:block; color:#7a8199; font-size:.78rem; margin-bottom:.15rem; }
+    .tp-fact b { color:#101828; font-size:.95rem; font-weight:600; }
+
+    /* body columns */
+    .tp-cols { display:grid; grid-template-columns:310px 1fr; gap:1.25rem; align-items:start; }
+    .tp-stack { display:flex; flex-direction:column; gap:1.25rem; }
+    .tp-card { background:#fff; border:1px solid #e3e6ef; border-radius:12px; box-shadow:0 1px 3px rgba(16,24,40,.06); }
+    .tp-card h2 { margin:0; padding:.9rem 1.25rem; font-size:.95rem; font-weight:700; color:#101828; border-bottom:1px solid #e9ecf3; display:flex; align-items:center; gap:.5rem; }
+    .tp-card h2 i { color:#000666; }
+
+    /* icon list */
+    .tp-list { list-style:none; margin:0; padding:.35rem 1.25rem .6rem; }
+    .tp-list li { display:flex; align-items:flex-start; gap:.8rem; padding:.7rem 0; border-bottom:1px solid #f0f2f7; }
+    .tp-list li:last-child { border-bottom:0; }
+    .tp-ico { flex:0 0 34px; height:34px; border-radius:8px; background:#eceefb; color:#000666; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+    .tp-list small { display:block; color:#7a8199; font-size:.78rem; }
+    .tp-list span, .tp-list a { color:#101828; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; text-decoration:none; }
+    .tp-list a:hover { color:#000666; text-decoration:underline; }
+
+    /* label / value rows */
+    .tp-rows { margin:0; padding:.25rem 1.25rem .5rem; }
+    .tp-row { display:grid; grid-template-columns:170px 1fr; gap:1rem; padding:.8rem 0; border-bottom:1px solid #f0f2f7; }
+    .tp-row:last-child { border-bottom:0; }
+    .tp-row dt { color:#667085; font-size:.88rem; font-weight:500; }
+    .tp-row dd { margin:0; color:#101828; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; }
+    .tp-muted { color:#98a2b3; font-weight:500; }
+
+    /* subject chips */
+    .tp-chips { display:flex; flex-wrap:wrap; gap:.5rem; padding:1.1rem 1.25rem 1.25rem; }
+    .tp-chip { padding:.3rem .8rem; border-radius:999px; background:#eceefb; color:#26338f; font-size:.85rem; font-weight:600; }
+    .tp-empty { padding:1.1rem 1.25rem 1.25rem; color:#98a2b3; font-size:.9rem; }
+
+    @@media (max-width:860px) {
+        .tp-cols { grid-template-columns:1fr; }
+    }
+    @@media (max-width:620px) {
+        .tp-head { padding:0 1.1rem 1.1rem; }
+        .tp-facts { grid-template-columns:1fr; }
+        .tp-fact { padding:.8rem 1.1rem; border-right:0; border-bottom:1px solid #e9ecf3; }
+        .tp-fact:last-child { border-bottom:0; }
+        .tp-row { grid-template-columns:1fr; gap:.15rem; }
+    }
+</style>
+}
+
+<div class="tp">
+    <nav class="tp-crumbs" aria-label="Breadcrumb">
+        <a href="/Teachers">Teachers</a>
+        <i class="bi bi-chevron-right" style="font-size:.7rem"></i>
+        <span>@Model.FullName</span>
+    </nav>
+
+    <section class="tp-profile">
+        <div class="tp-head">
+            <img class="tp-photo" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.FullName" />
+
+            <div class="tp-id">
+                <h1 class="tp-name">@Model.FullName</h1>
+            </div>
+
+            <div class="tp-actions">
+                <a class="tp-btn" href="/Teachers/Edit/@Model.Id"><i class="bi bi-pencil-square"></i> Edit teacher</a>
             </div>
         </div>
 
-        <!-- Details grid -->
-        <div style="padding:1.2rem 1.5rem;
-                    display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
-            @{
-                void Field(string label, string value) {
-                    <div>
-                        <div style="font-size:.68rem;text-transform:uppercase;
-                                    letter-spacing:.07em;font-weight:700;
-                                    color:#9ca3af;margin-bottom:.2rem">@label</div>
-                        <div style="font-size:.88rem;font-weight:600;color:#111827">
-                            @value
+        <div class="tp-facts">
+            <div class="tp-fact"><small>Primary class</small><b>@(Model.PrimaryClass?.Name ?? "Not assigned")</b></div>
+            <div class="tp-fact"><small>Class teacher of</small><b>@(!string.IsNullOrWhiteSpace(headClassName) ? headClassName : "—")</b></div>
+            <div class="tp-fact"><small>Joined</small><b>@Model.JoinedDate.ToString("dd MMM yyyy")</b></div>
+        </div>
+    </section>
+
+    <div class="tp-cols">
+        <div class="tp-stack">
+            <section class="tp-card">
+                <h2><i class="bi bi-envelope"></i> Contact</h2>
+                <ul class="tp-list">
+                    <li>
+                        <div class="tp-ico"><i class="bi bi-at"></i></div>
+                        <div>
+                            <small>Email</small>
+                            @if (string.IsNullOrWhiteSpace(Model.Email)) { <span class="tp-muted">Not provided</span> }
+                            else { <a href="mailto:@Model.Email">@Model.Email</a> }
                         </div>
-                    </div>;
-                }
-            }
-            @{ Field("Full Name",     Model.FullName); }
-            @{ Field("Email",         Model.Email.Length > 0 ? Model.Email : "â€”"); }
-            @{ Field("Primary Class", Model.PrimaryClass?.Name ?? "â€”"); }
-            @{ Field("Class Teacher Of", !string.IsNullOrWhiteSpace(headClassName) ? headClassName : "â€”"); }
-            @{ Field("Status",        Model.Status); }
-            @{ Field("Joined",        Model.JoinedDate.ToString("dd MMM yyyy")); }
-            @{ Field("Login Username", Model.User?.Username ?? "â€”"); }
+                    </li>
+                </ul>
+            </section>
+
+            <section class="tp-card">
+                <h2><i class="bi bi-key"></i> Account</h2>
+                <ul class="tp-list">
+                    <li>
+                        <div class="tp-ico"><i class="bi bi-person-badge"></i></div>
+                        <div>
+                            <small>Login username</small>
+                            @if (string.IsNullOrWhiteSpace(Model.User?.Username)) { <span class="tp-muted">No login yet</span> }
+                            else { <span>@Model.User.Username</span> }
+                        </div>
+                    </li>
+                </ul>
+            </section>
         </div>
 
-        <!-- Subjects -->
-        @if (subjects.Any())
-        {
-            <div style="padding:.8rem 1.5rem 1.2rem;
-                        border-top:1px solid #f3f4f6">
-                <div style="font-size:.68rem;text-transform:uppercase;
-                            letter-spacing:.07em;font-weight:700;
-                            color:#9ca3af;margin-bottom:.5rem">
-                    Assigned Subjects
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:.35rem">
-                    @foreach (var sub in subjects)
-                    {
-                        <span style="font-size:.7rem;font-weight:700;
-                                     text-transform:uppercase;letter-spacing:.05em;
-                                     padding:.22rem .55rem;border-radius:.2rem;
-                                     background:#e0e7ff;color:#3730a3">
-                            @sub
-                        </span>
-                    }
-                </div>
-            </div>
-        }
+        <div class="tp-stack">
+            <section class="tp-card">
+                <h2><i class="bi bi-person-vcard"></i> Teacher details</h2>
+                <dl class="tp-rows">
+                    <div class="tp-row"><dt>Full name</dt><dd>@Model.FullName</dd></div>
+                    <div class="tp-row"><dt>Primary class</dt><dd>@(Model.PrimaryClass?.Name ?? "—")</dd></div>
+                    <div class="tp-row"><dt>Class teacher of</dt><dd>@(!string.IsNullOrWhiteSpace(headClassName) ? headClassName : "—")</dd></div>
+                    <div class="tp-row"><dt>Status</dt><dd>@Model.Status</dd></div>
+                    <div class="tp-row"><dt>Joined</dt><dd>@Model.JoinedDate.ToString("dd MMM yyyy")</dd></div>
+                </dl>
+            </section>
+
+            <section class="tp-card">
+                <h2><i class="bi bi-journal-bookmark"></i> Assigned subjects</h2>
+                @if (subjects.Any())
+                {
+                    <div class="tp-chips">
+                        @foreach (var sub in subjects)
+                        {
+                            <span class="tp-chip">@sub</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="tp-empty">No subjects assigned yet.</div>
+                }
+            </section>
+        </div>
     </div>
 </div>

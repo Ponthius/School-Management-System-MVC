@@ -16,12 +16,8 @@
 
     /* profile header */
     .sd-profile { background:#fff; border:1px solid #e3e6ef; border-radius:12px; box-shadow:0 1px 3px rgba(16,24,40,.06); overflow:hidden; margin-bottom:1.25rem; }
-    .sd-cover { position:relative; height:140px; background:#0a1175; overflow:hidden; }
-    .sd-cover::before { content:""; position:absolute; right:-60px; top:-90px; width:300px; height:300px; border-radius:50%; background:#1d2fc0; opacity:.55; }
-    .sd-cover::after { content:""; position:absolute; right:150px; bottom:-120px; width:240px; height:240px; border-radius:50%; background:#3b4fe0; opacity:.35; }
-
-    .sd-head { display:flex; align-items:flex-end; gap:1.25rem; padding:0 1.75rem 1.25rem; flex-wrap:wrap; }
-    .sd-photo { width:112px; height:112px; margin-top:-56px; border-radius:50%; object-fit:cover; background:#fff; border:5px solid #fff; box-shadow:0 2px 8px rgba(16,24,40,.18); position:relative; z-index:1; }
+    .sd-head { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 1.75rem 1.25rem; flex-wrap:wrap; }
+    .sd-photo { width:112px; height:112px; border-radius:50%; object-fit:cover; background:#fff; border:1px solid #e3e6ef; box-shadow:0 2px 8px rgba(16,24,40,.12); }
     .sd-id { flex:1; min-width:200px; padding-top:.9rem; }
     .sd-name { margin:0; font-size:1.45rem; font-weight:700; color:#101828; line-height:1.2; }
     .sd-sub { margin-top:.3rem; display:flex; align-items:center; gap:.65rem; flex-wrap:wrap; color:#667085; font-size:.9rem; }
@@ -89,8 +85,6 @@
     </nav>
 
     <section class="sd-profile">
-        <div class="sd-cover"></div>
-
         <div class="sd-head">
             <img class="sd-photo" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.FullName" />
 
