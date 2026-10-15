@@ -2,60 +2,178 @@
 @{
     ViewData["Title"] = "Student Details";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var statusKey = (Convert.ToString(Model.Status) ?? "").ToLowerInvariant().Replace(" ", "-");
 }
 
 @section Styles {
 <style>
-    .student-detail { max-width: 900px; margin: 0 auto; }
-    .student-detail-head { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
-    .student-detail-back { color:#000666; font-size:.85rem; font-weight:700; text-decoration:none; }
-    .student-detail-back:hover { text-decoration:underline; }
-    .student-detail-actions { display:flex; gap:.6rem; }
-    .student-detail-btn { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem .9rem; border-radius:8px; font-size:.8rem; font-weight:700; text-decoration:none; }
-    .student-detail-btn.edit { border:1px solid #f2c078; color:#9a5b00; background:#fffaf0; }
-    .student-detail-card { overflow:hidden; background:#fff; border:1px solid #dfe2ec; border-radius:14px; box-shadow:0 4px 16px rgba(15,23,42,.06); }
-    .student-detail-banner { display:flex; align-items:center; gap:1rem; padding:1.5rem 1.75rem; background:linear-gradient(120deg,#000666,#243b9b); color:#fff; }
-    .student-detail-photo { width:78px; height:78px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.65); background:#fff; }
-    .student-detail-name { margin:0; font-size:1.35rem; font-weight:800; }
-    .student-detail-class { margin:.25rem 0 .6rem; color:#dbe3ff; font-size:.9rem; }
-    .student-detail-status { display:inline-block; padding:.25rem .65rem; border-radius:999px; background:rgba(255,255,255,.16); color:#fff; font-size:.72rem; font-weight:800; text-transform:uppercase; }
-    .student-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem 2rem; padding:1.5rem 1.75rem; }
-    .student-detail-field label { display:block; margin-bottom:.3rem; color:#667085; font-size:.7rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
-    .student-detail-field span { color:#1d2939; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; }
-    @@media (max-width:600px) { .student-detail-grid { grid-template-columns:1fr; gap:1rem; padding:1.25rem; } .student-detail-banner { padding:1.25rem; } }
+    .sd { max-width: 1040px; margin: 0 auto; }
+
+    /* breadcrumb row */
+    .sd-crumbs { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.85rem; color:#7a8199; }
+    .sd-crumbs a { color:#000666; text-decoration:none; font-weight:600; }
+    .sd-crumbs a:hover { text-decoration:underline; }
+
+    /* profile header */
+    .sd-profile { background:#fff; border:1px solid #e3e6ef; border-radius:12px; box-shadow:0 1px 3px rgba(16,24,40,.06); overflow:hidden; margin-bottom:1.25rem; }
+    .sd-cover { position:relative; height:140px; background:#0a1175; overflow:hidden; }
+    .sd-cover::before { content:""; position:absolute; right:-60px; top:-90px; width:300px; height:300px; border-radius:50%; background:#1d2fc0; opacity:.55; }
+    .sd-cover::after { content:""; position:absolute; right:150px; bottom:-120px; width:240px; height:240px; border-radius:50%; background:#3b4fe0; opacity:.35; }
+
+    .sd-head { display:flex; align-items:flex-end; gap:1.25rem; padding:0 1.75rem 1.25rem; flex-wrap:wrap; }
+    .sd-photo { width:112px; height:112px; margin-top:-56px; border-radius:50%; object-fit:cover; background:#fff; border:5px solid #fff; box-shadow:0 2px 8px rgba(16,24,40,.18); position:relative; z-index:1; }
+    .sd-id { flex:1; min-width:200px; padding-top:.9rem; }
+    .sd-name { margin:0; font-size:1.45rem; font-weight:700; color:#101828; line-height:1.2; }
+    .sd-sub { margin-top:.3rem; display:flex; align-items:center; gap:.65rem; flex-wrap:wrap; color:#667085; font-size:.9rem; }
+    .sd-pill { display:inline-flex; align-items:center; gap:.4rem; padding:.18rem .65rem .18rem .5rem; border-radius:999px; font-size:.78rem; font-weight:600; background:#eef1f8; color:#475467; }
+    .sd-pill::before { content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+    .sd-pill.new { background:#e6f0ff; color:#1a56db; }
+    .sd-pill.active { background:#e3f8ec; color:#13794a; }
+    .sd-pill.suspended, .sd-pill.expelled { background:#fde8e8; color:#b42318; }
+    .sd-pill.graduated, .sd-pill.alumni { background:#f1e8fd; color:#6b2fb8; }
+
+    .sd-actions { padding-top:.9rem; }
+    .sd-btn { display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1rem; border-radius:8px; font-size:.85rem; font-weight:600; text-decoration:none; background:#000666; color:#fff; border:1px solid #000666; }
+    .sd-btn:hover { background:#0a1180; color:#fff; }
+
+    /* quick facts strip */
+    .sd-facts { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #e9ecf3; }
+    .sd-fact { padding:.9rem 1.75rem; border-right:1px solid #e9ecf3; }
+    .sd-fact:last-child { border-right:0; }
+    .sd-fact small { display:block; color:#7a8199; font-size:.78rem; margin-bottom:.15rem; }
+    .sd-fact b { color:#101828; font-size:.95rem; font-weight:600; }
+
+    /* body columns */
+    .sd-cols { display:grid; grid-template-columns:310px 1fr; gap:1.25rem; align-items:start; }
+    .sd-stack { display:flex; flex-direction:column; gap:1.25rem; }
+    .sd-card { background:#fff; border:1px solid #e3e6ef; border-radius:12px; box-shadow:0 1px 3px rgba(16,24,40,.06); }
+    .sd-card h2 { margin:0; padding:.9rem 1.25rem; font-size:.95rem; font-weight:700; color:#101828; border-bottom:1px solid #e9ecf3; display:flex; align-items:center; gap:.5rem; }
+    .sd-card h2 i { color:#000666; }
+
+    /* contact list with icons */
+    .sd-list { list-style:none; margin:0; padding:.35rem 1.25rem .6rem; }
+    .sd-list li { display:flex; align-items:flex-start; gap:.8rem; padding:.7rem 0; border-bottom:1px solid #f0f2f7; }
+    .sd-list li:last-child { border-bottom:0; }
+    .sd-ico { flex:0 0 34px; height:34px; border-radius:8px; background:#eceefb; color:#000666; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+    .sd-list small { display:block; color:#7a8199; font-size:.78rem; }
+    .sd-list span, .sd-list a { color:#101828; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; text-decoration:none; }
+    .sd-list a:hover { color:#000666; text-decoration:underline; }
+
+    /* label / value rows */
+    .sd-rows { margin:0; padding:.25rem 1.25rem .5rem; }
+    .sd-row { display:grid; grid-template-columns:170px 1fr; gap:1rem; padding:.8rem 0; border-bottom:1px solid #f0f2f7; }
+    .sd-row:last-child { border-bottom:0; }
+    .sd-row dt { color:#667085; font-size:.88rem; font-weight:500; }
+    .sd-row dd { margin:0; color:#101828; font-size:.92rem; font-weight:600; overflow-wrap:anywhere; }
+    .sd-muted { color:#98a2b3; font-weight:500; }
+
+    @@media (max-width:860px) {
+        .sd-cols { grid-template-columns:1fr; }
+        .sd-facts { grid-template-columns:repeat(2,1fr); }
+        .sd-fact:nth-child(2) { border-right:0; }
+        .sd-fact:nth-child(-n+2) { border-bottom:1px solid #e9ecf3; }
+    }
+    @@media (max-width:520px) {
+        .sd-head { padding:0 1.1rem 1.1rem; }
+        .sd-fact { padding:.8rem 1.1rem; }
+        .sd-row { grid-template-columns:1fr; gap:.15rem; }
+    }
 </style>
 }
 
-<div class="student-detail">
-    <div class="student-detail-head">
-        <a class="student-detail-back" href="/Students"><i class="bi bi-arrow-left"></i> Back to Students</a>
-        <div class="student-detail-actions">
-            <a class="student-detail-btn edit" href="/Students/Edit/@Model.Id"><i class="bi bi-pencil"></i> Edit Student</a>
+<div class="sd">
+    <nav class="sd-crumbs" aria-label="Breadcrumb">
+        <a href="/Students">Students</a>
+        <i class="bi bi-chevron-right" style="font-size:.7rem"></i>
+        <span>@Model.FullName</span>
+    </nav>
+
+    <section class="sd-profile">
+        <div class="sd-cover"></div>
+
+        <div class="sd-head">
+            <img class="sd-photo" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.FullName" />
+
+            <div class="sd-id">
+                <h1 class="sd-name">@Model.FullName</h1>
+                <div class="sd-sub">
+                    <span>@(Model.Class?.Name ?? "No class assigned")</span>
+                    <span class="sd-pill @statusKey">@Model.Status</span>
+                </div>
+            </div>
+
+            <div class="sd-actions">
+                <a class="sd-btn" href="/Students/Edit/@Model.Id"><i class="bi bi-pencil-square"></i> Edit student</a>
+            </div>
+        </div>
+
+        <div class="sd-facts">
+            <div class="sd-fact"><small>Class</small><b>@(Model.Class?.Name ?? "Not assigned")</b></div>
+            <div class="sd-fact"><small>Term</small><b>@(string.IsNullOrWhiteSpace(Model.Term) ? "—" : Model.Term)</b></div>
+            <div class="sd-fact"><small>Enrolled</small><b>@Model.EnrolledDate.ToString("dd MMM yyyy")</b></div>
+            <div class="sd-fact"><small>LIN</small><b>@(string.IsNullOrWhiteSpace(Model.LIN) ? "Not yet assigned" : Model.LIN)</b></div>
+        </div>
+    </section>
+
+    <div class="sd-cols">
+        <div class="sd-stack">
+            <section class="sd-card">
+                <h2><i class="bi bi-people"></i> Guardian</h2>
+                <ul class="sd-list">
+                    <li>
+                        <div class="sd-ico"><i class="bi bi-person"></i></div>
+                        <div>
+                            <small>Name</small>
+                            @if (string.IsNullOrWhiteSpace(Model.GuardianName)) { <span class="sd-muted">Not provided</span> }
+                            else { <span>@Model.GuardianName</span> }
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sd-ico"><i class="bi bi-telephone"></i></div>
+                        <div>
+                            <small>Phone</small>
+                            @if (string.IsNullOrWhiteSpace(Model.GuardianContact)) { <span class="sd-muted">Not provided</span> }
+                            else { <a href="tel:@Model.GuardianContact">@Model.GuardianContact</a> }
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="sd-card">
+                <h2><i class="bi bi-key"></i> Account</h2>
+                <ul class="sd-list">
+                    <li>
+                        <div class="sd-ico"><i class="bi bi-at"></i></div>
+                        <div>
+                            <small>Login username</small>
+                            @if (string.IsNullOrWhiteSpace(Model.User?.Username)) { <span class="sd-muted">No login yet</span> }
+                            else { <span>@Model.User.Username</span> }
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="sd-stack">
+            <section class="sd-card">
+                <h2><i class="bi bi-person-vcard"></i> Personal details</h2>
+                <dl class="sd-rows">
+                    <div class="sd-row"><dt>Full name</dt><dd>@Model.FullName</dd></div>
+                    <div class="sd-row"><dt>Gender</dt><dd>@Model.Gender</dd></div>
+                    <div class="sd-row"><dt>Date of birth</dt><dd>@Model.DOB.ToString("dd MMM yyyy")</dd></div>
+                </dl>
+            </section>
+
+            <section class="sd-card">
+                <h2><i class="bi bi-mortarboard"></i> School record</h2>
+                <dl class="sd-rows">
+                    <div class="sd-row"><dt>Class</dt><dd>@(Model.Class?.Name ?? "No class assigned")</dd></div>
+                    <div class="sd-row"><dt>Status</dt><dd>@Model.Status</dd></div>
+                    <div class="sd-row"><dt>Term</dt><dd>@(string.IsNullOrWhiteSpace(Model.Term) ? "—" : Model.Term)</dd></div>
+                    <div class="sd-row"><dt>Enrolled</dt><dd>@Model.EnrolledDate.ToString("dd MMM yyyy")</dd></div>
+                    <div class="sd-row"><dt>LIN</dt><dd>@if (string.IsNullOrWhiteSpace(Model.LIN)) { <span class="sd-muted">Not yet assigned</span> } else { @Model.LIN }</dd></div>
+                </dl>
+            </section>
         </div>
     </div>
-
-    <article class="student-detail-card">
-        <header class="student-detail-banner">
-            <img class="student-detail-photo" src="@Model.PhotoPath" onerror="this.src='/images/default-avatar.png'" alt="@Model.FullName" />
-            <div>
-                <h1 class="student-detail-name">@Model.FullName</h1>
-                <div class="student-detail-class">@(Model.Class?.Name ?? "No class assigned")</div>
-                <span class="student-detail-status">@Model.Status</span>
-            </div>
-        </header>
-
-        <div class="student-detail-grid">
-            <div class="student-detail-field"><label>Full Name</label><span>@Model.FullName</span></div>
-            <div class="student-detail-field"><label>LIN</label><span>@(string.IsNullOrWhiteSpace(Model.LIN) ? "Not yet assigned" : Model.LIN)</span></div>
-            <div class="student-detail-field"><label>Gender</label><span>@Model.Gender</span></div>
-            <div class="student-detail-field"><label>Date of Birth</label><span>@Model.DOB.ToString("dd MMM yyyy")</span></div>
-            <div class="student-detail-field"><label>Class</label><span>@(Model.Class?.Name ?? "No class assigned")</span></div>
-            <div class="student-detail-field"><label>Status</label><span>@Model.Status</span></div>
-            <div class="student-detail-field"><label>Term</label><span>@(string.IsNullOrWhiteSpace(Model.Term) ? "—" : Model.Term)</span></div>
-            <div class="student-detail-field"><label>Guardian Name</label><span>@(string.IsNullOrWhiteSpace(Model.GuardianName) ? "—" : Model.GuardianName)</span></div>
-            <div class="student-detail-field"><label>Guardian Contact</label><span>@(string.IsNullOrWhiteSpace(Model.GuardianContact) ? "—" : Model.GuardianContact)</span></div>
-            <div class="student-detail-field"><label>Enrolled</label><span>@Model.EnrolledDate.ToString("dd MMM yyyy")</span></div>
-            <div class="student-detail-field"><label>Login Username</label><span>@(Model.User?.Username ?? "—")</span></div>
-        </div>
-    </article>
 </div>
