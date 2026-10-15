@@ -367,3 +367,4 @@ data-protection-keys/
 
 # Runtime uploads created from local admin/teacher/student actions
 /wwwroot/uploads/
+/guides/
