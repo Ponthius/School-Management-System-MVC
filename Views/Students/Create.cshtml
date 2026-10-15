@@ -214,6 +214,12 @@
                         <input asp-for="FullName" placeholder="First and last name" />
                         <span asp-validation-for="FullName" class="validation-text"></span>
                     </div>
+                    <div class="field full">
+                        <label asp-for="LIN">Learner Identification Number (LIN)</label>
+                        <input asp-for="LIN" placeholder="Official EMIS LIN" autocomplete="off" />
+                        <div class="hint">Enter the LIN issued by Uganda EMIS.</div>
+                        <span asp-validation-for="LIN" class="validation-text"></span>
+                    </div>
                     <div class="field">
                         <label asp-for="Gender">Gender</label>
                         <select asp-for="Gender">

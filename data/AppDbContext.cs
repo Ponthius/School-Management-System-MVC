@@ -75,6 +75,11 @@ namespace School_Management_System.Data
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.LIN)
+                .IsUnique()
+                .HasFilter("[LIN] IS NOT NULL AND [LIN] <> ''");
+
             modelBuilder.Entity<Teacher>()
                 .HasOne(t => t.User)
                 .WithMany()

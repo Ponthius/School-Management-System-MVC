@@ -19,6 +19,9 @@ namespace School_Management_System.Models
         [Required, MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
 
+        [MaxLength(30)]
+        public string? LIN { get; set; }
+
         public string Gender { get; set; } = string.Empty;
         public DateTime DOB { get; set; }
         public string PhotoPath { get; set; } = "/images/default-avatar.png";

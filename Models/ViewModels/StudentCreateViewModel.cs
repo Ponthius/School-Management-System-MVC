@@ -15,6 +15,9 @@ namespace School_Management_System.Models.ViewModels
         [Required, MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
 
+        [Required, MaxLength(30)]
+        public string LIN { get; set; } = string.Empty;
+
         [Required]
         public string Gender { get; set; } = string.Empty;
 
@@ -42,6 +45,9 @@ namespace School_Management_System.Models.ViewModels
 
         [Required, MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
+
+        [MaxLength(30)]
+        public string? LIN { get; set; }
 
         [Required]
         public string Gender { get; set; } = string.Empty;

@@ -39,7 +39,7 @@ namespace School_Management_System.Controllers
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(s => s.FullName.Contains(search));
+                query = query.Where(s => s.FullName.Contains(search) || (s.LIN != null && s.LIN.Contains(search)));
 
             if (classId.HasValue && classId > 0)
                 query = query.Where(s => s.ClassId == classId);
@@ -104,6 +104,10 @@ namespace School_Management_System.Controllers
             if (_context.Users.Any(u => u.Username == vm.Username))
                 ModelState.AddModelError("Username", "Username already exists.");
 
+            vm.LIN = vm.LIN?.Trim().ToUpperInvariant() ?? string.Empty;
+            if (!string.IsNullOrEmpty(vm.LIN) && _context.Students.Any(s => s.LIN == vm.LIN))
+                ModelState.AddModelError("LIN", "This LIN is already assigned to another student.");
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Classes = new SelectList(_context.Classes.ToList(), "Id", "Name");
@@ -136,6 +140,7 @@ namespace School_Management_System.Controllers
                 UserId = user.Id,
                 ClassId = vm.ClassId,
                 FullName = vm.FullName,
+                LIN = vm.LIN,
                 Gender = vm.Gender,
                 DOB = vm.DOB,
                 GuardianName = vm.GuardianName,
@@ -178,6 +183,7 @@ namespace School_Management_System.Controllers
             {
                 Id = student.Id,
                 FullName = student.FullName,
+                LIN = student.LIN,
                 Gender = student.Gender,
                 DOB = student.DOB,
                 ClassId = student.ClassId,
@@ -199,6 +205,10 @@ namespace School_Management_System.Controllers
         public async Task<IActionResult> Edit(int id, StudentEditViewModel vm)
         {
             var guard = Guard(); if (guard != null) return guard;
+
+            vm.LIN = vm.LIN?.Trim().ToUpperInvariant();
+            if (!string.IsNullOrEmpty(vm.LIN) && _context.Students.Any(s => s.LIN == vm.LIN && s.Id != id))
+                ModelState.AddModelError("LIN", "This LIN is already assigned to another student.");
 
             if (!ModelState.IsValid)
             {
@@ -222,6 +232,7 @@ namespace School_Management_System.Controllers
             }
 
             student.FullName = vm.FullName;
+            student.LIN = string.IsNullOrEmpty(vm.LIN) ? null : vm.LIN;
             student.Gender = vm.Gender;
             student.DOB = vm.DOB;
             student.ClassId = vm.ClassId;

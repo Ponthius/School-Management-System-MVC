@@ -4,6 +4,17 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+@section Styles {
+<style>
+    .max-w-2xl { max-width: 760px; margin: 0 auto; }
+    .max-w-2xl .bg-white { background: #fff; border: 1px solid #dfe2ec; border-radius: 12px; overflow: hidden; }
+    .max-w-2xl .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .max-w-2xl .grid { display: grid; }
+    .max-w-2xl .p-5 { padding: 1.25rem; }
+    @@media (max-width: 600px) { .max-w-2xl .grid-cols-2 { grid-template-columns: 1fr; } }
+</style>
+}
+
 <div class="max-w-2xl mx-auto">
     <div class="mb-4 flex items-center justify-between">
         <a href="/Students" class="text-xs text-indigo-600 hover:underline flex items-center gap-1">
@@ -50,6 +61,9 @@
             }
             @{
                 Row("Full Name", Model.FullName);
+            }
+            @{
+                Row("LIN", string.IsNullOrWhiteSpace(Model.LIN) ? "Not yet assigned" : Model.LIN);
             }
             @{
                 Row("Gender", Model.Gender);

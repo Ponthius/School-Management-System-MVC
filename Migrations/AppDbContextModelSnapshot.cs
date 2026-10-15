@@ -739,6 +739,10 @@ namespace School_Management_System.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("LIN")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<string>("PhotoPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -759,6 +763,10 @@ namespace School_Management_System.Migrations
                     b.HasIndex("ClassId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("LIN")
+                        .IsUnique()
+                        .HasFilter("[LIN] IS NOT NULL AND [LIN] <> ''");
 
                     b.ToTable("Students");
                 });
