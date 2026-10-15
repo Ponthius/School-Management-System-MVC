@@ -1,0 +1,1583 @@
+root@vmi3353576:~# apt update
+apt install -y git nginx dotnet-sdk-10.0 aspnetcore-runtime-10.0
+dotnet --version
+Hit:1 http://archive.ubuntu.com/ubuntu noble InRelease
+Get:2 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:3 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Hit:4 https://apt.postgresql.org/pub/repos/apt noble-pgdg InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:7 https://pkgs.tailscale.com/stable/ubuntu noble InRelease
+Get:8 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1397 kB]
+Get:9 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+Fetched 3358 kB in 4s (895 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+55 packages can be upgraded. Run 'apt list --upgradable' to see them.
+W: https://apt.postgresql.org/pub/repos/apt/dists/noble-pgdg/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+git is already the newest version (1:2.43.0-1ubuntu7.3).
+nginx is already the newest version (1.24.0-2ubuntu7.18).
+The following packages were automatically installed and are no longer required:
+  gyp libcares2 libdrm-intel1 libegl-mesa0 libegl1 libfile-basedir-perl libfile-desktopentry-perl
+  libfile-mimeinfo-perl libfwupd2 libgbm1 libgl1 libgl1-mesa-dri libgles2 libglvnd0 libglx-mesa0 libglx0 libgusb2
+  libio-stringy-perl libipc-system-simple-perl libjs-async libjs-events libjs-inherits libjs-is-typedarray
+  libjs-prettify libjs-regenerate libjs-source-map libjs-sprintf-js libjs-typedarray-to-buffer libllvm20
+  libnet-dbus-perl libpciaccess0 libre2-10 libtie-ixhash-perl libuv1-dev libvulkan1 libwayland-client0
+  libx11-protocol-perl libx11-xcb1 libxaw7 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0
+  libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2 libxi6 libxinerama1 libxkbfile1
+  libxml-parser-perl libxml-twig-perl libxml-xpathengine-perl libxrandr2 libxshmfence1 libxtst6 libxv1 libxxf86dga1
+  libxxf86vm1 mesa-libgallium mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-regex
+  node-ansi-styles node-aproba node-are-we-there-yet node-arrify node-async node-async-each node-auto-bind
+  node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match node-base64-js node-binary-extensions
+  node-brace-expansion node-busboy node-camelcase node-caniuse-lite node-chownr node-chrome-trace-event node-ci-info
+  node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone node-collection-visit node-color-convert
+  node-color-name node-colors node-commander node-commondir node-concat-stream node-console-control-strings
+  node-convert-source-map node-core-js node-core-js-pure node-core-util-is node-data-uri-to-buffer
+  node-decompress-response node-deep-is node-defaults node-define-property node-delegates node-depd node-diff
+  node-electron-to-chromium node-encoding node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys node-esquery node-estraverse node-esutils
+  node-events node-fancy-log node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up node-flatted
+  node-foreground-child node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath node-function-bind
+  node-get-caller-file node-get-stream node-get-value node-glob node-globals node-got node-graceful-fs node-growl
+  node-has-flag node-has-unicode node-has-value node-has-values node-hosted-git-info node-iconv-lite node-ieee754
+  node-iferr node-imurmurhash node-indent-string node-inflight node-inherits node-ini node-interpret node-ip
+  node-ip-regex node-is-arrayish node-is-binary-path node-is-buffer node-is-descriptor node-is-extglob
+  node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream node-is-typedarray node-is-windows
+  node-isarray node-isexe node-isobject node-js-tokens node-json-buffer node-json-parse-better-errors node-json-schema
+  node-json-schema-traverse node-json-stable-stringify node-jsonify node-jsonparse node-kind-of node-levn
+  node-loader-runner node-locate-path node-lodash-packages node-lowercase-keys node-lru-cache node-map-visit
+  node-memfs node-merge-stream node-mimic-response node-minimatch node-minimist node-minipass node-mute-stream node-n3
+  node-negotiator node-npm-run-path node-object-inspect node-object-visit node-once node-optimist node-optionator
+  node-osenv node-p-cancelable node-p-limit node-p-locate node-p-map node-pascalcase node-path-dirname
+  node-path-exists node-path-is-absolute node-path-is-inside node-path-type node-pify node-pkg-dir
+  node-postcss-value-parser node-prelude-ls node-process-nextick-args node-promise-inflight node-promise-retry
+  node-promzard node-prr node-pump node-punycode node-quick-lru node-randombytes node-read node-readable-stream
+  node-rechoir node-regenerator-runtime node-regenerator-transform node-regexpp node-regjsgen node-repeat-string
+  node-require-directory node-require-from-string node-resolve node-resolve-cwd node-resolve-from node-restore-cursor
+  node-resumer node-retry node-run-queue node-safe-buffer node-serialize-javascript node-set-blocking
+  node-set-immediate-shim node-shebang-command node-shebang-regex node-shell-quote node-signal-exit node-slash
+  node-slice-ansi node-source-list-map node-source-map node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri node-stack-utils node-string-decoder
+  node-strip-bom node-supports-color node-tapable node-terser node-text-table node-through node-time-stamp
+  node-to-fast-properties node-tslib node-type-check node-typedarray node-typedarray-to-buffer node-undici
+  node-unicode-canonical-property-names-ecmascript node-unicode-match-property-value-ecmascript
+  node-unicode-property-aliases-ecmascript node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources node-wordwrap node-wrappy
+  node-write-file-atomic node-xtend node-y18n node-yallist node-yaml x11-utils x11-xserver-utils xdg-utils zutty
+Use 'apt autoremove' to remove them.
+The following additional packages will be installed:
+  aspnetcore-targeting-pack-10.0 dotnet-apphost-pack-10.0 dotnet-host-10.0 dotnet-hostfxr-10.0 dotnet-runtime-10.0
+  dotnet-sdk-aot-10.0 dotnet-targeting-pack-10.0 dotnet-templates-10.0 liblttng-ust-common1t64 liblttng-ust-ctl5t64
+  liblttng-ust1t64
+Suggested packages:
+  aspnetcore-runtime-dbg-10.0 dotnet-runtime-dbg-10.0 dotnet-sdk-dbg-10.0
+The following NEW packages will be installed:
+  aspnetcore-runtime-10.0 aspnetcore-targeting-pack-10.0 dotnet-apphost-pack-10.0 dotnet-host-10.0 dotnet-hostfxr-10.0
+  dotnet-runtime-10.0 dotnet-sdk-10.0 dotnet-sdk-aot-10.0 dotnet-targeting-pack-10.0 dotnet-templates-10.0
+  liblttng-ust-common1t64 liblttng-ust-ctl5t64 liblttng-ust1t64
+0 upgraded, 13 newly installed, 0 to remove and 55 not upgraded.
+Need to get 164 MB of archives.
+After this operation, 624 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-host-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [200 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-hostfxr-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [149 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 liblttng-ust-common1t64 amd64 2.13.7-1.1ubuntu2 [27.5 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble/main amd64 liblttng-ust-ctl5t64 amd64 2.13.7-1.1ubuntu2 [74.9 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/main amd64 liblttng-ust1t64 amd64 2.13.7-1.1ubuntu2 [185 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-runtime-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [25.6 MB]
+Get:7 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 aspnetcore-runtime-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [8454 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 aspnetcore-targeting-pack-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [3518 kB]
+Get:9 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-apphost-pack-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [3717 kB]
+Get:10 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-targeting-pack-10.0 amd64 10.0.12-0ubuntu1~24.04.1 [3171 kB]
+Get:11 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-templates-10.0 amd64 10.0.112-0ubuntu1~24.04.1 [2920 kB]
+Get:12 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-sdk-10.0 amd64 10.0.112-0ubuntu1~24.04.1 [100 MB]
+Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 dotnet-sdk-aot-10.0 amd64 10.0.112-0ubuntu1~24.04.1 [15.8 MB]
+Fetched 164 MB in 7s (23.2 MB/s)
+Selecting previously unselected package dotnet-host-10.0.
+(Reading database ... 136488 files and directories currently installed.)
+Preparing to unpack .../00-dotnet-host-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-host-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-hostfxr-10.0.
+Preparing to unpack .../01-dotnet-hostfxr-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-hostfxr-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package liblttng-ust-common1t64:amd64.
+Preparing to unpack .../02-liblttng-ust-common1t64_2.13.7-1.1ubuntu2_amd64.deb ...
+Unpacking liblttng-ust-common1t64:amd64 (2.13.7-1.1ubuntu2) ...
+Selecting previously unselected package liblttng-ust-ctl5t64:amd64.
+Preparing to unpack .../03-liblttng-ust-ctl5t64_2.13.7-1.1ubuntu2_amd64.deb ...
+Unpacking liblttng-ust-ctl5t64:amd64 (2.13.7-1.1ubuntu2) ...
+Selecting previously unselected package liblttng-ust1t64:amd64.
+Preparing to unpack .../04-liblttng-ust1t64_2.13.7-1.1ubuntu2_amd64.deb ...
+Unpacking liblttng-ust1t64:amd64 (2.13.7-1.1ubuntu2) ...
+Selecting previously unselected package dotnet-runtime-10.0.
+Preparing to unpack .../05-dotnet-runtime-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-runtime-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package aspnetcore-runtime-10.0.
+Preparing to unpack .../06-aspnetcore-runtime-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking aspnetcore-runtime-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package aspnetcore-targeting-pack-10.0.
+Preparing to unpack .../07-aspnetcore-targeting-pack-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking aspnetcore-targeting-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-apphost-pack-10.0.
+Preparing to unpack .../08-dotnet-apphost-pack-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-apphost-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-targeting-pack-10.0.
+Preparing to unpack .../09-dotnet-targeting-pack-10.0_10.0.12-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-targeting-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-templates-10.0.
+Preparing to unpack .../10-dotnet-templates-10.0_10.0.112-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-templates-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-sdk-10.0.
+Preparing to unpack .../11-dotnet-sdk-10.0_10.0.112-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-sdk-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Selecting previously unselected package dotnet-sdk-aot-10.0.
+Preparing to unpack .../12-dotnet-sdk-aot-10.0_10.0.112-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking dotnet-sdk-aot-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Setting up dotnet-targeting-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up liblttng-ust-common1t64:amd64 (2.13.7-1.1ubuntu2) ...
+Setting up aspnetcore-targeting-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up liblttng-ust-ctl5t64:amd64 (2.13.7-1.1ubuntu2) ...
+Setting up dotnet-apphost-pack-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up dotnet-host-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up dotnet-hostfxr-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up dotnet-templates-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Setting up liblttng-ust1t64:amd64 (2.13.7-1.1ubuntu2) ...
+Setting up dotnet-runtime-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up aspnetcore-runtime-10.0 (10.0.12-0ubuntu1~24.04.1) ...
+Setting up dotnet-sdk-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Setting up dotnet-sdk-aot-10.0 (10.0.112-0ubuntu1~24.04.1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.8.0-124-generic
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.8.0-147-generic.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart docker.service
+ systemctl restart getty@tty1.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ session #501: gunicorn[2490591,3140086], node /usr/bin/p[2490519], PM2 v7.0.1: God[146308], python3[1099048],
+  sh[2490531]
+ root @ session #9649: tmux: server[2668468]
+ root @ user manager service: systemd[139051]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+10.0.112
+root@vmi3353576:~# cd /var/www
+root@vmi3353576:/var/www# git clone -b main https://github.com/Ponthius/School-Management-System-MVC.git school-management-asp
+Cloning into 'school-management-asp'...
+remote: Enumerating objects: 443, done.
+remote: Counting objects: 100% (443/443), done.
+remote: Compressing objects: 100% (256/256), done.
+remote: Total 443 (delta 232), reused 368 (delta 161), pack-reused 0 (from 0)
+Receiving objects: 100% (443/443), 1.70 MiB | 18.74 MiB/s, done.
+Resolving deltas: 100% (232/232), done.
+root@vmi3353576:/var/www# docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sa -P 'Grandtheftauto_ponthius4' -C \
+  -Q "IF DB_ID('SchoolManagementDB') IS NULL CREATE DATABASE SchoolManagementDB"
+root@vmi3353576:/var/www# mkdir -p /etc/school-management
+nano /etc/school-management/app.env
+root@vmi3353576:/var/www# micro /etc/school-management/app.env
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+root@vmi3353576:/var/www# cd /var/www/school-management
+dotnet restore
+dotnet publish -c Release -o /var/www/school-management/publish
+-bash: cd: /var/www/school-management: No such file or directory
+
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.112
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
+MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
+root@vmi3353576:/var/www# cd /var/www/school-management
+-bash: cd: /var/www/school-management: No such file or directory
+root@vmi3353576:/var/www# ls
+KAMATECH      Kamatech-RMS  family-tracker  humble-servant-international  school-management-asp
+KAMATECH-POS  alijeda       html            quickoffice
+root@vmi3353576:/var/www# cd /var/www/school-management-asp
+root@vmi3353576:/var/www/school-management-asp# dotnet restore
+Restore succeeded with 2 warning(s) in 26.1s
+    /var/www/school-management-asp/School Management System.csproj : warning NU1902: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+    /var/www/school-management-asp/School Management System.csproj : warning NU1903: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx
+
+Build succeeded with 2 warning(s) in 26.4s
+root@vmi3353576:/var/www/school-management-asp# dotnet publish -c Release -o /var/www/school-management-asp/publish
+Restore succeeded with 2 warning(s) in 2.0s
+    /var/www/school-management-asp/School Management System.csproj : warning NU1902: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+    /var/www/school-management-asp/School Management System.csproj : warning NU1903: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx
+  School Management System net10.0 succeeded with 2 warning(s) (36.0s) → publish/
+    /var/www/school-management-asp/School Management System.csproj : warning NU1902: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+    /var/www/school-management-asp/School Management System.csproj : warning NU1903: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx
+  School Management System.slnx succeeded with 1 warning(s) (0.0s)
+    /usr/lib/dotnet/sdk/10.0.112/Current/SolutionFile/ImportAfter/Microsoft.NET.Sdk.Solution.targets(36,5): warning NETSDK1194: The "--output" option isn't supported when building a solution. Specifying a solution-level output path results in all projects copying outputs to the same directory, which can lead to inconsistent builds.
+
+Build succeeded with 5 warning(s) in 39.1s
+root@vmi3353576:/var/www/school-management-asp# dotnet ef database update \
+  --connection "Server=127.0.0.1,1433;Database=SchoolManagementDB;User Id=sa;Password=Grandtheftauto_ponthius4;TrustServ
+erCertificate=True;Encrypt=False"
+Could not execute because the specified command or file was not found.
+Possible reasons for this include:
+  * You misspelled a built-in dotnet command.
+  * You intended to execute a .NET program, but dotnet-ef does not exist.
+  * You intended to run a global tool, but a dotnet-prefixed executable with this name could not be found on the PATH.
+root@vmi3353576:/var/www/school-management-asp# dotnet tool install --global dotnet-ef
+export PATH="$PATH:/root/.dotnet/tools"
+Tools directory '/root/.dotnet/tools' is not currently on the PATH environment variable.
+If you are using bash, you can add it to your profile by running the following command:
+
+cat << \EOF >> ~/.bash_profile
+# Add .NET Core SDK tools
+export PATH="$PATH:/root/.dotnet/tools"
+EOF
+
+You can add it to the current session by running the following command:
+
+export PATH="$PATH:/root/.dotnet/tools"
+
+You can invoke the tool using the following command: dotnet-ef
+Tool 'dotnet-ef' (version '10.0.13') was successfully installed.
+root@vmi3353576:/var/www/school-management-asp# micro /etc/systemd/system/school-management.service
+root@vmi3353576:/var/www/school-management-asp# cat /etc/systemd/system/school-management.service
+[Unit]
+Description=School Management System
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/www/school-management-asp/publish
+ExecStart=/usr/bin/dotnet "/var/www/school-management-asp/publish/School Management System.dll"
+EnvironmentFile=/etc/school-management/app.env
+Restart=always
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target
+root@vmi3353576:/var/www/school-management-asp# dotnet ef database update   --connection "Server=127.0.0.1,1433;Database=SchoolManagementDB;User Id=sa;Password=Grandtheftauto_ponthius4;TrustServerCertificate=True;Encrypt=False"
+/var/www/school-management-asp/School Management System.csproj : warning NU1902: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+/var/www/school-management-asp/School Management System.csproj : warning NU1903: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx
+/var/www/school-management-asp/School Management System.csproj : warning NU1902: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+/var/www/school-management-asp/School Management System.csproj : warning NU1903: Package 'System.Security.Cryptography.Pkcs' 9.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx
+Build started...
+Build succeeded.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (46ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Migrations[20411]
+      Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (115ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+      SELECT @result
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (45ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+      BEGIN
+          CREATE TABLE [__EFMigrationsHistory] (
+              [MigrationId] nvarchar(150) NOT NULL,
+              [ProductVersion] nvarchar(32) NOT NULL,
+              CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+          );
+      END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (103ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [MigrationId], [ProductVersion]
+      FROM [__EFMigrationsHistory]
+      ORDER BY [MigrationId];
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260505004051_InitialCreate'.
+Applying migration '20260505004051_InitialCreate'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (17ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Users] (
+          [Id] int NOT NULL IDENTITY,
+          [Username] nvarchar(50) NOT NULL,
+          [Password] nvarchar(255) NOT NULL,
+          [Role] nvarchar(max) NOT NULL,
+          CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (229ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Password', N'Role', N'Username') AND [object_id] = OBJECT_ID(N'[Users]'))
+          SET IDENTITY_INSERT [Users] ON;
+      INSERT INTO [Users] ([Id], [Password], [Role], [Username])
+      VALUES (1, N'admin123', N'Admin', N'admin');
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Password', N'Role', N'Username') AND [object_id] = OBJECT_ID(N'[Users]'))
+          SET IDENTITY_INSERT [Users] OFF;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260505004051_InitialCreate', N'10.0.7');
+Applying migration '20260505094250_AddCoreModels'.
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260505094250_AddCoreModels'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [ActivityLogs] (
+          [Id] int NOT NULL IDENTITY,
+          [UserName] nvarchar(100) NOT NULL,
+          [UserRole] nvarchar(max) NOT NULL,
+          [Action] nvarchar(200) NOT NULL,
+          [Status] nvarchar(max) NOT NULL,
+          [Timestamp] datetime2 NOT NULL,
+          [RelatedUserId] int NULL,
+          CONSTRAINT [PK_ActivityLogs] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Teachers] (
+          [Id] int NOT NULL IDENTITY,
+          [UserId] int NOT NULL,
+          [FullName] nvarchar(100) NOT NULL,
+          [SubjectSpecialization] nvarchar(max) NOT NULL,
+          [JoinedDate] datetime2 NOT NULL,
+          CONSTRAINT [PK_Teachers] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_Teachers_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Classes] (
+          [Id] int NOT NULL IDENTITY,
+          [Name] nvarchar(50) NOT NULL,
+          [TeacherId] int NULL,
+          [Capacity] int NOT NULL,
+          CONSTRAINT [PK_Classes] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_Classes_Teachers_TeacherId] FOREIGN KEY ([TeacherId]) REFERENCES [Teachers] ([Id]) ON DELETE SET NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (10ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Students] (
+          [Id] int NOT NULL IDENTITY,
+          [UserId] int NOT NULL,
+          [ClassId] int NOT NULL,
+          [FullName] nvarchar(100) NOT NULL,
+          [Gender] nvarchar(max) NOT NULL,
+          [DOB] datetime2 NOT NULL,
+          [PhotoPath] nvarchar(max) NOT NULL,
+          [GuardianName] nvarchar(100) NOT NULL,
+          [GuardianContact] nvarchar(20) NOT NULL,
+          [Status] nvarchar(max) NOT NULL,
+          [Term] nvarchar(max) NOT NULL,
+          [EnrolledDate] datetime2 NOT NULL,
+          CONSTRAINT [PK_Students] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_Students_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+          CONSTRAINT [FK_Students_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Payments] (
+          [Id] int NOT NULL IDENTITY,
+          [StudentId] int NOT NULL,
+          [Amount] decimal(18,2) NOT NULL,
+          [Balance] decimal(18,2) NOT NULL,
+          [Term] nvarchar(max) NOT NULL,
+          [PaymentMethod] nvarchar(max) NOT NULL,
+          [Status] nvarchar(max) NOT NULL,
+          [Date] datetime2 NOT NULL,
+          CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_Payments_Students_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Students] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Classes_TeacherId] ON [Classes] ([TeacherId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Payments_StudentId] ON [Payments] ([StudentId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Students_ClassId] ON [Students] ([ClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Students_UserId] ON [Students] ([UserId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Teachers_UserId] ON [Teachers] ([UserId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260505094250_AddCoreModels', N'10.0.7');
+Applying migration '20260508124957_AddTeacherFields'.
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260508124957_AddTeacherFields'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (21ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD [AssignedSubjects] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD [Email] nvarchar(100) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD [PhotoPath] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD [PrimaryClassId] int NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD [Status] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (66ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Capacity', N'Name', N'TeacherId') AND [object_id] = OBJECT_ID(N'[Classes]'))
+          SET IDENTITY_INSERT [Classes] ON;
+      INSERT INTO [Classes] ([Id], [Capacity], [Name], [TeacherId])
+      VALUES (1, 40, N'S1-A', NULL),
+      (2, 40, N'S1-B', NULL),
+      (3, 40, N'S2-A', NULL),
+      (4, 40, N'S2-B', NULL),
+      (5, 40, N'S3-A', NULL),
+      (6, 40, N'S3-B', NULL),
+      (7, 45, N'P1', NULL),
+      (8, 45, N'P2', NULL),
+      (9, 45, N'P3', NULL),
+      (10, 45, N'P4', NULL),
+      (11, 45, N'P5', NULL),
+      (12, 45, N'P6', NULL),
+      (13, 45, N'P7', NULL);
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Capacity', N'Name', N'TeacherId') AND [object_id] = OBJECT_ID(N'[Classes]'))
+          SET IDENTITY_INSERT [Classes] OFF;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Teachers_PrimaryClassId] ON [Teachers] ([PrimaryClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Teachers] ADD CONSTRAINT [FK_Teachers_Classes_PrimaryClassId] FOREIGN KEY ([PrimaryClassId]) REFERENCES [Classes] ([Id]) ON DELETE SET NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260508124957_AddTeacherFields', N'10.0.7');
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260510172253_PersonalPcSetup'.
+Applying migration '20260510172253_PersonalPcSetup'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Subjects] (
+          [Id] int NOT NULL IDENTITY,
+          [Code] nvarchar(20) NOT NULL,
+          [Name] nvarchar(100) NOT NULL,
+          [Department] nvarchar(50) NOT NULL,
+          CONSTRAINT [PK_Subjects] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [ClassSubjects] (
+          [ClassId] int NOT NULL,
+          [SubjectId] int NOT NULL,
+          CONSTRAINT [PK_ClassSubjects] PRIMARY KEY ([ClassId], [SubjectId]),
+          CONSTRAINT [FK_ClassSubjects_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_ClassSubjects_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (79ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Code', N'Department', N'Name') AND [object_id] = OBJECT_ID(N'[Subjects]'))
+          SET IDENTITY_INSERT [Subjects] ON;
+      INSERT INTO [Subjects] ([Id], [Code], [Department], [Name])
+      VALUES (1, N'MAT-001', N'STEM', N'Mathematics'),
+      (2, N'PHY-002', N'STEM', N'Physics'),
+      (3, N'CHE-003', N'STEM', N'Chemistry'),
+      (4, N'BIO-004', N'STEM', N'Biology'),
+      (5, N'ENG-005', N'Languages', N'English Literature'),
+      (6, N'ENG-006', N'Languages', N'English Language'),
+      (7, N'HIS-007', N'Humanities', N'History'),
+      (8, N'GEO-008', N'Humanities', N'Geography'),
+      (9, N'SST-009', N'Humanities', N'Social Studies'),
+      (10, N'CSC-010', N'STEM', N'Computer Science'),
+      (11, N'PED-011', N'Arts', N'Physical Education'),
+      (12, N'ART-012', N'Arts', N'Fine Art'),
+      (13, N'MUS-013', N'Arts', N'Music'),
+      (14, N'ECO-014', N'Business', N'Economics'),
+      (15, N'COM-015', N'Business', N'Commerce'),
+      (16, N'AGR-016', N'STEM', N'Agriculture'),
+      (17, N'CRE-017', N'Humanities', N'CRE'),
+      (18, N'IRE-018', N'Humanities', N'IRE');
+      IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Code', N'Department', N'Name') AND [object_id] = OBJECT_ID(N'[Subjects]'))
+          SET IDENTITY_INSERT [Subjects] OFF;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ClassSubjects_SubjectId] ON [ClassSubjects] ([SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260510172253_PersonalPcSetup', N'10.0.7');
+Applying migration '20260510195703_RemoveSeededClassSubjectData'.
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260510195703_RemoveSeededClassSubjectData'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (165ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @TeacherUserIds TABLE ([Id] int NOT NULL PRIMARY KEY);
+
+      INSERT INTO @TeacherUserIds ([Id])
+      SELECT [UserId]
+      FROM [Teachers];
+
+      UPDATE [Classes]
+      SET [TeacherId] = NULL;
+
+      DELETE FROM [Teachers];
+
+      DELETE FROM [Users]
+      WHERE [Role] = N'Teacher'
+         OR [Id] IN (SELECT [Id] FROM @TeacherUserIds);
+
+      DELETE FROM [ClassSubjects];
+
+      DELETE FROM [Subjects];
+
+      DELETE c
+      FROM [Classes] c
+      WHERE NOT EXISTS (
+          SELECT 1
+          FROM [Students] s
+          WHERE s.[ClassId] = c.[Id]
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260510195703_RemoveSeededClassSubjectData', N'10.0.7');
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260510213859_AddAttendanceExamsResults'.
+Applying migration '20260510213859_AddAttendanceExamsResults'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [AttendanceRecords] (
+          [Id] int NOT NULL IDENTITY,
+          [StudentId] int NOT NULL,
+          [ClassId] int NOT NULL,
+          [MarkedByTeacherId] int NULL,
+          [AttendanceDate] datetime2 NOT NULL,
+          [Status] nvarchar(20) NOT NULL,
+          [Source] nvarchar(20) NOT NULL,
+          [MarkedByName] nvarchar(100) NOT NULL,
+          [Notes] nvarchar(300) NOT NULL,
+          [MarkedAt] datetime2 NOT NULL,
+          [UpdatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_AttendanceRecords] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_AttendanceRecords_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+          CONSTRAINT [FK_AttendanceRecords_Students_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Students] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_AttendanceRecords_Teachers_MarkedByTeacherId] FOREIGN KEY ([MarkedByTeacherId]) REFERENCES [Teachers] ([Id]) ON DELETE SET NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [ExamTerms] (
+          [Id] int NOT NULL IDENTITY,
+          [Name] nvarchar(100) NOT NULL,
+          [Description] nvarchar(300) NOT NULL,
+          [StartDate] datetime2 NOT NULL,
+          [EndDate] datetime2 NOT NULL,
+          [Status] nvarchar(20) NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_ExamTerms] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [ExamResults] (
+          [Id] int NOT NULL IDENTITY,
+          [ExamTermId] int NOT NULL,
+          [StudentId] int NOT NULL,
+          [SubjectId] int NOT NULL,
+          [Score] decimal(5,2) NULL,
+          [TeacherComments] nvarchar(300) NOT NULL,
+          [RecordedByName] nvarchar(100) NOT NULL,
+          [IsPublished] bit NOT NULL,
+          [UpdatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_ExamResults] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_ExamResults_ExamTerms_ExamTermId] FOREIGN KEY ([ExamTermId]) REFERENCES [ExamTerms] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_ExamResults_Students_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Students] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_ExamResults_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE NO ACTION
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [ExamSchedules] (
+          [Id] int NOT NULL IDENTITY,
+          [ExamTermId] int NOT NULL,
+          [ClassId] int NOT NULL,
+          [SubjectId] int NOT NULL,
+          [InvigilatorTeacherId] int NULL,
+          [RoomNumber] nvarchar(50) NOT NULL,
+          [ExamDate] datetime2 NOT NULL,
+          [StartTime] time NOT NULL,
+          [EndTime] time NOT NULL,
+          [Notes] nvarchar(300) NOT NULL,
+          CONSTRAINT [PK_ExamSchedules] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_ExamSchedules_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+          CONSTRAINT [FK_ExamSchedules_ExamTerms_ExamTermId] FOREIGN KEY ([ExamTermId]) REFERENCES [ExamTerms] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_ExamSchedules_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE NO ACTION,
+          CONSTRAINT [FK_ExamSchedules_Teachers_InvigilatorTeacherId] FOREIGN KEY ([InvigilatorTeacherId]) REFERENCES [Teachers] ([Id]) ON DELETE SET NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_AttendanceRecords_ClassId] ON [AttendanceRecords] ([ClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_AttendanceRecords_MarkedByTeacherId] ON [AttendanceRecords] ([MarkedByTeacherId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX [IX_AttendanceRecords_StudentId_AttendanceDate] ON [AttendanceRecords] ([StudentId], [AttendanceDate]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX [IX_ExamResults_ExamTermId_StudentId_SubjectId] ON [ExamResults] ([ExamTermId], [StudentId], [SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamResults_StudentId] ON [ExamResults] ([StudentId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamResults_SubjectId] ON [ExamResults] ([SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamSchedules_ClassId] ON [ExamSchedules] ([ClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamSchedules_ExamTermId] ON [ExamSchedules] ([ExamTermId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (14ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamSchedules_InvigilatorTeacherId] ON [ExamSchedules] ([InvigilatorTeacherId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_ExamSchedules_SubjectId] ON [ExamSchedules] ([SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260510213859_AddAttendanceExamsResults', N'10.0.7');
+Applying migration '20260510224240_AddCorePortalScreens'.
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20260510224240_AddCorePortalScreens'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Payments] ADD [FeeInvoiceId] int NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Payments] ADD [Notes] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Payments] ADD [ReceiptNumber] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Payments] ADD [RecordedByName] nvarchar(max) NOT NULL DEFAULT N'';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [AcademicCalendarEvents] (
+          [Id] int NOT NULL IDENTITY,
+          [Title] nvarchar(120) NOT NULL,
+          [Description] nvarchar(500) NOT NULL,
+          [EventDate] datetime2 NOT NULL,
+          [StartTime] time NULL,
+          [EndTime] time NULL,
+          [Location] nvarchar(120) NOT NULL,
+          [Audience] nvarchar(30) NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_AcademicCalendarEvents] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Assignments] (
+          [Id] int NOT NULL IDENTITY,
+          [TeacherId] int NOT NULL,
+          [ClassId] int NOT NULL,
+          [SubjectId] int NULL,
+          [Title] nvarchar(140) NOT NULL,
+          [Description] nvarchar(1000) NOT NULL,
+          [DueDate] datetime2 NOT NULL,
+          [MaxScore] decimal(5,2) NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_Assignments] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_Assignments_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+          CONSTRAINT [FK_Assignments_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE SET NULL,
+          CONSTRAINT [FK_Assignments_Teachers_TeacherId] FOREIGN KEY ([TeacherId]) REFERENCES [Teachers] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [FeeInvoices] (
+          [Id] int NOT NULL IDENTITY,
+          [StudentId] int NOT NULL,
+          [Term] nvarchar(80) NOT NULL,
+          [AmountDue] decimal(18,2) NOT NULL,
+          [AmountPaid] decimal(18,2) NOT NULL,
+          [Balance] decimal(18,2) NOT NULL,
+          [DueDate] datetime2 NOT NULL,
+          [Status] nvarchar(20) NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_FeeInvoices] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_FeeInvoices_Students_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Students] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [HelpTickets] (
+          [Id] int NOT NULL IDENTITY,
+          [UserId] int NULL,
+          [Subject] nvarchar(120) NOT NULL,
+          [Message] nvarchar(1000) NOT NULL,
+          [Status] nvarchar(20) NOT NULL,
+          [Priority] nvarchar(20) NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_HelpTickets] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_HelpTickets_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE SET NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (10ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [LearningMaterials] (
+          [Id] int NOT NULL IDENTITY,
+          [TeacherId] int NOT NULL,
+          [ClassId] int NULL,
+          [SubjectId] int NULL,
+          [Title] nvarchar(140) NOT NULL,
+          [Description] nvarchar(600) NOT NULL,
+          [FilePath] nvarchar(260) NOT NULL,
+          [MaterialType] nvarchar(30) NOT NULL,
+          [UploadedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_LearningMaterials] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_LearningMaterials_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE SET NULL,
+          CONSTRAINT [FK_LearningMaterials_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE SET NULL,
+          CONSTRAINT [FK_LearningMaterials_Teachers_TeacherId] FOREIGN KEY ([TeacherId]) REFERENCES [Teachers] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [Notices] (
+          [Id] int NOT NULL IDENTITY,
+          [Title] nvarchar(120) NOT NULL,
+          [Body] nvarchar(1000) NOT NULL,
+          [Audience] nvarchar(30) NOT NULL,
+          [Priority] nvarchar(20) NOT NULL,
+          [PublishDate] datetime2 NOT NULL,
+          [CreatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_Notices] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [SchoolSettings] (
+          [Id] int NOT NULL IDENTITY,
+          [Key] nvarchar(80) NOT NULL,
+          [Value] nvarchar(500) NOT NULL,
+          [Group] nvarchar(40) NOT NULL,
+          [UpdatedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_SchoolSettings] PRIMARY KEY ([Id])
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [AssignmentSubmissions] (
+          [Id] int NOT NULL IDENTITY,
+          [AssignmentId] int NOT NULL,
+          [StudentId] int NOT NULL,
+          [FilePath] nvarchar(260) NOT NULL,
+          [Notes] nvarchar(600) NOT NULL,
+          [Status] nvarchar(20) NOT NULL,
+          [Score] decimal(5,2) NULL,
+          [SubmittedAt] datetime2 NOT NULL,
+          CONSTRAINT [PK_AssignmentSubmissions] PRIMARY KEY ([Id]),
+          CONSTRAINT [FK_AssignmentSubmissions_Assignments_AssignmentId] FOREIGN KEY ([AssignmentId]) REFERENCES [Assignments] ([Id]) ON DELETE CASCADE,
+          CONSTRAINT [FK_AssignmentSubmissions_Students_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Students] ([Id]) ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Payments_FeeInvoiceId] ON [Payments] ([FeeInvoiceId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Assignments_ClassId] ON [Assignments] ([ClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Assignments_SubjectId] ON [Assignments] ([SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_Assignments_TeacherId] ON [Assignments] ([TeacherId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX [IX_AssignmentSubmissions_AssignmentId_StudentId] ON [AssignmentSubmissions] ([AssignmentId], [StudentId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_AssignmentSubmissions_StudentId] ON [AssignmentSubmissions] ([StudentId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_FeeInvoices_StudentId] ON [FeeInvoices] ([StudentId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_HelpTickets_UserId] ON [HelpTickets] ([UserId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_LearningMaterials_ClassId] ON [LearningMaterials] ([ClassId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_LearningMaterials_SubjectId] ON [LearningMaterials] ([SubjectId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX [IX_LearningMaterials_TeacherId] ON [LearningMaterials] ([TeacherId]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX [IX_SchoolSettings_Key] ON [SchoolSettings] ([Key]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE [Payments] ADD CONSTRAINT [FK_Payments_FeeInvoices_FeeInvoiceId] FOREIGN KEY ([FeeInvoiceId]) REFERENCES [FeeInvoices] ([Id]);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20260510224240_AddCorePortalScreens', N'10.0.7');
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+      SELECT @result
+Done.
+root@vmi3353576:/var/www/school-management-asp# systemctl daemon-reload
+systemctl enable --now school-management
+systemctl status school-management --no-pager
+Created symlink /etc/systemd/system/multi-user.target.wants/school-management.service → /etc/systemd/system/school-management.service.
+● school-management.service - School Management System
+     Loaded: loaded (/etc/systemd/system/school-management.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-10-15 09:43:11 CEST; 22ms ago
+   Main PID: 2328715 (dotnet)
+      Tasks: 1 (limit: 9483)
+     Memory: 1.8M (peak: 1.8M)
+        CPU: 18ms
+     CGroup: /system.slice/school-management.service
+             └─2328715 /usr/bin/dotnet "/var/www/school-management-asp/publish/School Management System.dll"
+
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]: warn: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[35]
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]:       No XML encryptor configured. Key {2edeaabe-a8b8-43f1-bc79-8002…d form.
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]: info: Microsoft.Hosting.Lifetime[14]
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]:       Now listening on: http://127.0.0.1:1111
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]: info: Microsoft.Hosting.Lifetime[0]
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]:       Application started. Press Ctrl+C to shut down.
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]: info: Microsoft.Hosting.Lifetime[0]
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]:       Hosting environment: Production
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]: info: Microsoft.Hosting.Lifetime[0]
+Oct 15 09:43:12 vmi3353576 dotnet[2328715]:       Content root path: /var/www/school-management-asp/publish
+Hint: Some lines were ellipsized, use -l to show in full.
+root@vmi3353576:/var/www/school-management-asp# curl http://127.0.0.1:1111
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login — Brait Inc SMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #0d1b6e 0%, #1a2fa0 50%, #0d1b6e 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            .login-card {
+                background: #fff;
+                border-radius: 12px;
+                width: 100%;
+                max-width: 440px;
+                padding: 2.5rem 2rem 2rem;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+            }
+
+            .brand-icon {
+                width: 52px;
+                height: 52px;
+                background: #1a2fa0;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+            }
+
+            .brand-icon i {
+                color: #fff;
+                font-size: 1.5rem;
+            }
+
+            .brand-name {
+                text-align: center;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1a2fa0;
+                margin-bottom: 0.1rem;
+            }
+
+            .brand-sub {
+                text-align: center;
+                font-size: 0.72rem;
+                letter-spacing: 0.12em;
+                color: #6b7280;
+                text-transform: uppercase;
+                margin-bottom: 1.5rem;
+            }
+
+            .divider {
+                border-top: 1px solid #e5e7eb;
+                margin-bottom: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #111827;
+                text-align: center;
+                margin-bottom: 0.25rem;
+            }
+
+            .login-sub {
+                font-size: 0.85rem;
+                color: #6b7280;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: #374151;
+                margin-bottom: 0.4rem;
+            }
+
+            .input-group-text {
+                background: #f9fafb;
+                border-right: none;
+                color: #9ca3af;
+                border-color: #d1d5db;
+            }
+
+            .form-control {
+                border-left: none;
+                border-color: #d1d5db;
+                font-size: 0.9rem;
+                background: #f9fafb;
+            }
+
+            .form-control:focus {
+                box-shadow: none;
+                border-color: #1a2fa0;
+                background: #fff;
+            }
+
+            .input-group:focus-within .input-group-text {
+                border-color: #1a2fa0;
+                background: #fff;
+            }
+
+            .toggle-password {
+                cursor: pointer;
+                background: #f9fafb;
+                border-left: none;
+                border-color: #d1d5db;
+                color: #9ca3af;
+            }
+
+            .forgot-link {
+                font-size: 0.82rem;
+                color: #1a2fa0;
+                text-decoration: none;
+                float: right;
+                margin-top: -1.8rem;
+            }
+
+            .forgot-link:hover {
+                text-decoration: underline;
+            }
+
+            .form-check-label {
+                font-size: 0.85rem;
+                color: #6b7280;
+            }
+
+            .btn-signin {
+                background: #1a2fa0;
+                border: none;
+                color: #fff;
+                width: 100%;
+                padding: 0.7rem;
+                border-radius: 6px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                transition: background 0.2s;
+            }
+
+            .btn-signin:hover {
+                background: #152580;
+                color: #fff;
+            }
+
+            .help-text {
+                text-align: center;
+                font-size: 0.82rem;
+                color: #6b7280;
+                margin-top: 1.25rem;
+            }
+
+            .help-text a {
+                color: #1a2fa0;
+                text-decoration: none;
+            }
+
+            .help-text a:hover {
+                text-decoration: underline;
+            }
+
+            .alert-danger {
+                font-size: 0.85rem;
+                border-radius: 6px;
+                padding: 0.6rem 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .status-bar {
+                display: flex;
+                gap: 10px;
+                margin-top: 1.5rem;
+            }
+
+            .status-pill {
+                background: rgba(255, 255, 255, 0.12);
+                color: #e5e7eb;
+                border-radius: 999px;
+                font-size: 0.75rem;
+                padding: 0.3rem 0.85rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #22c55e;
+                display: inline-block;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <!-- Brand -->
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div class="brand-name">Brait Inc</div>
+        <div class="brand-sub">School Management System</div>
+
+        <div class="divider"></div>
+
+        <div class="login-title">Admin Login</div>
+        <div class="login-sub">Enter your credentials to access the portal</div>
+
+        <!-- Error message -->
+
+        <form method="post" action="/Account/Login">
+
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input class="form-control" placeholder="Enter admin username" autocomplete="username" type="text" data-val="true" data-val-required="Username is required" id="Username" name="Username" value="" />
+                </div>
+                <span class="text-danger small field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="passwordInput" class="form-control" placeholder="••••••••" autocomplete="current-password" data-val="true" data-val-required="Password is required" name="Password" />
+                    <button type="button" class="btn toggle-password border" onclick="togglePassword()">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+                <span class="text-danger small field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+            </div>
+
+            <!-- Forgot password -->
+            <div class="mb-3 text-end">
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe" data-val="true" data-val-required="The RememberMe field is required." name="RememberMe" value="true" />
+                <label class="form-check-label" for="rememberMe">Remember Me</label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-signin">
+                Sign In <i class="bi bi-box-arrow-in-right"></i>
+            </button>
+
+        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8L6q3i64qPFDvHmAAn8n-mb6V1WPjn1Rx6KiaL7BJOSqbA4L_VW3x6lFV-2frO_8CbN4fEKG_Sa0KpC30QnHYDrSigxf1N_AtaY1tddHkZRZ7K1gfUkUBQWj1ke2w3p0-vrAd6DHiXv1xA507fUDXjE" /><input name="RememberMe" type="hidden" value="false" /></form>
+
+        <div class="help-text">
+            Need help? <a href="mailto:ponthiuspaul@gmail.com?subject=System%20Administrator%20Support">
+            Contact System Administrator
+        </a>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        }
+</script>
+
+</body>
+
+</html>
+root@vmi3353576:/var/www/school-management-asp# ufw allow 1111/tcp
+ufw reload
+ERROR: problem running
+Firewall reloaded
+root@vmi3353576:/var/www/school-management-asp# micro /etc/school-management/app.env
+root@vmi3353576:/var/www/school-management-asp# cat ASPNETCORE_URLS=http://0.0.0.0:1111
+cat: 'ASPNETCORE_URLS=http://0.0.0.0:1111': No such file or directory
+root@vmi3353576:/var/www/school-management-asp# cat /etc/school-management/app.env
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://0.0.0.0:1111
+ConnectionStrings__DefaultConnection=Server=127.0.0.1,1433;Database=SchoolManagementDB;User Id=sa;Password=Grandtheftauto_ponthius4;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=true
+root@vmi3353576:/var/www/school-management-asp# systemctl daemon-reload
+systemctl restart school-management
+systemctl status school-management --no-pager
+● school-management.service - School Management System
+     Loaded: loaded (/etc/systemd/system/school-management.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-10-15 09:46:19 CEST; 28ms ago
+   Main PID: 2332145 (dotnet)
+      Tasks: 1 (limit: 9483)
+     Memory: 1.3M (peak: 1.4M)
+        CPU: 18ms
+     CGroup: /system.slice/school-management.service
+             └─2332145 /usr/bin/dotnet "/var/www/school-management-asp/publish/School Management System.dll"
+
+Oct 15 09:46:19 vmi3353576 systemd[1]: Started school-management.service - School Management System.
+root@vmi3353576:/var/www/school-management-asp# ss -ltnp | grep 1111
+LISTEN 0      512                        0.0.0.0:1111       0.0.0.0:*    users:(("dotnet",pid=2332145,fd=273))          
+root@vmi3353576:/var/www/school-management-asp# curl http://127.0.0.1:1111
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login — Brait Inc SMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #0d1b6e 0%, #1a2fa0 50%, #0d1b6e 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            .login-card {
+                background: #fff;
+                border-radius: 12px;
+                width: 100%;
+                max-width: 440px;
+                padding: 2.5rem 2rem 2rem;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+            }
+
+            .brand-icon {
+                width: 52px;
+                height: 52px;
+                background: #1a2fa0;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+            }
+
+            .brand-icon i {
+                color: #fff;
+                font-size: 1.5rem;
+            }
+
+            .brand-name {
+                text-align: center;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1a2fa0;
+                margin-bottom: 0.1rem;
+            }
+
+            .brand-sub {
+                text-align: center;
+                font-size: 0.72rem;
+                letter-spacing: 0.12em;
+                color: #6b7280;
+                text-transform: uppercase;
+                margin-bottom: 1.5rem;
+            }
+
+            .divider {
+                border-top: 1px solid #e5e7eb;
+                margin-bottom: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #111827;
+                text-align: center;
+                margin-bottom: 0.25rem;
+            }
+
+            .login-sub {
+                font-size: 0.85rem;
+                color: #6b7280;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: #374151;
+                margin-bottom: 0.4rem;
+            }
+
+            .input-group-text {
+                background: #f9fafb;
+                border-right: none;
+                color: #9ca3af;
+                border-color: #d1d5db;
+            }
+
+            .form-control {
+                border-left: none;
+                border-color: #d1d5db;
+                font-size: 0.9rem;
+                background: #f9fafb;
+            }
+
+            .form-control:focus {
+                box-shadow: none;
+                border-color: #1a2fa0;
+                background: #fff;
+            }
+
+            .input-group:focus-within .input-group-text {
+                border-color: #1a2fa0;
+                background: #fff;
+            }
+
+            .toggle-password {
+                cursor: pointer;
+                background: #f9fafb;
+                border-left: none;
+                border-color: #d1d5db;
+                color: #9ca3af;
+            }
+
+            .forgot-link {
+                font-size: 0.82rem;
+                color: #1a2fa0;
+                text-decoration: none;
+                float: right;
+                margin-top: -1.8rem;
+            }
+
+            .forgot-link:hover {
+                text-decoration: underline;
+            }
+
+            .form-check-label {
+                font-size: 0.85rem;
+                color: #6b7280;
+            }
+
+            .btn-signin {
+                background: #1a2fa0;
+                border: none;
+                color: #fff;
+                width: 100%;
+                padding: 0.7rem;
+                border-radius: 6px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                transition: background 0.2s;
+            }
+
+            .btn-signin:hover {
+                background: #152580;
+                color: #fff;
+            }
+
+            .help-text {
+                text-align: center;
+                font-size: 0.82rem;
+                color: #6b7280;
+                margin-top: 1.25rem;
+            }
+
+            .help-text a {
+                color: #1a2fa0;
+                text-decoration: none;
+            }
+
+            .help-text a:hover {
+                text-decoration: underline;
+            }
+
+            .alert-danger {
+                font-size: 0.85rem;
+                border-radius: 6px;
+                padding: 0.6rem 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .status-bar {
+                display: flex;
+                gap: 10px;
+                margin-top: 1.5rem;
+            }
+
+            .status-pill {
+                background: rgba(255, 255, 255, 0.12);
+                color: #e5e7eb;
+                border-radius: 999px;
+                font-size: 0.75rem;
+                padding: 0.3rem 0.85rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #22c55e;
+                display: inline-block;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <!-- Brand -->
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div class="brand-name">Brait Inc</div>
+        <div class="brand-sub">School Management System</div>
+
+        <div class="divider"></div>
+
+        <div class="login-title">Admin Login</div>
+        <div class="login-sub">Enter your credentials to access the portal</div>
+
+        <!-- Error message -->
+
+        <form method="post" action="/Account/Login">
+
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input class="form-control" placeholder="Enter admin username" autocomplete="username" type="text" data-val="true" data-val-required="Username is required" id="Username" name="Username" value="" />
+                </div>
+                <span class="text-danger small field-validation-valid" data-valmsg-for="Username" data-valmsg-replace="true"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="passwordInput" class="form-control" placeholder="••••••••" autocomplete="current-password" data-val="true" data-val-required="Password is required" name="Password" />
+                    <button type="button" class="btn toggle-password border" onclick="togglePassword()">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+                <span class="text-danger small field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+            </div>
+
+            <!-- Forgot password -->
+            <div class="mb-3 text-end">
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe" data-val="true" data-val-required="The RememberMe field is required." name="RememberMe" value="true" />
+                <label class="form-check-label" for="rememberMe">Remember Me</label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-signin">
+                Sign In <i class="bi bi-box-arrow-in-right"></i>
+            </button>
+
+        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8L6q3i64qPFDvHmAAn8n-mb1nK5zqNFtP_E-InWlPihShErbsWNYWads_zUnjDGVSYbpdr1RHZg9KRvoSyShw2W4j0xxkPmQkOwN2ei3PxTZ5umk1BhgiofkQtbWw6KlEUrDsDoO0bJKKCEGGc9ngmY" /><input name="RememberMe" type="hidden" value="false" /></form>
+
+        <div class="help-text">
+            Need help? <a href="mailto:ponthiuspaul@gmail.com?subject=System%20Administrator%20Support">
+            Contact System Administrator
+        </a>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        }
+</script>
+
+</body>
+
+</html>
+root@vmi3353576:/var/www/school-management-asp# ufw allow 1111/tcp
+ufw status
+Skipping adding existing rule
+Rule added (v6)
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
+2222/tcp                   ALLOW       Anywhere
+4000                       ALLOW       Anywhere
+4001/tcp                   ALLOW       Anywhere
+8000/tcp                   ALLOW       Anywhere
+8001                       ALLOW       Anywhere
+8030/tcp                   ALLOW       Anywhere
+1111/tcp                   ALLOW       Anywhere
+22/tcp (v6)                ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443/tcp (v6)               ALLOW       Anywhere (v6)
+2222/tcp (v6)              ALLOW       Anywhere (v6)
+4000 (v6)                  ALLOW       Anywhere (v6)
+4001/tcp (v6)              ALLOW       Anywhere (v6)
+1111/tcp (v6)              ALLOW       Anywhere (v6)
+
+root@vmi3353576:/var/www/school-management-asp#
